@@ -422,12 +422,13 @@
       </section>
     </div>
 
-    <section class="yk-pickup" id="yk-notice" aria-label="お支払い方法">
-      <figure class="yk-pickup__image">
-        <img src="assets/payment-methods-gpt-image2.png" alt="PAY IDあと払い、クレジットカード、PayPay、キャリア決済、銀行振込、コンビニ決済またはPay-easyのお支払い方法一覧" loading="lazy" decoding="async">
-      </figure>
 
-    </section>
+      <section class="yk-pickup" id="yk-notice" aria-label="お支払い方法">
+        <figure class="yk-pickup__image">
+          <img src="assets/payment-methods-gpt-image2.png" alt="PAY IDあと払い、クレジットカード、PayPay、キャリア決済、銀行振込、コンビニ決済またはPay-easyのお支払い方法一覧" loading="lazy" decoding="async">
+        </figure>
+      </section>
+
 
     <section class="yk-store-band" id="yk-stores" aria-labelledby="yk-stores-title">
       <div class="yk-section">
@@ -440,7 +441,9 @@
         </div>
         <div class="yk-store-grid">
           <article class="yk-store-card">
+
             <img src="assets/store-illustration-main.jpg" alt="勇吉屋 本店の店舗イメージ" loading="lazy" decoding="async">
+
             <div class="yk-store-card__body">
               <h3>勇吉屋 本店</h3>
               <dl>
@@ -455,7 +458,9 @@
             </div>
           </article>
           <article class="yk-store-card">
+
             <img src="assets/store-illustration-takahashi.jpg" alt="勇吉屋 髙橋店の店舗イメージ" loading="lazy" decoding="async">
+
             <div class="yk-store-card__body">
               <h3>勇吉屋 髙橋店</h3>
               <dl>
@@ -570,20 +575,10 @@
     }
 
     function ykUpdateMaterialAvailability() {
-      var availability = ykState.school ? ykSchoolAvailability[ykState.school] : null;
       document.querySelectorAll(".yk-material-chip").forEach(function (button) {
-        var key = button.getAttribute("data-material-key");
-        var count = availability && availability.materials
-          ? availability.materials[key]
-          : ykAllProducts.filter(function (product) { return (product.m || []).indexOf(key) !== -1; }).length;
-        var disabled = !count;
-        button.disabled = !!disabled;
-        if (disabled && ykState.material === key) {
-          ykState.material = "";
-          ykState.materialLabel = "";
-          button.dataset.active = "false";
-          button.setAttribute("aria-pressed", "false");
-        }
+        button.disabled = false;
+        button.dataset.active = ykState.material === button.getAttribute("data-material-key") ? "true" : "false";
+        button.setAttribute("aria-pressed", button.dataset.active === "true" ? "true" : "false");
       });
     }
 
@@ -670,13 +665,19 @@
     document.querySelectorAll(".yk-school-list a").forEach(function (link) {
       link.addEventListener("click", function (event) {
         event.preventDefault();
+        var selectedSchool = (link.textContent || "").trim();
+        var shouldClear = ykState.school === selectedSchool;
         document.querySelectorAll(".yk-school-list a").forEach(function (item) {
           item.dataset.selected = "false";
           item.setAttribute("aria-pressed", "false");
         });
-        link.dataset.selected = "true";
-        link.setAttribute("aria-pressed", "true");
-        ykState.school = (link.textContent || "").trim();
+        if (shouldClear) {
+          ykState.school = "";
+        } else {
+          link.dataset.selected = "true";
+          link.setAttribute("aria-pressed", "true");
+          ykState.school = selectedSchool;
+        }
         ykState.page = 1;
         ykRenderProducts({ scroll: true });
       });
@@ -685,15 +686,22 @@
     document.querySelectorAll(".yk-material-chip").forEach(function (button) {
       button.addEventListener("click", function () {
         if (button.disabled) return;
+        var selectedMaterial = button.getAttribute("data-material-key") || "";
+        var shouldClear = ykState.material === selectedMaterial;
         document.querySelectorAll(".yk-material-chip").forEach(function (item) {
           item.dataset.active = "false";
           item.setAttribute("aria-pressed", "false");
         });
-        button.dataset.active = "true";
-        button.setAttribute("aria-pressed", "true");
-        ykState.material = button.getAttribute("data-material-key") || "";
-        var label = button.querySelector("b");
-        ykState.materialLabel = label ? label.textContent.trim() : "";
+        if (shouldClear) {
+          ykState.material = "";
+          ykState.materialLabel = "";
+        } else {
+          button.dataset.active = "true";
+          button.setAttribute("aria-pressed", "true");
+          ykState.material = selectedMaterial;
+          var label = button.querySelector("b");
+          ykState.materialLabel = label ? label.textContent.trim() : "";
+        }
         ykState.page = 1;
         ykRenderProducts({ scroll: true });
       });
