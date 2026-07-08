@@ -4,7 +4,7 @@
 
 - `index.html`: BASE HTML編集 Appへの移設を想定したメインプレビュー
 - `base-theme-migration-preview.html`: `index.html` と同じ内容の控え
-- `schools/*.html`: 学校別の商品候補確認ページ（補助確認用）
+- `schools/*.html`: 学校別の商品一覧ページ（補助確認用）
 
 商品画像・商品リンク・学校カテゴリリンクは公開BASEのURLを参照しています。
 メインプレビューは、学校名・用品・フリーワードに合わせて商品カードをページ内で即時表示します。
