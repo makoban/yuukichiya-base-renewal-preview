@@ -4,7 +4,9 @@
 
 - `index.html`: BASE HTML編集 Appへの移設を想定したメインプレビュー
 - `base-theme-migration-preview.html`: `index.html` と同じ内容の控え
-- `all-products.html`: 商品一覧確認用
+- `schools/*.html`: 学校別の商品候補確認ページ
 
 商品画像・商品リンク・学校カテゴリリンクは公開BASEのURLを参照しています。
+メインプレビューには商品名リストやCSVの生データを埋め込まず、学校別の有無・件数だけを持たせています。
+商品全件チェックはローカル確認用に限定し、GitHub Pagesには公開しません。
 注文、在庫、顧客情報、BASE本番テーマは変更しません。
