@@ -48,6 +48,7 @@
     .yk-search input { min-width: 0; height: 46px; border: 0; background: transparent; padding: 0 16px; font: inherit; outline: 0; }
     .yk-search button, .yk-button { min-height: 46px; border: 0; border-radius: var(--yk-radius); background: var(--yk-main); color: #fff; padding: 0 18px; font: inherit; font-weight: 900; cursor: pointer; box-shadow: var(--yk-press); }
     .yk-nav { display: flex; gap: 14px; align-items: center; color: var(--yk-muted); font-size: 14px; font-weight: 800; white-space: nowrap; }
+    .yk-nav a:hover { color: var(--yk-main); }
     #baseMenu ul { display: flex; align-items: center; gap: 10px; margin: 0; padding: 0; list-style: none; }
     #baseMenu img { height: 24px; width: auto; }
     .cart { position: relative; }
@@ -215,9 +216,10 @@
       </form>
 
       <nav class="yk-nav">
+        <a href="#top">TOP</a>
         <a href="#yk-stores">店舗について</a>
-        <a href="#yk-stores">お問い合わせ</a>
-        <a href="#yk-results">カート</a>
+        <a href="contact.html">お問い合わせ</a>
+        <a href="cart.html">カート</a>
       </nav>
     </div>
   </header>
@@ -501,7 +503,7 @@
         <h3>ご利用案内</h3>
         <ul>
           <li><a href="#yk-stores">店舗について</a></li>
-          <li><a href="#yk-stores">お問い合わせ</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
           <li><a href="#yk-notice">プライバシーポリシー</a></li>
           <li><a href="#yk-notice">特定商取引法に基づく表記</a></li>
         </ul>
@@ -750,6 +752,15 @@
         ykRenderProducts({ scroll: true });
       });
     }
+
+    try {
+      var ykInitialQuery = new URLSearchParams(window.location.search).get("q") || "";
+      if (ykInitialQuery) {
+        ykState.query = ykInitialQuery.trim();
+        var ykInitialInput = document.getElementById("yk-header-query");
+        if (ykInitialInput) ykInitialInput.value = ykState.query;
+      }
+    } catch (error) {}
 
     ykRenderProducts();
   </script>

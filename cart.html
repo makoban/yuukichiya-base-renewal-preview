@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>カート｜勇吉屋ネット</title>
+  <meta name="description" content="勇吉屋ネットのカート確認ページです。学校名や学校用品から商品を探して注文へ進めます。">
+  <style>
+    :root {
+      --yk-ink: #222426;
+      --yk-muted: #68727d;
+      --yk-line: #dde4e8;
+      --yk-paper: #ffffff;
+      --yk-wash: #f4f7f5;
+      --yk-main: #2f7d5b;
+      --yk-accent: #d9503f;
+      --yk-blue: #3579a8;
+      --yk-gold: #b9842b;
+      --yk-radius: 8px;
+      --yk-shadow: 0 10px 24px rgba(23,45,52,.14);
+      --yk-press: 0 5px 12px rgba(23,45,52,.16);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--yk-ink); background: #f6f8f6; font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif; line-height: 1.7; }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+    .yk-header { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.94); border-bottom: 1px solid var(--yk-line); backdrop-filter: blur(14px); }
+    .yk-header__inner { display: grid; grid-template-columns: auto minmax(220px,1fr) auto; gap: 22px; align-items: center; max-width: 1240px; min-height: 76px; margin: 0 auto; padding: 0 28px; }
+    .yk-logo .logoText { color: var(--yk-ink); font-size: 22px; font-weight: 800; letter-spacing: 0; }
+    .yk-search { display: grid; grid-template-columns: 1fr auto; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #f8faf9; box-shadow: 0 8px 20px rgba(26,45,52,.06); overflow: hidden; }
+    .yk-search input { min-width: 0; height: 46px; border: 0; background: transparent; padding: 0 16px; font: inherit; outline: 0; }
+    .yk-search button, .yk-button { min-height: 46px; border: 0; border-radius: var(--yk-radius); background: var(--yk-main); color: #fff; padding: 0 18px; font: inherit; font-weight: 900; cursor: pointer; box-shadow: var(--yk-press); }
+    .yk-nav { display: flex; gap: 14px; align-items: center; color: var(--yk-muted); font-size: 14px; font-weight: 800; white-space: nowrap; }
+    .yk-nav a:hover, .yk-nav a[aria-current="page"] { color: var(--yk-main); }
+    .yk-page-hero { border-bottom: 1px solid var(--yk-line); background: linear-gradient(120deg, #fbfcf9 0%, #fbfcf9 58%, #e8f1ed 100%); }
+    .yk-page-hero__inner { display: grid; gap: 18px; max-width: 1240px; min-height: 300px; margin: 0 auto; padding: 70px 28px 58px; align-content: center; }
+    .yk-eyebrow { margin: 0; color: var(--yk-main); font-size: 13px; font-weight: 900; text-transform: uppercase; }
+    .yk-page-hero h1 { max-width: 760px; margin: 0; font-size: 48px; line-height: 1.15; letter-spacing: 0; text-wrap: balance; }
+    .yk-page-hero p { max-width: 720px; margin: 0; color: var(--yk-muted); font-weight: 800; text-wrap: pretty; }
+    .yk-page-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .yk-page-section { max-width: 1240px; margin: 0 auto; padding: 56px 28px; }
+    .yk-section-head { display: flex; justify-content: space-between; align-items: end; gap: 22px; margin-bottom: 24px; }
+    .yk-section-head h2 { margin: 0; font-size: 34px; line-height: 1.25; text-wrap: balance; }
+    .yk-section-head p { margin: 8px 0 0; color: var(--yk-muted); font-weight: 800; }
+    .yk-grid-2 { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; align-items: start; }
+    .yk-grid-3 { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; align-items: start; }
+    .yk-card { border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; box-shadow: 0 10px 24px rgba(27,43,49,.08); overflow: hidden; }
+    .yk-card__body { padding: 24px; }
+    .yk-card h2, .yk-card h3 { margin: 0 0 12px; line-height: 1.3; }
+    .yk-card p { margin: 0 0 12px; color: var(--yk-muted); font-weight: 800; }
+    .yk-card p:last-child { margin-bottom: 0; }
+    .yk-card img { width: 100%; height: 240px; object-fit: cover; }
+    .yk-button { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; }
+    .yk-button--sub { border: 1px solid var(--yk-line); background: #fff; color: var(--yk-ink); }
+    .yk-form { display: grid; gap: 14px; padding: 24px; }
+    .yk-form label { display: grid; gap: 6px; color: var(--yk-ink); font-weight: 900; }
+    .yk-form input, .yk-form textarea { width: 100%; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; padding: 12px 14px; color: var(--yk-ink); font: inherit; outline: 0; }
+    .yk-form input:focus, .yk-form textarea:focus { border-color: rgba(47,125,91,.58); box-shadow: 0 0 0 3px rgba(47,125,91,.12); }
+    .yk-form-status { min-height: 1.7em; margin: 0; color: var(--yk-main); font-size: 13px; font-weight: 900; }
+    .yk-info-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+    .yk-info-list li { padding-left: 14px; border-left: 4px solid var(--yk-main); color: var(--yk-muted); font-weight: 800; }
+    .yk-payment-image { padding: 18px; }
+    .yk-payment-image img { height: auto; border: 1px solid var(--yk-line); box-shadow: 0 16px 34px rgba(28,45,52,.12); }
+    .yk-empty-cart { display: grid; justify-items: center; gap: 14px; padding: 54px 28px; text-align: center; }
+    .yk-empty-cart h2 { margin: 0; font-size: 34px; line-height: 1.25; }
+    .yk-empty-cart p { max-width: 620px; }
+    .yk-footer { background: #1f2527; color: #fff; }
+    .yk-footer__inner { display: grid; grid-template-columns: 1.1fr .9fr .9fr; gap: 40px; max-width: 1240px; margin: 0 auto; padding: 48px 28px; }
+    .yk-footer p, .yk-footer li { color: rgba(255,255,255,.72); font-size: 14px; font-weight: 700; }
+    .yk-footer ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+    @media (max-width: 920px) {
+      .yk-header__inner { grid-template-columns: 1fr auto; }
+      .yk-search { grid-column: 1 / -1; grid-row: 2; margin-bottom: 14px; }
+      .yk-nav { grid-column: 2; grid-row: 1; justify-self: end; }
+      .yk-grid-2, .yk-grid-3, .yk-footer__inner { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .yk-header__inner, .yk-page-hero__inner, .yk-page-section, .yk-footer__inner { padding-left: 18px; padding-right: 18px; }
+      .yk-nav { gap: 10px; font-size: 13px; }
+      .yk-nav a:nth-child(1), .yk-nav a:nth-child(2) { display: none; }
+      .yk-page-hero__inner { min-height: 250px; padding-top: 42px; padding-bottom: 42px; }
+      .yk-page-hero h1 { font-size: 34px; }
+      .yk-section-head { display: grid; align-items: start; }
+      .yk-section-head h2, .yk-empty-cart h2 { font-size: 28px; }
+      .yk-card img { height: 210px; }
+      .yk-card__body, .yk-form { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="yk-header">
+    <div class="yk-header__inner">
+      <a class="yk-logo" href="index.html#top"><span class="logoText">勇吉屋ネット</span></a>
+      <form class="yk-search" action="index.html" method="get">
+        <input type="search" name="q" placeholder="学校名・商品名で探す">
+        <button type="submit">検索</button>
+      </form>
+      <nav class="yk-nav" aria-label="主要ナビゲーション">
+        <a href="index.html#top">TOP</a>
+        <a href="index.html#yk-stores">店舗について</a>
+        <a href="contact.html">お問い合わせ</a>
+        <a href="cart.html" aria-current="page">カート</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <section class="yk-page-hero">
+      <div class="yk-page-hero__inner">
+        <p class="yk-eyebrow">Cart</p>
+        <h1>カート</h1>
+        <p>選んだ商品を確認して、ご注文手続きへ進むページです。学校名や用品から商品を探して追加してください。</p>
+      </div>
+    </section>
+    <section class="yk-page-section">
+      <article class="yk-card yk-empty-cart">
+        <h2>カートに商品が入っていません</h2>
+        <p>学校名で指定品を探すか、よく使う学校用品から商品を選んでください。サイズや指定品で迷った場合は店舗へご相談いただけます。</p>
+        <div class="yk-page-actions">
+          <a class="yk-button" href="index.html#yk-categories">学校名で探す</a>
+          <a class="yk-button yk-button--sub" href="index.html#yk-materials">用品から探す</a>
+        </div>
+      </article>
+    </section>
+    <section class="yk-page-section">
+      <div class="yk-section-head">
+        <div>
+          <h2>ご注文前の確認</h2>
+          <p>学校用品は指定内容とサイズ確認が大切です。</p>
+        </div>
+      </div>
+      <div class="yk-grid-3">
+        <article class="yk-card"><div class="yk-card__body"><h3>学校名を確認</h3><p>同じ商品名でも学校ごとに型や指定が異なる場合があります。</p></div></article>
+        <article class="yk-card"><div class="yk-card__body"><h3>サイズを確認</h3><p>体操服や制服はサイズ表記、男女別、旧タイプを確認してください。</p></div></article>
+        <article class="yk-card"><div class="yk-card__body"><h3>迷ったら店舗へ</h3><p>ご注文前の不安な点は、本店・髙橋店でご相談いただけます。</p></div></article>
+      </div>
+    </section>
+    <section class="yk-page-section">
+      <div class="yk-grid-2">
+        <article class="yk-card">
+          <img src="assets/store-illustration-main.jpg" alt="勇吉屋 本店">
+          <div class="yk-card__body">
+            <h3>本店で相談</h3>
+            <p>愛知県豊田市桜町1-29 / <a href="tel:0565331155">0565-33-1155</a></p>
+          </div>
+        </article>
+        <article class="yk-card">
+          <img src="assets/store-illustration-takahashi.jpg" alt="勇吉屋 髙橋店">
+          <div class="yk-card__body">
+            <h3>髙橋店で相談</h3>
+            <p>愛知県豊田市高上1-14-2 / <a href="tel:0565805050">0565-80-5050</a></p>
+          </div>
+        </article>
+      </div>
+    </section>
+    <section class="yk-page-section">
+      <article class="yk-card yk-payment-image">
+        <img src="assets/payment-methods-gpt-image2.png" alt="お支払い方法一覧">
+      </article>
+    </section>
+  </main>
+  <footer class="yk-footer">
+    <div class="yk-footer__inner">
+      <div>
+        <h2>勇吉屋ネット</h2>
+        <p>豊田市で創業78年の学生衣料品販売専門店。学校用品のご注文と店舗相談に対応しています。</p>
+      </div>
+      <div>
+        <h3>ご利用案内</h3>
+        <ul>
+          <li><a href="index.html#yk-stores">店舗について</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+          <li><a href="cart.html">カート</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>店舗</h3>
+        <ul>
+          <li>本店 0565-33-1155</li>
+          <li>髙橋店 0565-80-5050</li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+  <script>
+    document.querySelectorAll("[data-preview-form]").forEach(function (form) {
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        var status = form.querySelector("[data-form-status]");
+        if (status) status.textContent = "入力内容を確認しました。BASE本番ではお問い合わせ送信に接続します。";
+      });
+    });
+  </script>
+</body>
+</html>
