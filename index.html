@@ -129,6 +129,21 @@
     .yk-pickup { background: #f5fbf8; border-top: 1px solid var(--yk-line); border-bottom: 1px solid var(--yk-line); }
     .yk-pickup__image { display: flex; align-items: center; justify-content: center; max-width: 1240px; margin: 0 auto; padding: 42px 28px; }
     .yk-pickup__image img { width: 100%; height: auto; border-radius: var(--yk-radius); object-fit: contain; box-shadow: 0 16px 34px rgba(28,45,52,.12); }
+    .yk-store-band { background: #f7f6f1; border-top: 1px solid var(--yk-line); }
+    .yk-store-head { display: grid; grid-template-columns: minmax(160px,260px) 1fr; gap: 28px; align-items: end; margin-bottom: 28px; }
+    .yk-store-eyebrow { margin: 0; color: var(--yk-main); font-size: 13px; font-weight: 900; line-height: 1.4; text-transform: uppercase; }
+    .yk-store-head h2 { margin: 0; font-family: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, serif; font-size: 36px; line-height: 1.2; }
+    .yk-store-lead { margin: 8px 0 0; color: var(--yk-muted); font-weight: 800; }
+    .yk-store-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; }
+    .yk-store-card { overflow: hidden; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; box-shadow: var(--yk-shadow); }
+    .yk-store-card img { width: 100%; height: 260px; object-fit: cover; }
+    .yk-store-card__body { padding: 24px; }
+    .yk-store-card h3 { margin: 0 0 18px; font-size: 25px; line-height: 1.25; }
+    .yk-store-card dl { display: grid; grid-template-columns: 92px 1fr; gap: 10px 14px; margin: 0; }
+    .yk-store-card dt { color: var(--yk-main); font-weight: 900; }
+    .yk-store-card dd { margin: 0; color: var(--yk-ink); font-weight: 700; line-height: 1.7; }
+    .yk-store-card a { color: var(--yk-main); font-weight: 900; text-decoration: underline; text-decoration-thickness: .08em; text-underline-offset: .18em; }
+    .yk-store-note { margin-top: 20px; padding: 18px 20px; border-left: 4px solid var(--yk-main); border-radius: var(--yk-radius); background: #fff; color: var(--yk-muted); font-weight: 800; box-shadow: 0 8px 18px rgba(29,49,55,.06); }
     .yk-guide-strip { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; }
     .yk-guide { display: grid; gap: 8px; padding: 20px; border-radius: var(--yk-radius); border-left: 4px solid var(--yk-main); background: #f7faf9; box-shadow: 0 8px 18px rgba(29,49,55,.06); }
     .yk-guide:nth-child(2) { border-color: var(--yk-blue); }
@@ -162,7 +177,7 @@
       .yk-school-tabs { grid-template-columns: repeat(5,minmax(0,1fr)); }
       .yk-school-tab { justify-content: center; min-height: 54px; padding: 0 10px; font-size: 14px; }
       .yk-school-tab span { display: none; }
-      .yk-school-list, .yk-feature-grid, .yk-products, .yk-material-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .yk-school-list, .yk-feature-grid, .yk-products, .yk-material-grid, .yk-store-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
       .yk-material-layout { grid-template-columns: 1fr; }
       .yk-hero h1 { font-size: 48px; }
       .yk-section h2, .yk-item h1 { font-size: 34px; }
@@ -173,8 +188,13 @@
       .yk-section__head { display: grid; align-items: start; }
       .yk-school-tabs { display: flex; overflow-x: auto; }
       .yk-school-tab { min-width: 116px; }
-      .yk-school-list, .yk-feature-grid, .yk-products, .yk-guide-strip, .yk-material-grid { grid-template-columns: 1fr; }
+      .yk-school-list, .yk-feature-grid, .yk-products, .yk-guide-strip, .yk-material-grid, .yk-store-grid, .yk-store-head { grid-template-columns: 1fr; }
       .yk-feature-visual img { aspect-ratio: 1.45 / 1; }
+      .yk-store-head { gap: 8px; margin-bottom: 22px; }
+      .yk-store-head h2 { font-size: 30px; }
+      .yk-store-card img { height: 220px; }
+      .yk-store-card__body { padding: 20px; }
+      .yk-store-card dl { grid-template-columns: 78px 1fr; gap: 8px 12px; }
       .yk-hero { background-position: center bottom; }
       .yk-hero__inner { min-height: 590px; padding-top: 48px; padding-bottom: 260px; }
       .yk-hero h1 { font-size: 36px; }
@@ -195,8 +215,8 @@
       </form>
 
       <nav class="yk-nav">
-        <a href="#yk-notice">店舗について</a>
-        <a href="#yk-notice">お問い合わせ</a>
+        <a href="#yk-stores">店舗について</a>
+        <a href="#yk-stores">お問い合わせ</a>
         <a href="#yk-results">カート</a>
       </nav>
     </div>
@@ -409,6 +429,51 @@
 
     </section>
 
+    <section class="yk-store-band" id="yk-stores" aria-labelledby="yk-stores-title">
+      <div class="yk-section">
+        <div class="yk-store-head">
+          <p class="yk-store-eyebrow">Shop</p>
+          <div>
+            <h2 id="yk-stores-title">店舗について</h2>
+            <p class="yk-store-lead">本店と髙橋店で、サイズ確認や学校指定品のご相談を承ります。</p>
+          </div>
+        </div>
+        <div class="yk-store-grid">
+          <article class="yk-store-card">
+            <img src="assets/store-illustration-main.jpg" alt="勇吉屋 本店の店舗イメージ" loading="lazy" decoding="async">
+            <div class="yk-store-card__body">
+              <h3>勇吉屋 本店</h3>
+              <dl>
+                <dt>住所</dt><dd>愛知県豊田市桜町1-29</dd>
+                <dt>電話番号</dt><dd><a href="tel:0565331155">0565-33-1155</a></dd>
+                <dt>FAX</dt><dd>0565-33-6300</dd>
+                <dt>営業時間</dt><dd>9：30～19：30</dd>
+                <dt>休業日</dt><dd>火曜日</dd>
+                <dt>駐車場</dt><dd>店舗前3台、3軒となり3台。市営駐車場3時間無料（元城駐車場が近いです）。フリーパーキング無料認証します。</dd>
+                <dt>取扱い校</dt><dd>本店近隣</dd>
+              </dl>
+            </div>
+          </article>
+          <article class="yk-store-card">
+            <img src="assets/store-illustration-takahashi.jpg" alt="勇吉屋 髙橋店の店舗イメージ" loading="lazy" decoding="async">
+            <div class="yk-store-card__body">
+              <h3>勇吉屋 髙橋店</h3>
+              <dl>
+                <dt>住所</dt><dd>愛知県豊田市高上1-14-2</dd>
+                <dt>電話番号</dt><dd><a href="tel:0565805050">0565-80-5050</a></dd>
+                <dt>FAX</dt><dd>0565-80-5629</dd>
+                <dt>営業時間</dt><dd>10：00～19：30</dd>
+                <dt>休業日</dt><dd>月曜日</dd>
+                <dt>駐車場</dt><dd>店舗2軒横 10台。大駐車場あり。</dd>
+                <dt>取扱い校</dt><dd>高橋店近隣</dd>
+              </dl>
+            </div>
+          </article>
+        </div>
+        <p class="yk-store-note">サイズや指定品で迷ったときは、ご注文前に店舗へご相談ください。</p>
+      </div>
+    </section>
+
 
 
 
@@ -430,8 +495,8 @@
       <div>
         <h3>ご利用案内</h3>
         <ul>
-          <li><a href="#yk-notice">店舗について</a></li>
-          <li><a href="#yk-notice">お問い合わせ</a></li>
+          <li><a href="#yk-stores">店舗について</a></li>
+          <li><a href="#yk-stores">お問い合わせ</a></li>
           <li><a href="#yk-notice">プライバシーポリシー</a></li>
           <li><a href="#yk-notice">特定商取引法に基づく表記</a></li>
         </ul>
