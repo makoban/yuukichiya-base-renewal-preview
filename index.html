@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>勇吉屋ネット｜学生服・学校用品を学校名で探す</title>
-  <meta name="description" content="勇吉屋ネットの確認用プレビューです。学校名と学校用品を選ぶと同じ画面で商品を絞り込み、サイズ相談は店舗へ案内します。">
+  <meta name="description" content="勇吉屋ネットの確認用プレビューです。学校名と学校用品を選ぶと同じ画面で商品を絞り込み、お支払い方法も確認できます。">
   <meta name="BASE-Theme-Name" content="Yuukichiya School Finder">
   <meta name="BASE-Theme-Version" content="1.0">
 
@@ -131,7 +131,12 @@
     .yk-notice-label { margin: 0 0 12px; color: rgba(255,255,255,.7); font-size: 14px; font-weight: 900; }
     .yk-pickup__copy h2 { margin: 0 0 14px; font-size: 44px; line-height: 1.16; }
     .yk-pickup__copy p { max-width: 560px; margin: 0 0 24px; color: rgba(255,255,255,.82); font-weight: 700; }
-    .yk-pickup__image { min-height: 380px; background: linear-gradient(90deg, rgba(34,36,38,.35), rgba(34,36,38,0)), url("https://image.jimcdn.com/app/cms/image/transf/dimension=666x10000:format=jpg/path/s61bce0705a12eb97/image/i0f372e6fe4e051a8/version/1746521603/image.jpg") center / cover no-repeat; }
+    .yk-pickup__image { display: flex; align-items: center; justify-content: center; min-height: 380px; margin: 0; padding: 18px; background: #f5fbf8; }
+    .yk-pickup__image img { width: 100%; height: auto; max-height: 620px; border-radius: var(--yk-radius); object-fit: contain; box-shadow: 0 16px 34px rgba(28,45,52,.12); }
+    .yk-payment-methods { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; max-width: 680px; margin-top: 20px; }
+    .yk-payment-method { display: grid; gap: 4px; padding: 14px; border: 1px solid rgba(255,255,255,.16); border-radius: var(--yk-radius); background: rgba(255,255,255,.08); }
+    .yk-payment-method b { color: #fff; font-size: 15px; line-height: 1.35; }
+    .yk-payment-method span { color: rgba(255,255,255,.76); font-size: 12px; font-weight: 800; line-height: 1.55; }
     .yk-guide-strip { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; }
     .yk-guide { display: grid; gap: 8px; padding: 20px; border-radius: var(--yk-radius); border-left: 4px solid var(--yk-main); background: #f7faf9; box-shadow: 0 8px 18px rgba(29,49,55,.06); }
     .yk-guide:nth-child(2) { border-color: var(--yk-blue); }
@@ -166,6 +171,7 @@
       .yk-school-tab { justify-content: center; min-height: 54px; padding: 0 10px; font-size: 14px; }
       .yk-school-tab span { display: none; }
       .yk-school-list, .yk-feature-grid, .yk-products, .yk-material-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .yk-payment-methods { grid-template-columns: 1fr; }
       .yk-material-layout { grid-template-columns: 1fr; }
       .yk-hero h1 { font-size: 48px; }
       .yk-section h2, .yk-item h1 { font-size: 34px; }
@@ -185,7 +191,7 @@
       .yk-section h2, .yk-item h1 { font-size: 28px; }
       .yk-pickup__copy h2 { font-size: 30px; }
       .yk-pickup__copy { padding: 30px 22px; }
-      .yk-pickup__image { min-height: 260px; }
+      .yk-pickup__image { min-height: 0; padding: 12px; }
     }
   </style>
 
@@ -410,11 +416,23 @@
 
     <section class="yk-pickup" id="yk-notice">
       <div class="yk-pickup__copy">
-        <p class="yk-notice-label">お知らせ</p>
-        <h2>サイズ選びに迷ったら、店舗へご相談ください。</h2>
-        <p>制服・体操服はサイズと学校指定の確認が大切です。ご注文前の確認や交換について、不安な点は店舗でご相談いただけます。</p>
+        <p class="yk-notice-label">お支払い方法</p>
+        <h2>ご注文時に、使いやすい方法を選べます。</h2>
+        <p>ご注文手続き画面で、以下のお支払い方法をご利用いただけます。</p>
+        <div class="yk-payment-methods" aria-label="利用できるお支払い方法">
+          <div class="yk-payment-method"><b>PAY ID あと払い</b><span>翌月あと払い・3回あと払い・PAY IDクレジットカード決済</span></div>
+          <div class="yk-payment-method"><b>クレジットカード</b><span>VISA・Mastercard・JCB・American Express・Diners Club</span></div>
+          <div class="yk-payment-method"><b>PayPay</b><span>スマホ決済でお支払いできます。</span></div>
+          <div class="yk-payment-method"><b>キャリア決済</b><span>d払い・au PAY・SoftBank・Y!mobile</span></div>
+          <div class="yk-payment-method"><b>銀行振込</b><span>三井住友銀行</span></div>
+          <div class="yk-payment-method"><b>コンビニ決済・Pay-easy</b><span>ローソン・ファミリーマート・ミニストップ・セイコーマートなど</span></div>
+        </div>
       </div>
-      <div class="yk-pickup__image" role="img" aria-label="学生服商品イメージ"></div>
+
+      <figure class="yk-pickup__image">
+        <img src="assets/payment-methods-gpt-image2.png" alt="スマートフォン、カード、銀行、コンビニなどのお支払い方法イメージ" loading="lazy" decoding="async">
+      </figure>
+
     </section>
 
 
