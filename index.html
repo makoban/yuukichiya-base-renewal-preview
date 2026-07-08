@@ -82,6 +82,7 @@
     .yk-school-list[data-active="true"] { display: grid; }
     .yk-school-list a { position: relative; display: flex; align-items: center; min-height: 58px; padding: 12px 42px 12px 16px; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; box-shadow: 0 6px 14px rgba(28,45,52,.06); color: var(--yk-ink); font-size: 14px; font-weight: 700; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
     .yk-school-list a::after { position: absolute; right: 14px; color: var(--yk-main); font-size: 18px; font-weight: 900; content: ">"; }
+    .yk-school-list a[data-selected="true"] { border-color: var(--yk-main); background: #eef7f2; color: #1f553f; box-shadow: var(--yk-shadow); }
     .yk-school-list a:hover, .yk-product:hover .yk-product__button { color: #1f553f; border-color: rgba(47,125,91,.42); box-shadow: var(--yk-shadow); transform: translateY(-1px); }
     .yk-feature-band { background: #f2f6f7; border-top: 1px solid var(--yk-line); border-bottom: 1px solid var(--yk-line); }
     .yk-feature-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 18px; }
@@ -98,6 +99,8 @@
     .yk-choice-row { display: flex; flex-wrap: wrap; gap: 8px; }
     .yk-choice { min-height: 42px; padding: 0 13px; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #f9fbfa; color: var(--yk-ink); font: inherit; font-size: 13px; font-weight: 800; cursor: pointer; }
     .yk-choice[data-active="true"] { border-color: var(--yk-main); background: var(--yk-main); color: #fff; box-shadow: var(--yk-press); }
+    .yk-choice:disabled, .yk-material-chip:disabled { border-color: #d9dee1; background: #eceff1; color: #9aa2a8; cursor: not-allowed; box-shadow: none; }
+    .yk-choice:disabled[data-active="true"], .yk-material-chip:disabled[data-active="true"] { background: #eceff1; color: #9aa2a8; }
     .yk-finder__result { display: grid; align-content: start; gap: 16px; padding: 24px; background: #1f2527; color: #fff; }
     .yk-finder__result h3 { margin: 0; font-size: 28px; line-height: 1.25; }
     .yk-finder__result p { margin: 0; color: rgba(255,255,255,.78); font-weight: 700; }
@@ -233,7 +236,7 @@
       <div class="yk-section__head">
         <div>
           <h2>学校名で探す</h2>
-          <p class="yk-section__lead">お子さまの学校区分を選び、学校名から指定用品をお探しください。</p>
+          <p class="yk-section__lead">学校名を選ぶと、下の用品ボタンが学校別の候補に切り替わります。</p>
         </div>
         <a class="yk-link yk-link--sub" href="https://yuukichiya.base.shop/">すべての商品を見る</a>
       </div>
@@ -368,7 +371,7 @@
           <div class="yk-section__head">
             <div>
               <h2>かんたん商品選び</h2>
-              <p class="yk-section__lead">学校区分、探している用品、状況を選ぶと、見るべき場所と商品候補を案内します。</p>
+              <p class="yk-section__lead">学校名を選び、探している用品と状況を選ぶと、見るべき場所と商品候補を案内します。</p>
             </div>
           </div>
           <div class="yk-finder__step" data-finder-step="level">
@@ -383,10 +386,10 @@
           <div class="yk-finder__step" data-finder-step="item">
             <b>2. 探している用品</b>
             <div class="yk-choice-row">
-              <button class="yk-choice" type="button" data-finder-item="制服" data-keywords="制服,セーラー,ブレザー,シャツ" data-url="#products">制服</button>
-              <button class="yk-choice" type="button" data-finder-item="体操服" data-keywords="体操服,半袖,ハーフパンツ,ジャージ" data-url="#products" data-active="true">体操服</button>
+              <button class="yk-choice" type="button" data-finder-item="制服" data-keywords="制服,セーラー,ブレザー,学生服,標準服,通園服,スカート,ブラウス,オーバーブラウス,ポロシャツ,ニットシャツ,棒タイ,リボン" data-url="#products">制服</button>
+              <button class="yk-choice" type="button" data-finder-item="体操服" data-keywords="体操服,半袖,長袖,ハーフパンツ,ショートパンツ,ジャージ" data-url="#products" data-active="true">体操服</button>
               <button class="yk-choice" type="button" data-finder-item="水着用品" data-keywords="水着,セパレート,競泳" data-url="https://yuukichiya.base.shop/categories/5004492">水着用品</button>
-              <button class="yk-choice" type="button" data-finder-item="通学用品" data-keywords="バッグ,シューズ,靴下,ヘルメット,給食" data-url="#yk-categories">通学用品</button>
+              <button class="yk-choice" type="button" data-finder-item="通学用品" data-keywords="バッグ,シューズ,靴下,ソックス,ヘルメット,給食,上履き,上靴,帽子,赤白" data-url="#yk-categories">通学用品</button>
               <button class="yk-choice" type="button" data-finder-item="プライスダウン" data-keywords="旧タイプ,プライスダウン,SALE,OFF" data-url="https://yuukichiya.base.shop/categories/5004497">プライスダウン</button>
             </div>
           </div>
@@ -403,6 +406,7 @@
         <div class="yk-finder__result" aria-live="polite">
           <div class="yk-finder__summary">
             <span id="ykFinderLevel">中学校</span>
+            <span id="ykFinderSchool">学校未選択</span>
             <span id="ykFinderItem">体操服</span>
             <span id="ykFinderNeed">今すぐ購入</span>
           </div>
@@ -444,10 +448,10 @@
           <button class="yk-material-chip" type="button" data-material-filter="給食,給食セット"><b>給食セット</b><span>学校用品</span></button>
           <button class="yk-material-chip" type="button" data-material-filter="ヘルメット,自転車"><b>ヘルメット</b><span>自転車</span></button>
           <button class="yk-material-chip" type="button" data-material-filter="名札,ゼッケン"><b>名札・ゼッケン</b><span>学校用品</span></button>
-          <button class="yk-material-chip" type="button" data-material-filter="サイズ,採寸"><b>採寸メジャー</b><span>相談</span></button>
-          <button class="yk-material-chip" type="button" data-material-filter="ハンガー,制服"><b>ハンガー保管</b><span>相談</span></button>
+          <button class="yk-material-chip" type="button" data-material-filter="サイズ,採寸" data-always-available="true"><b>採寸メジャー</b><span>相談</span></button>
+          <button class="yk-material-chip" type="button" data-material-filter="ハンガー,制服" data-always-available="true"><b>ハンガー保管</b><span>相談</span></button>
           <button class="yk-material-chip" type="button" data-material-filter="セット,上下"><b>上下セット</b><span>まとめ買い</span></button>
-          <button class="yk-material-chip" type="button" data-material-filter="店舗,相談"><b>店舗相談</b><span>サイズ確認</span></button>
+          <button class="yk-material-chip" type="button" data-material-filter="店舗,相談" data-always-available="true"><b>店舗相談</b><span>サイズ確認</span></button>
         </div>
       </div>
     </section>
@@ -621,8 +625,16 @@
     </div>
   </footer>
   <script>
+    var ykSchoolProducts = {"青木幼稚園":["青木幼稚園　通園服","青木幼稚園　半袖体操服　吸汗速乾　ゼッケン付　110cm　120cm","青木幼稚園　半袖体操服　吸汗速乾　ゼッケン付　130cm～","青木幼稚園　ハーフパンツ 　両サイドポケット　110cm","青木幼稚園　ハーフパンツ 　両サイドポケット　120cm～","青木幼稚園　半袖体操服　110～130cm","青木幼稚園　半袖体操服　140～150cm","青木幼稚園　短パン　110～130cm","青木幼稚園　短パン　140cm","青木幼稚園　冬帽子"],"上鷹見こども園":["上鷹見こども園　通園服　小寸（Ｓ）110～大寸（?）130cm","上鷹見こども園　通園服　特大（LL）140cm","上鷹見こども園　半袖体操服　110～130cm","上鷹見こども園　半袖体操服　140cm","上鷹見こども園　短パン　100～130cm","上鷹見こども園　短パン　140cm","上鷹見こども園　カラー帽子","上鷹見こども園　通園バック","上鷹見こども園　ビニールバレーシューズ"],"浄光こども園":[],"根川こども園":["根川こども園　半袖体操服　110～130cm","根川こども園　半袖体操服　140cm","根川こども園　短パン　100～130cm","根川こども園　短パン　140cm"],"野見こども園":["野見こども園　通園服　小寸（S）110～大寸（L）130cm","野見こども園　通園服　特大（LL）140cm","野見こども園　園内服","野見こども園　半袖体操服　110～130cm","野見こども園　半袖体操服　140cm","野見こども園　短パン　100～130cm","野見こども園　短パン　140cm"],"杜のひかりこども園":[],"宮口こども園":["宮口こども園　通園服　小寸（Ｓ）110～大寸（?）130cm","宮口こども園　通園服　特大（LL）140cm","宮口こども園　半袖体操服　110～130cm","宮口こども園　半袖体操服　140cm","宮口こども園　短パン　110～130cm","宮口こども園　短パン　140cm","宮口こども園　ビニールバレーシューズ"],"みよし保育園":[],"青木小学校":["青木小学校　カンコー　チャック半袖体操服","青木小学校　カンコー　チャック長袖体操服","青木小学校　ハーフパンツ 濃紺　白2本線　両サイドポケット","青木小学校　長ズボン　濃紺　白2本線","青木小学校　赤白帽子（メッシュ）","青木小学校　上履き兼体育シューズ","青木小学校　メッシュ通学黄帽子"],"朝日小学校":["朝日小学校　カンコー　丸首半袖体操服","朝日小学校　カンコー　丸首長袖体操服","朝日小学校　ハーフパンツ　濃紺　両サイドポケット","朝日小学校　赤白帽子（メッシュ）","朝日小学校　メッシュ通学黄帽子　校章シール付き","朝日小学校　メッシュ体育シューズ　ホワイト"],"市木小学校":["市木小学校　カンコー　丸首半袖体操服","市木小学校　カンコー　丸首長袖体操服","市木小学校　ハーフパンツ 濃紺　白2本線　両サイドポケット","市木小学校　赤白帽子（メッシュ）","市木小学校　上履き兼体育シューズ","市木小学校　メッシュ通学黄帽子","綿70　ポリ30素材≫　市木小学校　丸首長袖体操服"],"五ケ丘小学校":["五ケ丘小学校　半袖体操服","五ケ丘小学校　長袖体操服","五ケ丘小学校　ハーフパンツ　濃紺　両サイドポケット","五ケ丘小学校　赤白帽子（メッシュ）","五ケ丘小学校　上履きシューズ","五ケ丘小学校　メッシュ体育シューズ　ネイビー","五ケ丘小学校　メッシュ通学黄帽子　校章シール付き","ポリ25　綿75素材≫　半袖体操服　120cm（則定小・五ケ丘小・校名なし）"],"五ケ丘東小学校":["五ケ丘東小学校　半袖体操服","五ケ丘東小学校　長袖体操服","五ケ丘東小学校　ハーフパンツ　濃紺　両サイドポケット","五ケ丘東小学校　赤白帽子（メッシュ）","五ケ丘東小学校　メッシュ体育シューズ　ネイビー","五ケ丘東小学校　メッシュ通学黄帽子　校章シール付き"],"井上小学校":["井上小学校　長袖体操服","井上小学校　半袖体操服","井上小学校　ハーフパンツ","井上小学校　赤白帽子（メッシュ）","井上小学校　メッシュ体育シューズ　ネイビー","井上小学校　メッシュ通学黄帽子"],"伊保小学校":["伊保小学校　半袖体操服　130cm～150cm","伊保小学校　半袖体操服　S～L","伊保小学校　長袖体操服　130cm～150cm","伊保小学校　長袖体操服　S～L","伊保小学校　ハーフパンツ　濃紺　両サイドポケット","伊保小学校　赤白帽子（メッシュ）　校章マーク付き","伊保小学校　メッシュ体育シューズ　コバルト"],"梅坪小学校":["梅坪小学校　カンコー　丸首半袖体操服","梅坪小学校　カンコー　丸首長袖体操服","梅坪小学校　ハーフパンツ　花紺　白2本線　両サイドポケット","梅坪小学校　ハーフパンツ　花紺　白2本線","梅坪小学校　赤白帽子（メッシュ）","梅坪小学校　メッシュ体育シューズ　コバルト"],"大畑小学校":["大畑小学校　半袖体操服","大畑小学校　長袖体操服","大畑小学校　ハーフパンツ　濃紺　両サイドポケット","大畑小学校　赤白帽子（メッシュ）","大畑小学校　上履きシューズ","大畑小学校　体育シューズ　バイオ　ブルー"],"大林小学校":["大林小学校　カンコー　チャック半袖体操服","大林小学校　カンコー　チャック長袖体操服","大林小学校　ハーフパンツ　花紺　白2本線　両サイドポケット","大林小学校　ハーフパンツ　花紺　白2本線","大林小学校　赤白帽子（メッシュ）　校章マーク付き","大林小学校　赤白帽子（メッシュ）","大林小学校　上履きシューズ","大林小学校　メッシュ体育シューズ　コバルト","大林小学校　メッシュ通学黄帽子　校章シール付き","旧タイプ　大林小学校　赤白帽子（綿）"],"加納小学校":["加納小学校　カンコー　チャック半袖体操服","加納小学校　カンコー　チャック長袖体操服","加納小学校　ハーフパンツ　130cm~150cm","加納小学校　ハーフパンツ　　S~LL","加納小学校　赤白帽子(メッシュ）　校章マーク付き","加納小学校　メッシュ体育シューズ　ネイビー","加納小学校　メッシュ通学黄帽子"],"上鷹見小学校":["上鷹見小学校　カンコー　チャック半袖体操服","上鷹見小学校　カンコー　チャック長袖体操服","上鷹見小学校　カンコー　丸首半袖体操服","上鷹見小学校　カンコー　丸首長袖体操服","上鷹見小学校　ハーフパンツ　濃紺　両サイドポケット","上鷹見小学校　ハーフパンツ","上鷹見小学校　赤白帽子（メッシュ）","上鷹見小学校　メッシュ体育シューズ　ネイビー","上鷹見小学校　メッシュ体育シューズ　コバルト","上鷹見小学校　メッシュ体育シューズ　グリーン","上鷹見小学校　メッシュ体育シューズ　レッド","上鷹見小学校メッシュ体育シューズ　ホワイト"],"幸海小学校":["幸海小学校　カンコー　チャック半袖体操服","幸海小学校　カンコー　チャック長袖体操服","幸海小学校　ハーフパンツ 濃紺　白2本線　両サイドポケット","幸海小学校　長ズボン　濃紺　白2本線","幸海小学校　赤白帽子（メッシュ）","幸海小学校　上履き兼体育シューズ"],"小清水小学校":["小清水小学校　新製品　速乾半袖体操服","小清水小学校　半袖体操服","小清水小学校　カンコー　チャック長袖体操服","小清水小学校　ハーフパンツ 濃紺　白2本線　両サイドポケット","小清水小学校　長ズボン　濃紺　白2本線","小清水小学校　赤白帽子（メッシュ）","小清水小学校　メッシュ通学黄帽子　校章シール付き","小清水小学校　メッシュ体育シューズ　ホワイト","旧タイプ　小清水小　通学黄帽子　ハット型　メッシュ　Sサイズ","綿70　ポリ30素材≫　小清水小学校　チャック長袖体操服"],"古瀬間小学校":["古瀬間小学校　新製品　速乾　半袖体操服","古瀬間小学校　カンコー　チャック半袖体操服","古瀬間小学校　カンコー　チャック長袖体操服","古瀬間小学校　新製品　ハーフパンツ コールネイビー　両サイドポケット","古瀬間小学校　ハーフパンツ","古瀬間小学校　赤白帽子（メッシュ）","古瀬間小学校　赤白帽子（メッシュ）　校章マーク付き","古瀬間小学校　メッシュ体育シューズ　ネイビー","古瀬間小学校　メッシュ通学黄帽子　校章シール付き"],"挙母小学校":["挙母小学校　カンコー　丸首半袖体操服","挙母小学校　カンコー　丸首長袖体操服","挙母小学校　ハーフパンツ　濃紺　両サイドポケット","挙母小学校　赤白帽子（メッシュ）","挙母小学校　上履き兼体育シューズ　バイオ　ブルー"],"衣丘小学校":["衣丘小学校　カンコー　チャック半袖体操服","衣丘小学校　カンコー　チャック長袖体操服","衣丘小学校　ハーフパンツ　濃紺　両サイドポケット","衣丘小学校　赤白帽子（メッシュ）","衣丘小学校　メッシュ体育シューズ　コバルト","衣丘小学校　メッシュ通学黄帽子"],"佐切小学校":["佐切小　旧タイプ　半袖体操服","佐切小学校　半袖体操服","佐切小学校　ハーフパンツ 濃紺　白2本線　両サイドポケット","佐切小学校　ジャージ上衣","佐切小学校　長ズボン　濃紺　白2本線","佐切小学校　赤白帽子（メッシュ）　校章マーク付き","佐切小学校　上履き兼体育シューズ","ポリ25　綿75素材≫　佐切小　半袖体操服"],"四郷小学校":["四郷小学校　標準服（スモック）","四郷小学校　半袖体操服","四郷小学校　カンコーチャック　長袖体操服","四郷小学校　両サイドポケット　ハーフパンツ","四郷小学校　ハーフパンツ","四郷小学校　長ズボン","四郷小学校　赤白帽子（メッシュ）　校章マーク付き","四郷小学校　メッシュ体育シューズ　グリーン","四郷小学校　メッシュ通学黄帽子"],"浄水小学校":["浄水小学校　半袖シャツ　130～150㎝","浄水小学校　半袖シャツ　S～L","浄水小学校　V首ジャージ上着　130～150cm","浄水小学校　V首ジャージ上着　S～L","浄水小学校　ハーフパンツ　130～150㎝","浄水小学校　ハーフパンツ　S～L","浄水小学校　赤白帽子（メッシュ）","浄水小学校　上履き兼体育シューズ"],"浄水北小学校":["浄水北小学校　半袖Tシャツ　130cm～150㎝","浄水北小学校　半袖Tシャツ　S～L","浄水北小学校　長袖Tシャツ　130cm～150㎝","浄水北小学校　長袖Tシャツ　S～L","浄水北小学校　V首ジャージ上衣　130cm～150㎝","浄水北小学校　V首ジャージ上衣　S～L","浄水北小学校　ハーフパンツ　130cm～150㎝","浄水北小学校　ハーフパンツ　S～L","浄水北小学校　赤白帽子（メッシュ）","浄水北小学校　上履き兼体育シューズ　バイオ　ブルー","浄水北小学校　上履き"],"寿恵野小学校":["寿恵野小学校　カンコー　チャック半袖体操服","寿恵野小学校　カンコー　チャック長袖体操服","寿恵野小学校　ハーフパンツ　濃紺　両サイドポケット","寿恵野小学校　赤白帽子（メッシュ）","寿恵野小学校　メッシュ体育シューズ　レッド","寿恵野小学校　メッシュ通学黄帽子"],"土橋小学校":["土橋小学校　カンコー　チャック半袖体操服","土橋小学校　カンコー　チャック長袖体操服","土橋小学校　ハーフパンツ","土橋小学校　赤白帽子（メッシュ）","土橋小学校　メッシュ体育シューズ　コバルト","土橋小学校　上履きシューズ"],"寺部小学校":["寺部小学校　標準服（スモック）","寺部小学校　カンコー　チャック半袖体操服","寺部小学校　カンコー　チャック長袖体操服","寺部小学校　ハーフパンツ 濃紺　白2本線　両サイドポケット","寺部小学校　赤白帽子（メッシュ）","寺部小学校　上履きシューズ","寺部小学校　メッシュ体育シューズ　コバルト","寺部小学校　メッシュ通学黄帽子　校章シール付き"],"童子山小学校":["童子山小学校　カンコー　チャック半袖体操服","童子山小学校　カンコー　チャック長袖体操服","童子山小学校　ハーフパンツ　濃紺　両サイドポケット","童子山小学校　赤白帽子（メッシュ）","童子山小学校　メッシュ体育シューズ　コバルト","童子山小学校　メッシュ通学黄帽子　校章シール付き"],"中山小学校":["中山小学校　カンコー　チャック半袖体操服","中山小学校　カンコー　チャック長袖体操服","中山小学校 　ハーフパンツ","中山小学校　長ズボン","中山小学校　赤白帽子（メッシュ）","中山小学校　上履きシューズ","中山小学校　メッシュ体育シューズ　グリーン","中山小学校　白帽子　夏用メッシュ　校章シール付き","中山小学校　白帽子　冬用　校章シール付き"],"西広瀬小学校":["西広瀬小学校　長袖体操服","西広瀬小学校　新製品　速乾　半袖体操服","西広瀬小学校　半袖体操服","西広瀬小学校　ハーフパンツ　濃紺　両サイドポケット","西広瀬小学校　赤白帽子（メッシュ）","西広瀬小学校　メッシュ体育シューズ　ネイビー","西広瀬小学校　メッシュ通学黄帽子"],"西保見小学校":["西保見小学校　半袖体操服　130cm～150cm","西保見小学校　半袖体操服　S~L","西保見小学校　長袖体操服　130cm～150cm","西保見小学校　長袖体操服　S~L","西保見小学校　ハーフパンツ　濃紺　両サイドポケット","西保見小学校　赤白帽子（メッシュ）","西保見小学校メッシュ体育シューズ　ホワイト"],"根川小学校":["根川小学校　カンコー　チャック半袖体操服","根川小学校　カンコー　チャック長袖体操服","根川小学校　ハーフパンツ（刺しゅう入り)　両サイドポケット","根川小学校　赤白帽子（メッシュ）","根川小学校　白帽子　キャップ型　校章シール付き","根川小学校　白帽子　ハット型　校章シール付き","根川小学校　メッシュ体育シューズ　ホワイト","根川小学校　メッシュ通学黄帽子　校章シール付き"],"野見小学校":["野見小学校　新製品　速乾　半袖体操服","野見小学校　半袖体操服","野見小学校　長袖体操服","野見小学校　ハーフパンツ　濃紺　両サイドポケット","野見小学校　赤白帽子（メッシュ）","野見小学校　赤白帽子（メッシュ）　校章マーク付き","野見小学校　メッシュ体育シューズ　コバルト","野見小学校　メッシュ通学黄帽子　校章シール付き"],"則定小学校":["則定小学校　半袖体操服","則定小学校　ハーフパンツ 濃紺　白2本線　両サイドポケット","則定小学校　ジャージ上衣","則定小学校　長ズボン　濃紺　白2本線","則定小学校　赤白帽子（メッシュ）","則定小学校　上履きシューズ","則定小学校　メッシュ体育シューズ　レッド","則定小学校　メッシュ体育シューズ　コバルト","則定小学校　メッシュ体育シューズ　ホワイト","則定小学校　メッシュ体育シューズ　ネイビー","則定小学校　メッシュ体育シューズ　グリーン","則定小学校　体育シューズ　バイオTEF01ブルー","ポリ25　綿75素材≫　半袖体操服　120cm（則定小・五ケ丘小・校名なし）"],"東保見小学校":["東保見小学校　半袖体操服　130～150","東保見小学校　半袖体操服　S～LL","東保見小学校　ハーフパンツ","東保見小学校　ジャージ上衣　130～150","東保見小学校　ジャージ上衣　S～LL","東保見小学校　長ズボン　130～150","東保見小学校　長ズボン　S～LL","東保見小学校　赤白帽子（メッシュ）","東保見小学校　上履き兼体育シューズ","東保見小学校　メッシュ通学黄帽子"],"東山小学校":["東山小学校　新製品　速乾　半袖体操服","東山小学校　半袖体操服","東山小学校　長袖体操服","東山小学校　ハーフパンツ 濃紺　白2本線　両サイドポケット","東山小学校　長ズボン　濃紺　白2本線","東山小学校　赤白帽子（メッシュ）","東山小学校　上履き兼体育シューズ　バイオ　グリーン","東山小学校　メッシュ通学黄帽子","東山小学校　綿素材　丸首長袖体操服　Lサイズ"],"平井小学校":["平井小学校　カンコー　チャック半袖体操服","平井小学校　カンコー　チャック長袖体操服","平井小学校　ハーフパンツ 濃紺　白2本線　両サイドポケット","平井小学校　長ズボン　濃紺　白2本線","平井小学校　赤白帽子（メッシュ）","平井小学校　上履き兼体育シューズ","平井小学校　標準服（スモック）","綿70　ポリ30素材≫　平井小学校　チャック長袖体操服"],"広川台小学校":["広川台小学校　半袖体操服","広川台小学校　長袖体操服","広川台小学校　ハーフパンツ　濃紺　両サイドポケット","広川台小学校　赤白帽子（メッシュ）","広川台小学校　メッシュ通学黄帽子　校章シール付き","広川台小学校　メッシュ体育シューズ　コバルト"],"平和小学校":["平和小学校　カンコー　チャック半袖体操服","平和小学校　ハーフパンツ","平和小学校　カンコー　チャック長袖体操服","平和小学校　赤白帽子（メッシュ）　校章マーク付き","平和小学校　上履きシューズ","平和小学校　メッシュ体育シューズ　レッド"],"前山小学校":["前山小学校　カンコー　チャック半袖体操服","前山小学校　カンコー　チャック長袖体操服","前山小学校　ハーフパンツ 濃紺　白2本線　両サイドポケット","前山小学校　長ズボン　濃紺　白2本線","前山小学校　赤白帽子（メッシュ）","前山小学校　上履きシューズ","前山小学校　メッシュ体育シューズ　レッド","前山小学校　メッシュ通学黄帽子","旧タイプ　前山小学校　赤白帽子（メッシュ）"],"美山小学校":["美山小学校　カンコー　チャック半袖体操服","美山小学校　カンコー　チャック長袖体操服","美山小学校　ハーフパンツ　濃紺　両サイドポケット","美山小学校　長ズボン　濃紺　白2本線","美山小学校　赤白帽子（メッシュ）","美山小学校　白帽子　夏用メッシュ　サイズ　S　M　L","美山小学校　白帽子　冬用　サイズ　S　M　L","美山小学校　白帽子用　校章マーク","美山小学校　体育シューズ　バイオブルー","美山小学校　メッシュ通学黄帽子","綿70　ポリ30素材≫　美山小学校　チャック半袖体操服","綿70　ポリ30素材≫　美山小学校　チャック長袖体操服"],"元城小学校":["元城小学校　カンコー　丸首長袖体操服","元城小学校　カンコー　丸首半袖体操服","元城小学校　ハーフパンツ　濃紺　両サイドポケット","元城小学校　赤白帽子（メッシュ）","元城小学校　メッシュ体育シューズ　ホワイト","元城小学校　メッシュ通学黄帽子"],"矢並小学校":["矢並小学校　カンコー　チャック半袖体操服","矢並小学校　カンコー　チャック長袖体操服","矢並小学校　ハーフパンツ 濃紺　白2本線　両サイドポケット","矢並小学校　赤白帽子（メッシュ）","矢並小学校メッシュ体育シューズ　コバルト","矢並小学校　上履きシューズ"],"山之手小学校":["山之手小学校　カンコー　チャック半袖体操服","山之手小学校　カンコー　チャック長袖体操服","山之手小学校　ハーフパンツ　グリーン　両サイドポケット　白2本線","山之手小学校　長ズボン　グリーン　白2本線　校章刺繍あり","山之手小学校　赤白帽子（メッシュ）","山之手小学校　メッシュ体育シューズ　ホワイト","山之手小学校　メッシュ通学黄帽子　校章シール付き","山之手小学校　ハーフパンツ　グリーン　白2本線　両サイドポケット"],"逢妻中学校":["逢妻中学校　新　ジャージ上衣","逢妻中学校　新　ジャージズボン","逢妻中学校　新　半袖体操服","逢妻中学校　新　ハーフパンツ","逢妻中学校　ジャージ上衣","逢妻中学校　ストレートパンツ","逢妻中学校　半袖シャツ","逢妻中学校　ハーフパンツ","逢妻中学校　上履き　MS7200S　ネイビー","逢妻中学校　体育館シューズ　S400　ジムスター　ネイビー","逢妻中学校　上履き　スクールサンダル02　ネイビー"],"朝日丘中学校":["朝日丘中学校　旧タイプ　ジャージ上衣","朝日丘中学校　旧タイプ　 ジャージズボン","朝日丘中学校　セーラー服用　棒タイリボン　（蝶々結びタイプ）","朝日丘中学校　ジャージ上衣","朝日丘中学校　ストレートパンツ","朝日丘中学校　紺Tシャツ","朝日丘中学校　半袖シャツ","朝日丘中学校　上履き　スクール303　スリッパ　ブルー","朝日丘中学校　上履き　スクール303　スリッパ　レッド","朝日丘中学校　上履き　スクール303　スリッパ　グリーン","朝日丘中学校　体育館シューズ　S400　ジムスター　ネイビー","朝日丘中学校　保見中学校　　ハーフパンツ","朝日丘中学校　旧タイプ　 ハーフパンツ","朝日丘中学校　旧タイプ　半袖体操服","朝日丘中学校　旧タイプ　ジャージ上衣　ネーム刺?入れ（名字）料金"],"井郷中学校":["井郷中学校　旧タイプ　半袖シャツ","井郷中学校　新　ジャージ上衣","井郷中学校　新　ジャージズボン","井郷中学校　新　半袖体操服","井郷中学校　新　ハーフパンツ","井郷中学校　紺色Tシャツ","井郷中学校　Vネック半袖シャツ","井郷中学校　ハーフパンツ","井郷中学校　ジャージ上衣","井郷中学校　ストレートパンツ　LL（175cm）","井郷中学校　上履き　スクールサンダル04　Dレッド","井郷中学校　上履き　スクールサンダル04　グリーン","井郷中学校　上履き　スクールサンダル04　ネイビー","井郷中学校　体育館シューズ　S400　ジムスター　ネイビー","井郷中学校　女子スカート　ブレザー用","井郷中学校　男女兼用スラックス　ブレザー用","井郷中学校　女子ブレザー　2型　ウール混　Ｂ体","井郷中学校　女子ブレザー　2型　ウール混","井郷中学校　男子ブレザー　1型　ウール混　Ｂ体","井郷中学校　男子ブレザー　1型　ウール混"],"石野中学校":["石野中学校　体育館シューズ　S400　ジムスター　ネイビー","石野中学校　上履き　ニューモード"],"梅坪台中学校":["梅坪台中学校　半袖シャツ","梅坪台中学校　ハーフパンツ","梅坪台中学校　ジャージ上衣","梅坪台中学校　ストレートパンツ","梅坪台中学校　上履き　スクールサンダル04　ネイビー","梅坪台中学校　上履き　スクールサンダル04　Dレッド","梅坪台中学校　上履き　スクールサンダル04　グリーン","梅坪台中学校　体育館シューズ　S400　ジムスター　ネイビー","梅坪台中学校　体育館シューズ　S400　ジムスター　レッド","梅坪台中学校　旧タイプ　長袖体操服","梅坪台中学校　旧タイプ　半袖体操服　サイズ　160㎝"],"上郷中学校":["上郷中学校　ジャージ上衣","上郷中学校　ストレートパンツ","上郷中学校　半袖シャツ","上郷中学校　男子用ハーフパンツ","上郷中学校　女子用ハーフパンツ"],"猿投中学校":["猿投中学校　半袖Tシャツ","猿投中学校　ハーフパンツ","猿投中学校　ジャージ上衣","猿投中学校　ストレートパンツ","猿投中学校　上履き　Vサンダル　グリーン","猿投中学校　体育館シューズ　S400　ジムスター　グリーン"],"猿投台中学校":["猿投台中　旧タイプ　ジャージズボン　グリーン　白2本線","猿投台中学校　クロスネック半袖シャツ","猿投台中学校　ハーフパンツ","猿投台中学校　ジャージ上衣","猿投台中学校　ストレートパンツ","猿投台中学校　上履き　ラッキーベルサンダル　グリーン","猿投台中学校　上履き　ラッキーベルサンダル　ブルー","猿投台中学校　上履き　ラッキーベルサンダル　レッド","猿投台中学校　体育館シューズ　S400　ジムスター　グリーン","猿投台中学校　旧タイプ　半袖シャツ","猿投台中学校　旧タイプ　ハーフパンツ","猿投台中　旧タイプ　半袖シャツ　襟、袖、グリーン"],"浄水中学校":["浄水中学校　セーラー服用　ワンタッチリボン　蝶々結び","浄水中学校　Tシャツ","浄水中学校　ハーフパンツ","浄水中学校　ジャージ上衣","浄水中学校　ストレートパンツ","浄水中学校　上履き　スクールサンダル04　グリーン","浄水中学校　上履き　スクールサンダル04　Dレッド","浄水中学校　上履き　スクールサンダル04　ネイビー","浄水中学校　体育館シューズ　S400　ジムスター　ライトブルー"],"末野原中学校":["末野原中　旧タイプ　女子半袖体操服 　サイズ165","末野原中学校　旧タイプ　男子　半袖体操服","末野原中学校　旧タイプ　女子ジャージ上衣","末野原中学校　ジャージ上衣","末野原中学校　ストレートパンツ","末野原中学校　半袖体操服","末野原中学校　ハーフパンツ","末野原中学校　上履き　スクール303　スリッパ　イエロー","末野原中学校　上履き　スクール303　スリッパ　レッド","末野原中学校　上履きスリッパ　ブルー","末野原中学校　上履きスリッパ　レッド","末野原中学校　上履きスリッパ　イエロー","末野原中学校　体育館シューズ　S400　ジムスター　ライトブルー","末野原中学校　旧タイプ　男子ジャージ上衣","末野原中学校　旧タイプ　男子ジャージズボン","末野原中学校　旧タイプ　女子ジャージズボン　160cm"],"崇化館中学校":["崇化館中学校　旧タイプ　ジャージ上  （校名有り）columbine1108","崇化館中学校　旧タイプ　ジャージ上衣　ネーム刺?入れ（名字）料金","崇化館中学校　旧タイプ　 ジャージズボン　columbine830","崇化館中学校　旧タイプ　 ハーフパンツ　sporlesh","崇化館中学校　旧タイプ　 ハーフパンツ　columbine89028","崇化館中学校　ジャージ上衣","崇化館中学校　ストレートパンツ","崇化館中学校　半袖シャツ　ネイビー","崇化館中学校　半袖シャツ　ホワイト","崇化館中学校　ハーフパンツ","崇化館中学校　上履き　Vサンダル　レッド","崇化館中学校　上履き　Vサンダル　ブルー","崇化館中学校　上履き　Vサンダル　グリーン","崇化館中学校　体育館シューズ　アサヒ　グリッパー　青","崇化館中学校　旧タイプ　 ジャージズボン　columbine1108","崇化館中学校　旧タイプ　 ハーフパンツ　サイズ190cm　columbine89055"],"高橋中学校":["高橋中学校　旧タイプ　ジャージ上衣（鉄紺）　SS～5L","高橋中学校　旧タイプ　ジャージズボン（鉄紺）","高橋中学校　旧タイプ　ジャージ上衣（エンジ）","高橋中学校　旧タイプ　ジャージズボン（エンジ)","高橋中学校　Vネック半袖シャツ","高橋中学校　ハーフパンツ（クォータ?パンツ）","高橋中学校　ジャージ上衣","高橋中学校　ストレートパンツ","高橋中学校　体育館シューズ　S400　ジムスター　ネイビー","高橋中学校　上履き　スリッパ　　グリーン　サイズ～LL","高橋中学校　上履き　スリッパ　　グリーン　サイズ　XL・XO","高橋中学校　上履き　スリッパ　　グリーン　サイズ　５L","高橋中学校　上履き　スリッパ　　エンジ　サイズ～LL","高橋中学校　上履き　スリッパ　エンジ　サイズ　XL・XO","高橋中学校　上履き　スリッパ　エンジ　サイズ　5L","高橋中学校　上履き　スリッパ　　コン　サイズ～LL","高橋中学校　上履き　スリッパ　　コン　サイズ　XL・XO","高橋中学校　上履き　スリッパ　　コン　サイズ　5L","高橋中学校　旧タイプ　女子　半袖体操服","高橋中学校　旧タイプ　男子　半袖体操服　175cm"],"藤岡中学校":["藤岡中学校　ジャージ上衣","藤岡中学校　ジャージズボン","藤岡中学校　半袖体操服","藤岡中学校　ハーフパンツ","藤岡中学校　上履き　ネイビー（男子）","藤岡中学校　上履き　ワイン（女子）","藤岡中学校　体育館シューズ　S400　ジムスター　パープル"],"藤岡南中学校":["藤岡南中学校　ジャージ上衣","藤岡南中学校　ストレートパンツ","藤岡南中学校　半袖シャツ","藤岡南中学校　ハーフパンツ","藤岡南中学校　新上履き　ジャストモード800","藤岡南中学校　上履き　スクールサンダル04　Dレッド","藤岡南中学校　上履き　スクールサンダル04　ネイビー","藤岡南中学校　体育館シューズ　S400　ジムスター　レッド","藤岡南中学校　新上履き　ジャストモードNo800"],"豊南中学校":["豊南中学校　Tシャツ","豊南中学校　ハーフパンツ","豊南中学校　ジャージ上衣","豊南中学校　ストレートパンツ","豊南中学校　体育館シューズ　S400　ジムスター　レッド","豊南中学校　上履き　スクール303　スリッパ　　ブルー","豊南中学校　旧タイプ　半袖体操服"],"保見中学校":["保見中学校　旧タイプ　ジャージ上衣","保見中学校　長袖ポロシャツ","保見中学校　半袖ポロシャツ","保見中学校　半袖Tシャツ","朝日丘中学校　保見中学校　　ハーフパンツ","保見中学校　ジャージ上衣","保見中学校　ストレートパンツ","保見中学校　上履き　スクール303　スリッパ　グリーン","保見中学校　上履き　スクール303　スリッパ　イエロー","保見中学校　上履き　スクール303　スリッパ　レッド","保見中学校　体育館シューズ　S400　ジムスター　ネイビー"],"益富中学校":["益富中学校（校名刺?なし）旧タイプ　ジャージ上衣　160㎝","益富中学校　旧タイプ　ジャージズボン","益富中学校　水の如く　Tシャツ","益富中学校　Tシャツ","益富中学校　ハーフパンツ","益富中学校　ジャージ上衣","益富中学校　ストレートパンツ","益富中学校　体育館シューズ　教育シューズ　PK-X3　ブルー","益富中学校　上履き","訳あり品　益富中学校　旧タイプ　半袖体操服","益富中学校　旧タイプ　半袖体操服（転写マーク入り）","益富中学校　旧タイプ　ジャージ上衣","益富中学校　体育館シューズ　教育シューズ500　ブルー"],"美里中学校":["旧タイプ　【美里中　刺繍あり】夏セーラー服（上着のみ）　紺衿　白3本線","美里中学校　美里Tシャツ　白","美里中学校　美里Tシャツ　黒","美里中学校　ハーフパンツ　両サイドポケット","美里中学校　ハーフパンツ　後ろ片側ポケット","美里中学校　ジャージ上衣","美里中学校　ストレートパンツ","美里中学校　上履き　SD-02　サンダル　ブルー","美里中学校　体育館シューズ　教育シューズ　PK-X3　ブルー"],"竜神中学校":["竜神中学校　セーラー服用　棒タイリボン　（蝶々結びタイプ）","竜神中学校　ジャージ上衣","竜神中学校　ストレートパンツ","竜神中学校　半袖シャツ","竜神中学校　ハーフパンツ","竜神中学校　上履き　Vサンダル　ブルー","竜神中学校　上履き　Vサンダル　レッド","竜神中学校　上履き　Vサンダル　グリーン","竜神中学校　体育館シューズ　教育シューズ　PK-X3　グリーン"],"衣台高校":["衣台高校　旧タイプ長袖オーバーブラウス","衣台高校　旧タイプ　ダブルプリーツ夏スカート","衣台高校　旧タイプ　男子半袖ニットシャツ　サックス","衣台高校　ジャージ上衣"],"豊田大谷高校":[],"豊田東高校":[],"自転車通学用品":[],"豊田工科高校":[],"豊田北高校":[],"豊田西高等学校・附属中学校":[],"豊田高校":[],"給食セット":[],"靴下":[],"サニタリースパッツ":["サニタリースパッツ"],"シューズ袋":["シューズ袋"],"ベルト":[],"カバンカバー":["カバンカバー　黒　紺"],"インナーシャツ":[],"水着用品":[],"シューズ":["逢妻中学校　体育館シューズ　S400　ジムスター　ネイビー","朝日丘中学校　体育館シューズ　S400　ジムスター　ネイビー","石野中学校　体育館シューズ　S400　ジムスター　ネイビー","竜神中学校　体育館シューズ　教育シューズ　PK-X3　グリーン","崇化館中学校　体育館シューズ　アサヒ　グリッパー　青","末野原中学校　体育館シューズ　S400　ジムスター　ライトブルー","藤岡中学校　体育館シューズ　S400　ジムスター　パープル","藤岡南中学校　体育館シューズ　S400　ジムスター　レッド","保見中学校　体育館シューズ　S400　ジムスター　ネイビー","浄水中学校　体育館シューズ　S400　ジムスター　ライトブルー","益富中学校　体育館シューズ　教育シューズ　PK-X3　ブルー","美里中学校　体育館シューズ　教育シューズ　PK-X3　ブルー","猿投台中学校　体育館シューズ　S400　ジムスター　グリーン","高橋中学校　体育館シューズ　S400　ジムスター　ネイビー","猿投中学校　体育館シューズ　S400　ジムスター　グリーン","梅坪台中学校　体育館シューズ　S400　ジムスター　ネイビー","梅坪台中学校　体育館シューズ　S400　ジムスター　レッド","井郷中学校　体育館シューズ　S400　ジムスター　ネイビー","豊南中学校　体育館シューズ　S400　ジムスター　レッド","浄水北小学校　上履き兼体育シューズ　バイオ　ブルー","浄水小学校　上履き兼体育シューズ","朝日小学校　メッシュ体育シューズ　ホワイト","梅坪小学校　メッシュ体育シューズ　コバルト","挙母小学校　上履き兼体育シューズ　バイオ　ブルー","大畑小学校　上履きシューズ","大畑小学校　体育シューズ　バイオ　ブルー","寿恵野小学校　メッシュ体育シューズ　レッド","土橋小学校　メッシュ体育シューズ　コバルト","土橋小学校　上履きシューズ","加納小学校　メッシュ体育シューズ　ネイビー","衣丘小学校　メッシュ体育シューズ　コバルト","伊保小学校　メッシュ体育シューズ　コバルト","西保見小学校メッシュ体育シューズ　ホワイト","中山小学校　上履きシューズ","中山小学校　メッシュ体育シューズ　グリーン","大林小学校　上履きシューズ","大林小学校　メッシュ体育シューズ　コバルト","小清水小学校　メッシュ体育シューズ　ホワイト","山之手小学校　メッシュ体育シューズ　ホワイト","童子山小学校　メッシュ体育シューズ　コバルト","美山小学校　体育シューズ　バイオブルー","根川小学校　メッシュ体育シューズ　ホワイト","西広瀬小学校　メッシュ体育シューズ　ネイビー","野見小学校　メッシュ体育シューズ　コバルト","広川台小学校　メッシュ体育シューズ　コバルト","五ケ丘小学校　上履きシューズ","五ケ丘小学校　メッシュ体育シューズ　ネイビー","五ケ丘東小学校　メッシュ体育シューズ　ネイビー","古瀬間小学校　メッシュ体育シューズ　ネイビー","井上小学校　メッシュ体育シューズ　ネイビー","四郷小学校　メッシュ体育シューズ　グリーン","東保見小学校　上履き兼体育シューズ","佐切小学校　上履き兼体育シューズ","則定小学校　上履きシューズ","則定小学校　メッシュ体育シューズ　レッド","則定小学校　メッシュ体育シューズ　コバルト","則定小学校　メッシュ体育シューズ　ホワイト","則定小学校　メッシュ体育シューズ　ネイビー","則定小学校　メッシュ体育シューズ　グリーン","則定小学校　体育シューズ　バイオTEF01ブルー","東山小学校　上履き兼体育シューズ　バイオ　グリーン","青木小学校　上履き兼体育シューズ","平井小学校　上履き兼体育シューズ","寺部小学校　上履きシューズ","寺部小学校　メッシュ体育シューズ　コバルト","市木小学校　上履き兼体育シューズ","平和小学校　上履きシューズ","平和小学校　メッシュ体育シューズ　レッド","前山小学校　上履きシューズ","前山小学校　メッシュ体育シューズ　レッド","上鷹見小学校　メッシュ体育シューズ　ネイビー","上鷹見小学校　メッシュ体育シューズ　コバルト","上鷹見小学校　メッシュ体育シューズ　グリーン","上鷹見小学校　メッシュ体育シューズ　レッド","上鷹見小学校メッシュ体育シューズ　ホワイト","幸海小学校　上履き兼体育シューズ","矢並小学校メッシュ体育シューズ　コバルト","矢並小学校　上履きシューズ","元城小学校　メッシュ体育シューズ　ホワイト","宮口こども園　ビニールバレーシューズ","上鷹見こども園　ビニールバレーシューズ","シューズ袋","上履き　体育シューズ　ビニールバレー","メッシュ体育シューズ　グリーン","メッシュ体育シューズ　ネイビー","メッシュ体育シューズ　ホワイト","メッシュ体育シューズ　レッド","メッシュ体育シューズ　コバルト","松平中学校　体育館シューズ　バイオLT04　ブルー","益富中学校　体育館シューズ　教育シューズ500　ブルー"],"帽子":["遮熱赤白帽子 M/L","遮熱赤白帽子 LL","水泳帽子　フリーサイズ　9色","水泳帽子  LL　3色","浄水北小学校　赤白帽子（メッシュ）","浄水小学校　赤白帽子（メッシュ）","朝日小学校　赤白帽子（メッシュ）","朝日小学校　メッシュ通学黄帽子　校章シール付き","梅坪小学校　赤白帽子（メッシュ）","挙母小学校　赤白帽子（メッシュ）","大畑小学校　赤白帽子（メッシュ）","寿恵野小学校　赤白帽子（メッシュ）","土橋小学校　赤白帽子（メッシュ）","加納小学校　赤白帽子(メッシュ）　校章マーク付き","衣丘小学校　赤白帽子（メッシュ）","伊保小学校　赤白帽子（メッシュ）　校章マーク付き","西保見小学校　赤白帽子（メッシュ）","中山小学校　赤白帽子（メッシュ）","大林小学校　赤白帽子（メッシュ）　校章マーク付き","大林小学校　赤白帽子（メッシュ）","小清水小学校　赤白帽子（メッシュ）","小清水小学校　メッシュ通学黄帽子　校章シール付き","山之手小学校　赤白帽子（メッシュ）","童子山小学校　赤白帽子（メッシュ）","美山小学校　赤白帽子（メッシュ）","美山小学校　白帽子　夏用メッシュ　サイズ　S　M　L","美山小学校　白帽子　冬用　サイズ　S　M　L","美山小学校　白帽子用　校章マーク","根川小学校　赤白帽子（メッシュ）","根川小学校　白帽子　キャップ型　校章シール付き","根川小学校　白帽子　ハット型　校章シール付き","西広瀬小学校　赤白帽子（メッシュ）","野見小学校　赤白帽子（メッシュ）","野見小学校　赤白帽子（メッシュ）　校章マーク付き","広川台小学校　赤白帽子（メッシュ）","広川台小学校　メッシュ通学黄帽子　校章シール付き","五ケ丘小学校　赤白帽子（メッシュ）","五ケ丘東小学校　赤白帽子（メッシュ）","古瀬間小学校　赤白帽子（メッシュ）","古瀬間小学校　赤白帽子（メッシュ）　校章マーク付き","井上小学校　赤白帽子（メッシュ）","四郷小学校　赤白帽子（メッシュ）　校章マーク付き","東保見小学校　赤白帽子（メッシュ）","佐切小学校　赤白帽子（メッシュ）　校章マーク付き","則定小学校　赤白帽子（メッシュ）","東山小学校　赤白帽子（メッシュ）","青木小学校　赤白帽子（メッシュ）","平井小学校　赤白帽子（メッシュ）","寺部小学校　赤白帽子（メッシュ）","市木小学校　赤白帽子（メッシュ）","平和小学校　赤白帽子（メッシュ）　校章マーク付き","前山小学校　赤白帽子（メッシュ）","上鷹見小学校　赤白帽子（メッシュ）","幸海小学校　赤白帽子（メッシュ）","矢並小学校　赤白帽子（メッシュ）","元城小学校　赤白帽子（メッシュ）","赤白帽子（メッシュ）","寺部小学校　メッシュ通学黄帽子　校章シール付き","野見小学校　メッシュ通学黄帽子　校章シール付き","古瀬間小学校　メッシュ通学黄帽子　校章シール付き","五ケ丘東小学校　メッシュ通学黄帽子　校章シール付き","五ケ丘小学校　メッシュ通学黄帽子　校章シール付き","童子山小学校　メッシュ通学黄帽子　校章シール付き","大林小学校　メッシュ通学黄帽子　校章シール付き","山之手小学校　メッシュ通学黄帽子　校章シール付き","元城小学校　メッシュ通学黄帽子","西広瀬小学校　メッシュ通学黄帽子","寿恵野小学校　メッシュ通学黄帽子","四郷小学校　メッシュ通学黄帽子","衣丘小学校　メッシュ通学黄帽子","加納小学校　メッシュ通学黄帽子","井上小学校　メッシュ通学黄帽子","市木小学校　メッシュ通学黄帽子","青木小学校　メッシュ通学黄帽子","東保見小学校　メッシュ通学黄帽子","前山小学校　メッシュ通学黄帽子","美山小学校　メッシュ通学黄帽子","東山小学校　メッシュ通学黄帽子","メッシュ通学黄帽子","根川小学校　メッシュ通学黄帽子　校章シール付き","中山小学校　白帽子　夏用メッシュ　校章シール付き","中山小学校　白帽子　冬用　校章シール付き","青木幼稚園　冬帽子","上鷹見こども園　カラー帽子","いろいろ水泳帽子　フリーサイズ　3色","いろいろ水泳帽子　Mサイズ　4色","いろいろ水泳帽子　Lサイズ　黄色","いろいろ水泳帽子　LLサイズ　ピンク","旧タイプ　小清水小　通学黄帽子　ハット型　メッシュ　Sサイズ","通学黄帽子　ハット型","メッシュ　通学黄帽子　ハット型","旧タイプ　大林小学校　赤白帽子（綿）","赤白帽子（綿）　Lサイズ","旧タイプ　前山小学校　赤白帽子（メッシュ）"],"プライスダウン":[],"通学専用バッグ":["通学専用バッグ　アディダス　W32×H50×D19cm（30L）","通学専用バッグ　Champion　W31×H48×D18cm（28L）","通学専用バッグ　Champion　W32×H47×D16cm（22L）","通学専用バッグ　Barbie　W32×H48×D18cm（20L）","通学専用バッグ　Barbie　W33×H45×D16cm","通学専用バッグ　プーマ　W30×H49×D16cm（25L）","通学専用バッグ　Champion　W32×H45×D15cm（22L）"],"雨合羽":["ストレッチ素材雨合羽　スクール　スーツ","ストレッチ素材雨合羽　スクール　コート"],"自転車用ヘルメット":["自転車用ヘルメット　CHI－DO－RI","自転車用ヘルメット　カブト　バイザータイプ　黒","自転車用ヘルメット　カブト　バイザータイプ　白","自転車用ヘルメット　カブト　スタンダードタイプ　黒","自転車用ヘルメット　カブト　スタンダードタイプ　白"],"ウインドブレーカー":["ニューバランス　ウインドブレーカー　ジャケット　ブラック","ニューバランス　ウインドブレーカー　ジャケット　ネイビー","ニューバランス　ウインドブレーカー　パンツ　ブラック","ニューバランス　ウインドブレーカー　パンツ　ネイビー","puma　ウインドブレーカー　ジャケット　ブラック","puma　ウインドブレーカー　ジャケット　ネイビー","puma　ウインドブレーカー　パンツ　ブラック","puma　ウインドブレーカー　パンツ　ネイビー"]};
     var ykTabs = document.querySelectorAll(".yk-school-tab");
     var ykLists = document.querySelectorAll(".yk-school-list");
+    var ykSchoolLevelByList = {
+      "yk-kindergarten": "園",
+      "yk-elementary": "小学校",
+      "yk-junior": "中学校",
+      "yk-high": "高校",
+      "yk-other": "その他"
+    };
     ykTabs.forEach(function (button) {
       button.addEventListener("click", function () {
         ykTabs.forEach(function (item) { item.dataset.active = "false"; });
@@ -635,19 +647,23 @@
 
     var ykFinderState = {
       level: "中学校",
+      school: "",
+      schoolUrl: "#yk-categories",
       item: "体操服",
       need: "今すぐ購入",
-      keywords: "体操服,半袖,ハーフパンツ,ジャージ",
+      keywords: "体操服,半袖,長袖,ハーフパンツ,ショートパンツ,ジャージ",
       url: "#products"
     };
     var ykFinderTitle = document.getElementById("ykFinderTitle");
     var ykFinderAdvice = document.getElementById("ykFinderAdvice");
     var ykFinderLink = document.getElementById("ykFinderLink");
     var ykFinderLevel = document.getElementById("ykFinderLevel");
+    var ykFinderSchool = document.getElementById("ykFinderSchool");
     var ykFinderItem = document.getElementById("ykFinderItem");
     var ykFinderNeed = document.getElementById("ykFinderNeed");
 
     function ykSetActiveChoice(button, attrName) {
+      if (button.disabled) return;
       var scope = button.closest(".yk-finder__step");
       if (!scope) return;
       scope.querySelectorAll(".yk-choice").forEach(function (item) {
@@ -661,33 +677,175 @@
         ykFinderState.keywords = button.getAttribute("data-keywords") || "";
         ykFinderState.url = button.getAttribute("data-url") || "#products";
       }
+      if (attrName === "level") {
+        ykFinderState.school = "";
+        ykFinderState.schoolUrl = "#yk-categories";
+        document.querySelectorAll(".yk-school-list a").forEach(function (item) {
+          item.dataset.selected = "false";
+          item.setAttribute("aria-pressed", "false");
+        });
+        ykActivateSchoolTabForLevel(ykFinderState.level);
+      }
       ykUpdateFinder();
     }
 
+    function ykSplitKeywords(keywordText) {
+      return String(keywordText || "").split(",").map(function (item) { return item.trim(); }).filter(Boolean);
+    }
+
+    function ykSchoolVariants(name) {
+      var variants = [String(name || "").trim()];
+      variants.forEach(function (value) {
+        if (/中学校$/.test(value)) variants.push(value.replace(/中学校$/, "中"));
+        if (/小学校$/.test(value)) variants.push(value.replace(/小学校$/, "小"));
+        if (/高等学校/.test(value)) variants.push(value.replace(/高等学校/g, "高校"));
+        if (/高校$/.test(value)) variants.push(value.replace(/高校$/, "高"));
+      });
+      return variants.filter(Boolean).filter(function (value, index, array) { return array.indexOf(value) === index; });
+    }
+
+    function ykSelectedSchoolProducts() {
+      return ykFinderState.school && ykSchoolProducts[ykFinderState.school]
+        ? ykSchoolProducts[ykFinderState.school]
+        : [];
+    }
+
+    function ykTextMatchesKeywords(text, keywordText) {
+      var keywords = ykSplitKeywords(keywordText);
+      if (!keywords.length) return true;
+      return keywords.some(function (word) { return String(text || "").indexOf(word) !== -1; });
+    }
+
+    function ykSchoolHasKeywords(keywordText) {
+      if (!ykFinderState.school) return true;
+      return ykSelectedSchoolProducts().some(function (title) {
+        return ykTextMatchesKeywords(title, keywordText);
+      });
+    }
+
+    function ykSchoolMatchCount(keywordText) {
+      if (!ykFinderState.school) return 0;
+      return ykSelectedSchoolProducts().filter(function (title) {
+        return ykTextMatchesKeywords(title, keywordText);
+      }).length;
+    }
+
+    function ykSetItemStateFromButton(button) {
+      ykFinderState.item = button.getAttribute("data-finder-item") || ykFinderState.item;
+      ykFinderState.keywords = button.getAttribute("data-keywords") || "";
+      ykFinderState.url = button.getAttribute("data-url") || "#products";
+    }
+
+    function ykSetLevelButton(level) {
+      document.querySelectorAll("[data-finder-level]").forEach(function (button) {
+        var active = button.getAttribute("data-finder-level") === level;
+        button.dataset.active = active ? "true" : "false";
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+    }
+
+    function ykActivateSchoolTabForLevel(level) {
+      var targetId = {
+        "園": "yk-kindergarten",
+        "小学校": "yk-elementary",
+        "中学校": "yk-junior",
+        "高校": "yk-high",
+        "その他": "yk-other"
+      }[level];
+      if (!targetId) return;
+      ykTabs.forEach(function (item) { item.dataset.active = item.dataset.target === targetId ? "true" : "false"; });
+      ykLists.forEach(function (item) { item.dataset.active = item.id === targetId ? "true" : "false"; });
+    }
+
+    function ykRefreshAvailability() {
+      var hasSchool = Boolean(ykFinderState.school);
+      var itemButtons = Array.prototype.slice.call(document.querySelectorAll("[data-finder-item]"));
+      itemButtons.forEach(function (button) {
+        var available = !hasSchool || ykSchoolHasKeywords(button.getAttribute("data-keywords"));
+        button.disabled = !available;
+        button.dataset.available = available ? "true" : "false";
+        button.setAttribute("aria-disabled", available ? "false" : "true");
+        if (!available && button.dataset.active === "true") button.dataset.active = "false";
+      });
+      if (hasSchool && itemButtons.length && !itemButtons.some(function (button) { return button.dataset.active === "true" && !button.disabled; })) {
+        var nextButton = itemButtons.find(function (button) { return !button.disabled; });
+        if (nextButton) {
+          itemButtons.forEach(function (button) { button.dataset.active = "false"; button.setAttribute("aria-pressed", "false"); });
+          nextButton.dataset.active = "true";
+          nextButton.setAttribute("aria-pressed", "true");
+          ykSetItemStateFromButton(nextButton);
+        }
+      }
+      document.querySelectorAll(".yk-material-chip").forEach(function (button) {
+        var available = button.getAttribute("data-always-available") === "true" || !hasSchool || ykSchoolHasKeywords(button.getAttribute("data-material-filter"));
+        button.disabled = !available;
+        button.dataset.available = available ? "true" : "false";
+        button.setAttribute("aria-disabled", available ? "false" : "true");
+        if (!available && button.dataset.active === "true") {
+          button.dataset.active = "false";
+          button.setAttribute("aria-pressed", "false");
+        }
+      });
+    }
+
+    function ykSetSelectedSchool(link) {
+      var schoolName = link.textContent.trim();
+      var list = link.closest(".yk-school-list");
+      var level = list ? ykSchoolLevelByList[list.id] || ykFinderState.level : ykFinderState.level;
+      document.querySelectorAll(".yk-school-list a").forEach(function (item) {
+        item.dataset.selected = "false";
+        item.setAttribute("aria-pressed", "false");
+      });
+      link.dataset.selected = "true";
+      link.setAttribute("aria-pressed", "true");
+      ykFinderState.school = schoolName;
+      ykFinderState.schoolUrl = link.href || "#yk-categories";
+      ykFinderState.level = level;
+      ykSetLevelButton(level);
+      ykRefreshAvailability();
+      ykUpdateFinder();
+      var finder = document.getElementById("yk-finder");
+      if (finder) finder.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
     function ykUpdateFinder() {
+      ykRefreshAvailability();
       if (ykFinderLevel) ykFinderLevel.textContent = ykFinderState.level;
+      if (ykFinderSchool) ykFinderSchool.textContent = ykFinderState.school || "学校未選択";
       if (ykFinderItem) ykFinderItem.textContent = ykFinderState.item;
       if (ykFinderNeed) ykFinderNeed.textContent = ykFinderState.need;
-      if (ykFinderTitle) ykFinderTitle.textContent = ykFinderState.level + "の" + ykFinderState.item + "を、学校名とサイズで確認します。";
+      if (ykFinderTitle) {
+        ykFinderTitle.textContent = ykFinderState.school
+          ? ykFinderState.school + "の" + ykFinderState.item + "を確認します。"
+          : "学校名を選んで、" + ykFinderState.item + "の商品候補を確認します。";
+      }
       if (ykFinderAdvice) {
-        var advice = "学校名カテゴリを開き、商品名・種類・説明欄を照合してください。";
+        var advice = ykFinderState.school
+          ? "CSV上で" + ykSchoolMatchCount(ykFinderState.keywords) + "件の候補を確認できます。学校カテゴリを開き、商品名・種類・説明欄を照合してください。"
+          : "上の学校名を選ぶと、該当がない用品ボタンはグレーになります。";
         if (ykFinderState.need === "サイズ相談") advice = "サイズが不安な場合は、商品ページ確認後に店舗相談へ進むのが安全です。";
         if (ykFinderState.need === "学校指定を確認") advice = "旧タイプ、新タイプ、男女別、学年別の表記を必ず確認してください。";
         if (ykFinderState.need === "店舗で相談") advice = "購入前に本店・高橋店でサイズや指定品を相談できます。";
         ykFinderAdvice.textContent = advice + " 下の商品一覧では関連しそうな商品に枠を付けます。";
       }
-      if (ykFinderLink) ykFinderLink.href = ykFinderState.url || "#yk-categories";
+      if (ykFinderLink) {
+        ykFinderLink.href = ykFinderState.school ? ykFinderState.schoolUrl : ykFinderState.url || "#yk-categories";
+        ykFinderLink.textContent = ykFinderState.school ? ykFinderState.school + "の商品を見る" : "学校名で探す";
+      }
       ykHighlightProducts(ykFinderState.keywords);
     }
 
     function ykHighlightProducts(keywordText) {
       var cards = document.querySelectorAll(".yk-products .yk-product");
-      var keywords = String(keywordText || "").split(",").map(function (item) { return item.trim(); }).filter(Boolean);
-      if (!cards.length || !keywords.length) return;
+      var keywords = ykSplitKeywords(keywordText);
+      if (!cards.length) return;
+      var schoolVariants = ykSchoolVariants(ykFinderState.school);
       var matchCount = 0;
       cards.forEach(function (card) {
         var text = card.textContent || "";
-        var matched = keywords.some(function (word) { return text.indexOf(word) !== -1; });
+        var schoolMatched = !schoolVariants.length || schoolVariants.some(function (word) { return text.indexOf(word) !== -1; });
+        var keywordMatched = !keywords.length || keywords.some(function (word) { return text.indexOf(word) !== -1; });
+        var matched = schoolMatched && keywordMatched;
         card.dataset.match = matched ? "true" : "false";
         card.dataset.dim = "false";
         if (matched) matchCount += 1;
@@ -700,6 +858,15 @@
       }
     }
 
+    document.querySelectorAll(".yk-school-list a").forEach(function (link) {
+      link.setAttribute("role", "button");
+      link.setAttribute("aria-pressed", "false");
+      link.addEventListener("click", function (event) {
+        event.preventDefault();
+        ykSetSelectedSchool(link);
+      });
+    });
+
     document.querySelectorAll("[data-finder-level]").forEach(function (button) {
       button.addEventListener("click", function () { ykSetActiveChoice(button, "level"); });
     });
@@ -711,6 +878,7 @@
     });
     document.querySelectorAll(".yk-material-chip").forEach(function (button) {
       button.addEventListener("click", function () {
+        if (button.disabled) return;
         document.querySelectorAll(".yk-material-chip").forEach(function (item) {
           item.dataset.active = "false";
           item.setAttribute("aria-pressed", "false");
