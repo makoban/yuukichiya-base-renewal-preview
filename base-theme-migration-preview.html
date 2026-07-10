@@ -117,20 +117,32 @@
     .yk-material-chip b { font-size: 14px; line-height: 1.35; }
     .yk-material-chip span { color: var(--yk-muted); font-size: 11px; font-weight: 800; }
     .yk-material-chip[data-active="true"] { border-color: var(--yk-main); background: #eef7f2; box-shadow: var(--yk-shadow); }
-    .yk-products { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 24px; }
-    .yk-product { position: relative; display: grid; grid-template-rows: auto 1fr; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; box-shadow: 0 10px 24px rgba(27,43,49,.08); overflow: hidden; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
-    .yk-product:hover { transform: translateY(-3px); border-color: rgba(47,125,91,.4); box-shadow: var(--yk-shadow); }
-    .yk-product__photo { display: block; width: 100%; aspect-ratio: 1 / 1.08; overflow: hidden; background: #f7f8f8; }
+    .yk-products { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 12px; }
+    .yk-product { position: relative; display: grid; grid-template-rows: auto 1fr; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; box-shadow: 0 6px 14px rgba(27,43,49,.07); overflow: hidden; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+    .yk-product:hover { transform: translateY(-2px); border-color: rgba(47,125,91,.4); box-shadow: 0 10px 22px rgba(27,43,49,.12); }
+    .yk-product__photo { display: block; width: 100%; aspect-ratio: 1; overflow: hidden; border: 0; background: #f7f8f8; color: inherit; cursor: pointer; }
+    button.yk-product__photo { padding: 0; }
     .yk-product__photo img { width: 100%; height: 100%; object-fit: cover; transition: transform .24s ease; }
-    .yk-product:hover img { transform: scale(1.035); }
-    .yk-product__body { display: grid; gap: 8px; padding: 16px; }
-    .yk-product__title { min-height: 3.3em; font-size: 15px; font-weight: 800; line-height: 1.45; }
+    .yk-product:hover img { transform: scale(1.025); }
+    .yk-product__body { display: grid; grid-template-rows: auto auto; gap: 7px; min-width: 0; padding: 9px; }
+    .yk-product__title { display: -webkit-box; min-height: 2.8em; overflow: hidden; font-size: 12px; font-weight: 800; line-height: 1.4; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
     .yk-product__price { font-size: 17px; font-weight: 900; }
     .yk-product__sale { color: var(--yk-accent); font-size: 12px; font-weight: 900; }
-    .yk-product__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: stretch; }
-    .yk-product__button, .yk-product__detail { display: inline-flex; align-items: center; justify-content: center; min-height: 38px; border: 1px solid rgba(47,125,91,.18); border-radius: var(--yk-radius); background: #eef7f2; color: #1f553f; font: inherit; font-size: 13px; font-weight: 900; cursor: pointer; }
+    .yk-product__actions { display: grid; align-items: stretch; }
+    .yk-product__button, .yk-product__detail { display: inline-flex; align-items: center; justify-content: center; min-height: 34px; padding: 5px 6px; border: 1px solid rgba(47,125,91,.18); border-radius: var(--yk-radius); background: #eef7f2; color: #1f553f; font: inherit; font-size: 11px; font-weight: 900; cursor: pointer; }
     .yk-product__button:disabled { opacity: .72; cursor: default; }
     .yk-product__detail { background: #fff; color: var(--yk-ink); }
+    .yk-product-dialog { width: min(720px,calc(100% - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 0; border-radius: var(--yk-radius); background: #fff; color: var(--yk-ink); box-shadow: 0 24px 70px rgba(16,31,36,.28); }
+    .yk-product-dialog::backdrop { background: rgba(18,31,35,.66); }
+    .yk-product-dialog__close { position: absolute; z-index: 2; top: 10px; right: 10px; display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--yk-line); border-radius: 50%; background: rgba(255,255,255,.94); color: var(--yk-ink); font: inherit; font-size: 26px; line-height: 1; cursor: pointer; }
+    .yk-product-dialog__layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(260px,.9fr); }
+    .yk-product-dialog__image { width: 100%; height: 100%; min-height: 380px; object-fit: contain; background: #f7f8f8; }
+    .yk-product-dialog__body { display: grid; align-content: center; gap: 14px; min-width: 0; padding: 42px 30px 30px; }
+    .yk-product-dialog__label { margin: 0; color: var(--yk-main); font-size: 12px; font-weight: 900; }
+    .yk-product-dialog__title { margin: 0; font-size: 22px; line-height: 1.45; }
+    .yk-product-dialog__variant { margin: 0; color: var(--yk-muted); font-size: 14px; font-weight: 800; }
+    .yk-product-dialog__price { margin: 0; font-size: 22px; font-weight: 900; }
+    .yk-product-dialog__cart { min-height: 48px; border: 0; border-radius: var(--yk-radius); background: var(--yk-main); color: #fff; font: inherit; font-weight: 900; cursor: pointer; }
     .product-bottom { display: grid; grid-template-columns: 1fr; gap: 10px; align-items: stretch; }
     .yk-pickup { background: #f5fbf8; border-top: 1px solid var(--yk-line); border-bottom: 1px solid var(--yk-line); }
     .yk-pickup__image { display: flex; align-items: center; justify-content: center; max-width: 1240px; margin: 0 auto; padding: 42px 28px; }
@@ -183,7 +195,8 @@
       .yk-school-tabs { grid-template-columns: repeat(5,minmax(0,1fr)); }
       .yk-school-tab { justify-content: center; min-height: 54px; padding: 0 10px; font-size: 14px; }
       .yk-school-tab span { display: none; }
-      .yk-school-list, .yk-feature-grid, .yk-products, .yk-material-grid, .yk-store-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .yk-school-list, .yk-feature-grid, .yk-material-grid, .yk-store-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .yk-products { grid-template-columns: repeat(4,minmax(0,1fr)); }
       .yk-material-layout { grid-template-columns: 1fr; }
       .yk-hero h1 { font-size: 48px; }
       .yk-section h2, .yk-item h1 { font-size: 34px; }
@@ -194,7 +207,17 @@
       .yk-section__head { display: grid; align-items: start; }
       .yk-school-tabs { display: flex; overflow-x: auto; }
       .yk-school-tab { min-width: 116px; }
-      .yk-school-list, .yk-feature-grid, .yk-products, .yk-guide-strip, .yk-material-grid, .yk-store-grid, .yk-store-head { grid-template-columns: 1fr; }
+      .yk-school-list, .yk-feature-grid, .yk-guide-strip, .yk-material-grid, .yk-store-grid, .yk-store-head { grid-template-columns: 1fr; }
+      .yk-products { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; }
+      .yk-product__body { gap: 6px; padding: 7px; }
+      .yk-product__title { min-height: 2.8em; font-size: 11px; }
+      .yk-product__button { min-height: 32px; padding: 4px; font-size: 10px; }
+      .yk-product-dialog { width: min(430px,calc(100% - 20px)); max-height: calc(100dvh - 20px); }
+      .yk-product-dialog__layout { grid-template-columns: 1fr; }
+      .yk-product-dialog__image { height: min(38dvh,340px); min-height: 0; }
+      .yk-product-dialog__body { gap: 10px; padding: 20px; }
+      .yk-product-dialog__title { padding-right: 34px; font-size: 18px; }
+      .yk-product-dialog__price { font-size: 20px; }
       .yk-feature-visual img { aspect-ratio: 1.45 / 1; }
       .yk-store-head { gap: 8px; margin-bottom: 22px; }
       .yk-store-head h2 { font-size: 30px; }
@@ -210,7 +233,7 @@
   </style>
   <style data-yk-responsive-contract>
     html { width: 100%; max-width: 100%; -webkit-text-size-adjust: 100%; }
-    body { width: 100%; min-width: 0; max-width: 100%; overflow-x: hidden; overflow-x: clip; line-break: strict; overflow-wrap: normal; word-break: normal; }
+    body { width: 100%; min-width: 0; max-width: 100%; line-break: strict; overflow-wrap: normal; word-break: normal; }
     @supports (word-break: auto-phrase) { body { word-break: auto-phrase; } }
     :where(h1,h2,h3,p,li,dt,dd,label,summary,.yk-product__title,.yk-section__lead,.yk-result-count) { text-wrap: pretty; }
     :where(.yk-logo,.yk-nav a,button,.yk-button,.yk-link,.yk-hero__button,.yk-school-tab,.yk-school-list a,.yk-material-chip b,.yk-result-tags span,.yk-product__sale,.yk-product__price,.yk-store-card h3) { overflow-wrap: normal; word-break: keep-all; }
@@ -474,6 +497,19 @@
       <p class="yk-result-count" id="yk-result-count" aria-live="polite"></p>
       <div class="yk-products" id="products">
       </div>
+      <dialog class="yk-product-dialog" id="yk-product-dialog" aria-labelledby="yk-product-dialog-title">
+        <button class="yk-product-dialog__close" type="button" aria-label="商品詳細を閉じる" data-product-dialog-close>&times;</button>
+        <div class="yk-product-dialog__layout">
+          <img class="yk-product-dialog__image" src="" alt="" data-product-dialog-image>
+          <div class="yk-product-dialog__body">
+            <p class="yk-product-dialog__label">商品詳細</p>
+            <h3 class="yk-product-dialog__title" id="yk-product-dialog-title" data-product-dialog-title></h3>
+            <p class="yk-product-dialog__variant" data-product-dialog-variant></p>
+            <p class="yk-product-dialog__price" data-product-dialog-price></p>
+            <button class="yk-product-dialog__cart" type="button" data-cart-add>カートに入れる</button>
+          </div>
+        </div>
+      </dialog>
       <nav class="yk-pagination" id="yk-pagination" aria-label="検索結果のページ"></nav>
       <p class="yk-empty-result" id="yk-empty-result" hidden>該当する商品が見つかりません。条件を変更するか、店舗へご相談ください。</p>
     </section>
@@ -637,18 +673,54 @@
     function ykProductCard(product) {
       return [
         '<article class="yk-product">',
-        '<span class="yk-product__photo"><img src="' + ykEscapeHtml(product.img) + '" alt="' + ykEscapeHtml(product.t) + '" loading="lazy" decoding="async"></span>',
+        '<button class="yk-product__photo" type="button" data-product-detail="' + ykEscapeHtml(product.id) + '" aria-label="' + ykEscapeHtml(product.t) + 'の詳細を見る"><img src="' + ykEscapeHtml(product.img) + '" alt="' + ykEscapeHtml(product.t) + '" loading="lazy" decoding="async"></button>',
         '<span class="yk-product__body">',
-        '<span class="yk-product__sale">' + ykEscapeHtml(product.v) + '</span>',
         '<span class="yk-product__title">' + ykEscapeHtml(product.t) + '</span>',
-        '<span class="yk-product__price">' + ykEscapeHtml(product.p) + '</span>',
         '<span class="yk-product__actions">',
         '<button class="yk-product__button" type="button" data-cart-add data-cart-id="' + ykEscapeHtml(product.id) + '" data-cart-title="' + ykEscapeHtml(product.t) + '" data-cart-variant="' + ykEscapeHtml(product.v) + '" data-cart-price="' + ykEscapeHtml(product.p) + '" data-cart-image="' + ykEscapeHtml(product.img) + '" data-cart-url="' + ykEscapeHtml(product.u || "") + '">カートに入れる</button>',
-        '<a class="yk-product__detail" href="' + ykEscapeHtml(product.u || "#") + '" target="_blank" rel="noopener noreferrer">詳細</a>',
         '</span>',
         '</span>',
         '</article>'
       ].join("");
+    }
+
+    function ykFindProduct(productId) {
+      return ykAllProducts.find(function (product) { return String(product.id) === String(productId); }) || null;
+    }
+
+    function ykOpenProductDialog(product, trigger) {
+      var dialog = document.getElementById("yk-product-dialog");
+      if (!dialog || !product) return;
+      var image = dialog.querySelector("[data-product-dialog-image]");
+      var title = dialog.querySelector("[data-product-dialog-title]");
+      var variant = dialog.querySelector("[data-product-dialog-variant]");
+      var price = dialog.querySelector("[data-product-dialog-price]");
+      var cart = dialog.querySelector("[data-cart-add]");
+      if (image) { image.src = product.img; image.alt = product.t; }
+      if (title) title.textContent = product.t;
+      if (variant) variant.textContent = product.v || "種類・サイズは店舗でご確認ください";
+      if (price) price.textContent = product.p || "価格は商品ページでご確認ください";
+      if (cart) {
+        cart.setAttribute("data-cart-id", product.id || "");
+        cart.setAttribute("data-cart-title", product.t || "");
+        cart.setAttribute("data-cart-variant", product.v || "");
+        cart.setAttribute("data-cart-price", product.p || "");
+        cart.setAttribute("data-cart-image", product.img || "");
+        cart.setAttribute("data-cart-url", product.u || "");
+      }
+      dialog.ykPreviousFocus = trigger || document.activeElement;
+      if (typeof dialog.showModal === "function") dialog.showModal();
+      else dialog.setAttribute("open", "");
+      var closeButton = dialog.querySelector("[data-product-dialog-close]");
+      if (closeButton) closeButton.focus();
+    }
+
+    function ykCloseProductDialog() {
+      var dialog = document.getElementById("yk-product-dialog");
+      if (!dialog) return;
+      if (typeof dialog.close === "function" && dialog.open) dialog.close();
+      else dialog.removeAttribute("open");
+      if (dialog.ykPreviousFocus && dialog.ykPreviousFocus.focus) dialog.ykPreviousFocus.focus();
     }
 
     function ykUpdateMaterialAvailability() {
@@ -731,6 +803,18 @@
     }
 
     document.addEventListener("click", function (event) {
+      var detail = event.target.closest ? event.target.closest("[data-product-detail]") : null;
+      if (detail) {
+        event.preventDefault();
+        ykOpenProductDialog(ykFindProduct(detail.getAttribute("data-product-detail")), detail);
+        return;
+      }
+      var close = event.target.closest ? event.target.closest("[data-product-dialog-close]") : null;
+      if (close) {
+        event.preventDefault();
+        ykCloseProductDialog();
+        return;
+      }
       var button = event.target.closest ? event.target.closest("#yk-pagination [data-page]") : null;
       if (!button || button.disabled) return;
       var page = Number(button.getAttribute("data-page"));
@@ -738,6 +822,18 @@
       ykState.page = page;
       ykRenderProducts({ scroll: true });
     });
+
+    var ykProductDialog = document.getElementById("yk-product-dialog");
+    if (ykProductDialog) {
+      ykProductDialog.addEventListener("click", function (event) {
+        if (event.target === ykProductDialog) ykCloseProductDialog();
+      });
+      ykProductDialog.addEventListener("close", function () {
+        var image = ykProductDialog.querySelector("[data-product-dialog-image]");
+        if (image) image.removeAttribute("src");
+        if (ykProductDialog.ykPreviousFocus && ykProductDialog.ykPreviousFocus.focus) ykProductDialog.ykPreviousFocus.focus();
+      });
+    }
 
     document.querySelectorAll(".yk-school-list a").forEach(function (link) {
       link.addEventListener("click", function (event) {
@@ -842,7 +938,7 @@
   <script data-yk-image-lightbox>
     (function () {
       "use strict";
-      var selector = ".yk-feature-visual img,.yk-pickup__image img,.yk-payment-image img,.yk-store-card > img,.yk-card > img,.yk-product__photo img";
+      var selector = ".yk-feature-visual img,.yk-pickup__image img,.yk-payment-image img,.yk-store-card > img,.yk-card > img";
       var previousFocus = null;
       var dialog = document.createElement("dialog");
       dialog.className = "yk-lightbox";

@@ -6,8 +6,7 @@
     ".yk-pickup__image img",
     ".yk-payment-image img",
     ".yk-store-card > img",
-    ".yk-card > img",
-    ".yk-product__photo img"
+    ".yk-card > img"
   ].join(",");
 
   function whenReady(callback) {
