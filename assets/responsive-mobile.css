@@ -34,6 +34,10 @@ body {
   word-break: keep-all;
 }
 
+a[href^="tel:"] {
+  white-space: nowrap;
+}
+
 img,
 video,
 iframe,
@@ -285,6 +289,10 @@ body.yk-lightbox-open {
   .yk-material-chip {
     min-height: 84px;
     padding: 10px;
+  }
+
+  .yk-product__actions {
+    grid-template-columns: 1fr;
   }
 
   .yk-feature-visual,
