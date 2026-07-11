@@ -552,7 +552,7 @@
         <div class="yk-store-grid">
           <article class="yk-store-card">
 
-            <img src="assets/store-illustration-main.jpg" alt="勇吉屋 本店の外観写真" loading="lazy" decoding="async">
+            <img src="assets/store-main-hp.jpg" alt="勇吉屋 本店の外観写真" loading="lazy" decoding="async">
 
             <div class="yk-store-card__body">
               <h3>勇吉屋 本店</h3>
@@ -569,7 +569,7 @@
           </article>
           <article class="yk-store-card">
 
-            <img src="assets/store-illustration-takahashi.jpg" alt="勇吉屋 髙橋店の外観写真" loading="lazy" decoding="async">
+            <img src="assets/store-takahashi-hp.jpg" alt="勇吉屋 髙橋店の外観写真" loading="lazy" decoding="async">
 
             <div class="yk-store-card__body">
               <h3>勇吉屋 髙橋店</h3>
@@ -985,7 +985,7 @@
         var entries = [];
         Array.prototype.forEach.call(grid.children, function (card) {
           var cardImage = Array.prototype.find.call(card.children || [], function (child) {
-            return child.tagName === "IMG" && /store-illustration/i.test(child.getAttribute("src") || "");
+            return child.tagName === "IMG" && /store-(?:illustration-)?(?:main|takahashi)/i.test(child.getAttribute("src") || "");
           });
           if (!cardImage) return;
           var heading = card.querySelector("h2,h3");

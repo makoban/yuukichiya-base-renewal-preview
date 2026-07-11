@@ -84,7 +84,7 @@
         var entries = [];
         Array.prototype.forEach.call(grid.children, function (card) {
           var directImage = Array.prototype.find.call(card.children || [], function (child) {
-            return child.tagName === "IMG" && /store-illustration/i.test(child.getAttribute("src") || "");
+            return child.tagName === "IMG" && /store-(?:illustration-)?(?:main|takahashi)/i.test(child.getAttribute("src") || "");
           });
           if (!directImage) return;
           var heading = card.querySelector("h2, h3");
