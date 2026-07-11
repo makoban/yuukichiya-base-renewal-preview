@@ -110,8 +110,7 @@ button {
 .yk-gallery-button img {
   width: 100%;
   aspect-ratio: 4 / 3;
-  object-fit: contain;
-  background: #f2f4f3;
+  object-fit: cover;
 }
 
 .yk-gallery-button span {
