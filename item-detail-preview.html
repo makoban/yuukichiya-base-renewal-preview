@@ -394,6 +394,61 @@
     .yk-lightbox__image { width: auto; max-width: 100%; height: auto; max-height: 100%; object-fit: contain; }
     .yk-lightbox__caption { margin: 0; padding: 12px 18px 16px; color: rgba(255,255,255,.88); font-size: 14px; font-weight: 700; text-align: center; }
     body.yk-lightbox-open { overflow: hidden; }
+    body.yk-item-route { height: 100dvh; overflow: hidden; }
+    body.yk-item-route .yk-header__inner { grid-template-columns: auto minmax(0,1fr); min-height: 64px; }
+    body.yk-item-route .yk-search { display: none; }
+    body.yk-item-route .yk-nav { grid-column: 2; grid-row: 1; justify-self: end; }
+    body.yk-item-route .yk-main { height: calc(100dvh - var(--yk-item-header-height,64px)); overflow: hidden; }
+    body.yk-item-route .yk-footer { display: none; }
+    body.yk-item-route .yk-item-page { height: 100%; overflow: hidden; }
+    body.yk-item-route .yk-item-breadcrumb { height: 36px; padding-top: 7px; }
+    body.yk-item-route .yk-item { grid-template-columns: minmax(280px,.88fr) minmax(360px,.72fr); gap: 30px; align-items: center; height: calc(100% - 36px); padding-top: 14px; padding-bottom: 18px; overflow: hidden; }
+    body.yk-item-route .yk-item__gallery { display: grid; grid-template-columns: minmax(0,1fr) 68px; gap: 10px; align-items: center; min-height: 0; max-height: 100%; }
+    body.yk-item-route .yk-item__mainImage { min-height: 0; height: min(56dvh,560px); cursor: zoom-in; }
+    body.yk-item-route .yk-item__mainImage img { width: 100%; height: 100%; max-height: none; object-fit: contain; }
+    body.yk-item-route .yk-item__thumbs { grid-template-columns: 1fr; gap: 6px; align-content: center; margin: 0; }
+    body.yk-item-route .yk-item__thumbs img { cursor: zoom-in; }
+    body.yk-item-route .yk-item__thumbs img:only-child { display: none; }
+    body.yk-item-route .yk-item__summary { align-self: center; }
+    body.yk-item-route .yk-item__label { margin-bottom: 3px; }
+    body.yk-item-route .yk-item h1 { margin-bottom: 5px; font-size: clamp(24px,2.2vw,32px); line-height: 1.28; }
+    body.yk-item-route .yk-item__price { margin-bottom: 5px; font-size: 25px; }
+    body.yk-item-route .yk-item__attention { margin-bottom: 7px; font-size: 11px; line-height: 1.55; }
+    body.yk-item-route .yk-item__attention p { margin: 0; }
+    body.yk-item-route .yk-purchase-panel { margin-top: 8px; padding: 14px; }
+    body.yk-item-route .yk-purchase-panel__title { font-size: 18px; }
+    body.yk-item-route .yk-purchase-panel__lead { margin: 2px 0 9px; font-size: 11px; }
+    body.yk-item-route .yk-purchase-panel #itemSelect { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; }
+    body.yk-item-route .yk-purchase-panel .purchaseElement,
+    body.yk-item-route .yk-purchase-panel .itemSelect,
+    body.yk-item-route .yk-purchase-panel .itemOptionElement { gap: 4px; }
+    body.yk-item-route .yk-purchase-panel label { font-size: 12px; }
+    body.yk-item-route .yk-purchase-panel select,
+    body.yk-item-route .yk-purchase-panel .itemOption__select { min-height: 44px!important; font-size: 15px; }
+    body.yk-item-route .yk-purchase-panel .purchaseButton { margin-top: 10px; }
+    body.yk-item-route .yk-purchase-panel .purchaseButton__btn { min-height: 50px; }
+    body.yk-item-route .yk-purchase-panel__note { margin-top: 7px; }
+    body.yk-item-route .yk-item-support,
+    body.yk-item-route .yk-item__summary > .yk-detail { display: none; }
+    .yk-item-more { display: inline-flex; align-items: center; justify-content: center; width: 100%; min-height: 44px; margin-top: 10px; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; color: var(--yk-main); padding: 7px 12px; font: inherit; font-size: 13px; font-weight: 900; cursor: pointer; }
+    .yk-item-info-dialog { width: min(720px,calc(100% - 24px)); max-height: calc(100dvh - 24px); padding: 0; overflow: auto; border: 0; border-radius: var(--yk-radius); background: #fff; color: var(--yk-ink); box-shadow: 0 28px 80px rgba(12,29,34,.36); }
+    .yk-item-info-dialog::backdrop { background: rgba(16,31,36,.72); backdrop-filter: blur(4px); }
+    .yk-item-info-dialog__head { padding: 26px 70px 18px 24px; border-bottom: 1px solid var(--yk-line); background: #f3f8f5; }
+    .yk-item-info-dialog__head h2 { margin: 0; font-size: 25px; line-height: 1.3; }
+    .yk-item-info-dialog__body { display: grid; gap: 18px; padding: 22px 24px 26px; }
+    .yk-item-info-dialog__body h3 { margin: 0 0 7px; font-size: 18px; }
+    .yk-item-info-dialog__body p { margin: 0; color: var(--yk-muted); font-size: 14px; font-weight: 700; }
+    .yk-item-info-dialog__body .yk-detail { margin: 0; padding: 0; border: 0; }
+    .yk-preview-item-dialog { height: min(720px,calc(100dvh - 16px)); max-height: calc(100dvh - 16px); overflow: hidden; }
+    .yk-preview-item-dialog__layout { height: 100%; min-height: 0; }
+    .yk-preview-item-dialog__visual { min-height: 0; }
+    .yk-preview-item-dialog__image { max-height: calc(100dvh - 84px); cursor: zoom-in; }
+    .yk-preview-item-dialog__body { gap: 9px; overflow: hidden; }
+    .yk-preview-purchase { gap: 10px; margin-top: 3px; padding: 15px; }
+    .yk-preview-purchase select { min-height: 46px; }
+    .yk-preview-purchase__add { min-height: 50px; }
+    .yk-preview-item-dialog__guide { gap: 5px; }
+    .yk-preview-item-dialog__guide li { font-size: 11px; }
     @media (max-width: 560px) {
       :where(.yk-section[id],.yk-store-band[id],.yk-pickup[id]) { scroll-margin-top: 116px; }
       .yk-hero { position: relative; }
@@ -424,6 +479,57 @@
       .yk-store-card dl { grid-template-columns: minmax(72px,auto) minmax(0,1fr); }
       .yk-result-toolbar { justify-content: flex-start; }
       .yk-lightbox { width: 94vw; height: 88dvh; max-height: 88dvh; border-radius: 10px; }
+      body.yk-item-route .yk-header__inner { grid-template-columns: auto minmax(0,1fr); gap: 8px; min-height: 58px; padding-top: 0; padding-bottom: 0; }
+      body.yk-item-route .yk-logo { align-self: center; }
+      body.yk-item-route .yk-nav { display: flex; grid-column: 2; grid-row: 1; gap: 5px; justify-self: end; width: auto; padding: 0; }
+      body.yk-item-route .yk-nav > a { display: none; }
+      body.yk-item-route .yk-nav > a:first-child,
+      body.yk-item-route .yk-nav > [data-yk-preview-cart-open] { display: inline-flex; width: auto; min-width: 52px; padding: 4px 8px; }
+      body.yk-item-route .yk-nav #baseMenu { display: flex; min-width: 40px; }
+      body.yk-item-route .yk-item-breadcrumb { height: 30px; padding: 4px 14px 0; font-size: 11px; }
+      body.yk-item-route .yk-item { grid-template-columns: minmax(92px,31%) minmax(0,1fr); grid-template-rows: auto auto auto auto auto auto; gap: 7px 11px; align-content: start; align-items: start; height: calc(100% - 30px); padding: 8px 14px 10px; }
+      body.yk-item-route .yk-item__gallery,
+      body.yk-item-route .yk-item__summary { display: contents; }
+      body.yk-item-route .yk-item__mainImage { grid-column: 1; grid-row: 1 / 4; align-self: start; width: 100%; height: auto; max-height: 118px; aspect-ratio: 1; }
+      body.yk-item-route .yk-item__thumbs { grid-column: 1 / -1; grid-row: 5; display: grid; grid-template-columns: repeat(5,44px); gap: 6px; justify-content: start; margin: 0; }
+      body.yk-item-route .yk-item__thumbs img { width: 44px; height: 44px; }
+      body.yk-item-route .yk-item__label { display: none; }
+      body.yk-item-route .yk-item h1 { grid-column: 2; grid-row: 1; align-self: end; margin: 0; padding: 0; font-size: 19px; line-height: 1.28; }
+      body.yk-item-route .yk-item__price { grid-column: 2; grid-row: 2; margin: 0; font-size: 22px; line-height: 1.25; }
+      body.yk-item-route .yk-item__attention { grid-column: 2; grid-row: 3; margin: 0; font-size: 9px; line-height: 1.45; }
+      body.yk-item-route .yk-purchase-panel { grid-column: 1 / -1; grid-row: 4; margin: 0; padding: 10px; }
+      body.yk-item-route .yk-purchase-panel__title { font-size: 16px; }
+      body.yk-item-route .yk-purchase-panel__lead { margin-bottom: 6px; font-size: 10px; }
+      body.yk-item-route .yk-purchase-panel #itemSelect { gap: 7px; }
+      body.yk-item-route .yk-purchase-panel select,
+      body.yk-item-route .yk-purchase-panel .itemOption__select { min-height: 42px!important; padding-right: 30px!important; padding-left: 10px!important; font-size: 14px; }
+      body.yk-item-route .yk-purchase-panel .purchaseButton { margin-top: 8px; }
+      body.yk-item-route .yk-purchase-panel .purchaseButton__btn { min-height: 46px; font-size: 15px; }
+      body.yk-item-route .yk-purchase-panel__note { margin-top: 5px; font-size: 9px; }
+      body.yk-item-route .yk-item-more { grid-column: 1 / -1; grid-row: 6; min-height: 42px; margin: 0; }
+      .yk-item-info-dialog__head { padding: 22px 62px 16px 18px; }
+      .yk-item-info-dialog__head h2 { font-size: 22px; }
+      .yk-item-info-dialog__body { padding: 18px; }
+      .yk-preview-item-dialog { width: calc(100% - 12px); height: min(500px,calc(100dvh - 12px)); max-height: calc(100dvh - 12px); }
+      .yk-preview-item-dialog__layout { grid-template-rows: minmax(112px,22dvh) minmax(0,1fr); height: 100%; }
+      .yk-preview-item-dialog__visual { min-height: 0; padding: 12px; }
+      .yk-preview-item-dialog__image { position: absolute; inset: 12px; width: calc(100% - 24px); height: calc(100% - 24px); max-height: none; object-fit: contain; }
+      .yk-preview-badge { top: 8px; left: 8px; min-height: 24px; padding: 0 7px; font-size: 9px; }
+      .yk-preview-item-dialog__body { gap: 6px; padding: 12px 14px 10px; }
+      .yk-preview-item-dialog__eyebrow { display: none; }
+      .yk-preview-item-dialog__title { padding-right: 34px; font-size: 19px; line-height: 1.25; }
+      .yk-preview-item-dialog__price { font-size: 21px; line-height: 1.25; }
+      .yk-preview-item-dialog__lead { font-size: 10px; line-height: 1.45; }
+      .yk-preview-purchase { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; margin: 0; padding: 9px; }
+      .yk-preview-purchase h3,
+      .yk-preview-purchase__add,
+      .yk-preview-purchase__status { grid-column: 1 / -1; }
+      .yk-preview-purchase h3 { font-size: 15px; }
+      .yk-preview-purchase label { gap: 3px; font-size: 11px; }
+      .yk-preview-purchase select { min-height: 42px; padding-right: 28px; padding-left: 9px; font-size: 14px; }
+      .yk-preview-purchase__add { min-height: 46px; font-size: 15px; }
+      .yk-preview-purchase__status { min-height: 1.2em; font-size: 10px; }
+      .yk-preview-item-dialog__guide { display: none; }
     }
     @media (max-width: 360px) {
       .yk-header__inner,.yk-hero__inner,.yk-section,.yk-page-hero__inner,.yk-page-section,.yk-footer__inner { padding-right: 14px; padding-left: 14px; }
@@ -482,13 +588,18 @@
             </form>
             <p class="yk-purchase-panel__note">選択内容はカートでも確認できます。</p>
           </div>
-          <div class="yk-item-support">
-            <details open><summary>サイズ選びで迷ったら</summary><p>学校指定品はサイズと型番の確認が大切です。不安な場合は店舗へご相談ください。</p></details>
-            <details><summary>返品・交換の前に確認</summary><p>購入前に商品説明とショップ案内をご確認ください。</p></details>
-            <details><summary>学校指定品の確認</summary><p>学校名と商品名を照合して選んでください。</p></details>
-          </div>
-          <div class="yk-detail"><h2>商品について</h2><p>商品の仕様、素材、学校指定内容などをこちらで確認できます。</p></div>
+          <button class="yk-item-more" type="button" data-yk-item-info-open>商品説明・返品交換を見る</button>
         </div>
+        <dialog class="yk-item-info-dialog" id="yk-item-info-dialog" aria-labelledby="yk-item-info-title">
+          <button class="yk-preview-dialog__close" type="button" aria-label="商品情報を閉じる" data-yk-item-info-close>&times;</button>
+          <div class="yk-item-info-dialog__head"><h2 id="yk-item-info-title">商品情報</h2></div>
+          <div class="yk-item-info-dialog__body">
+            <section><h3>商品について</h3><div class="yk-detail"><p>商品の仕様、素材、学校指定内容などをこちらで確認できます。</p></div></section>
+            <section><h3>サイズ選びで迷ったら</h3><p>学校指定品はサイズと型番の確認が大切です。不安な場合は店舗へご相談ください。</p></section>
+            <section><h3>返品・交換の前に確認</h3><p>購入前に商品説明とショップ案内をご確認ください。</p></section>
+            <section><h3>学校指定品の確認</h3><p>学校名と商品名を照合して選んでください。</p></section>
+          </div>
+        </dialog>
       </section>
     </div>
   </main>
@@ -1080,6 +1191,38 @@
       }
     }
 
+    function ykSyncItemViewport() {
+      var itemPage = document.querySelector(".yk-item-page");
+      if (!itemPage) return;
+      document.body.classList.add("yk-item-route");
+      var sync = function () {
+        var header = document.querySelector(".yk-header");
+        var height = header ? Math.ceil(header.getBoundingClientRect().height) : 0;
+        document.body.style.setProperty("--yk-item-header-height", height + "px");
+      };
+      sync();
+      window.addEventListener("resize", sync, { passive: true });
+      window.addEventListener("orientationchange", sync, { passive: true });
+    }
+
+    function ykOpenItemInfo(trigger) {
+      var dialog = document.getElementById("yk-item-info-dialog");
+      if (!dialog) return false;
+      dialog.ykPreviousFocus = trigger || document.activeElement;
+      if (typeof dialog.showModal === "function") dialog.showModal();
+      else dialog.setAttribute("open", "");
+      var close = dialog.querySelector("[data-yk-item-info-close]");
+      if (close) close.focus();
+      return true;
+    }
+
+    function ykCloseItemInfo() {
+      var dialog = document.getElementById("yk-item-info-dialog");
+      if (!dialog) return;
+      if (typeof dialog.close === "function" && dialog.open) dialog.close();
+      else dialog.removeAttribute("open");
+    }
+
     document.addEventListener("submit", function (event) {
       var contactForm = event.target.closest ? event.target.closest("[data-yk-contact-form]") : null;
       if (!contactForm) return;
@@ -1128,6 +1271,17 @@
       if (contactSend) {
         event.preventDefault();
         ykSendContact();
+        return;
+      }
+      var itemInfoOpen = event.target.closest ? event.target.closest("[data-yk-item-info-open]") : null;
+      if (itemInfoOpen && ykOpenItemInfo(itemInfoOpen)) {
+        event.preventDefault();
+        return;
+      }
+      var itemInfoClose = event.target.closest ? event.target.closest("[data-yk-item-info-close]") : null;
+      if (itemInfoClose) {
+        event.preventDefault();
+        ykCloseItemInfo();
         return;
       }
       var previewProduct = event.target.closest ? event.target.closest("[data-product-page]") : null;
@@ -1200,6 +1354,18 @@
       ykContactDialog.addEventListener("close", function () {
         if (ykContactDialog.ykPreviousFocus && ykContactDialog.ykPreviousFocus.focus) {
           ykContactDialog.ykPreviousFocus.focus();
+        }
+      });
+    }
+
+    var ykItemInfoDialog = document.getElementById("yk-item-info-dialog");
+    if (ykItemInfoDialog) {
+      ykItemInfoDialog.addEventListener("click", function (event) {
+        if (event.target === ykItemInfoDialog) ykCloseItemInfo();
+      });
+      ykItemInfoDialog.addEventListener("close", function () {
+        if (ykItemInfoDialog.ykPreviousFocus && ykItemInfoDialog.ykPreviousFocus.focus) {
+          ykItemInfoDialog.ykPreviousFocus.focus();
         }
       });
     }
@@ -1339,6 +1505,7 @@
       }
     }
 
+    ykSyncItemViewport();
     if (ykAllProducts.length) ykRenderProducts();
     if (ykIsDraftPreview()) {
       document.documentElement.setAttribute("data-yk-draft-preview", "true");
@@ -1356,7 +1523,7 @@
   <script data-yk-image-lightbox>
     (function () {
       "use strict";
-      var selector = ".yk-feature-visual img,.yk-pickup__image img,.yk-payment-image img,.yk-store-card > img,.yk-card > img,.yk-item__mainImage img,.yk-item__thumbs img";
+      var selector = ".yk-feature-visual img,.yk-pickup__image img,.yk-payment-image img,.yk-store-card > img,.yk-card > img,.yk-item__mainImage img,.yk-item__thumbs img,.yk-preview-item-dialog__image";
       var previousFocus = null;
       var dialog = document.createElement("dialog");
       dialog.className = "yk-lightbox";
