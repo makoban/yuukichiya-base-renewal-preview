@@ -3,8 +3,6 @@
 
   var config = window.ykPreviewConfig || {};
   var cartKey = config.cartKey || "yuukichiya.preview.cart.v1";
-  var contactUrl = config.contactUrl || "https://thebase.in/inquiry/yuukichiya-base-shop";
-  var baseCartUrl = config.baseCartUrl || "https://c.thebase.in/order/cart/yuukichiya";
 
   function escapeHtml(value) {
     return String(value || "").replace(/[&<>"']/g, function (char) {
@@ -95,9 +93,9 @@
       var image = escapeHtml(item.img);
       var title = escapeHtml(item.t);
       var variant = escapeHtml(item.v);
-      var url = escapeHtml(item.u || "#");
+      var url = "item-detail-preview.html?id=" + encodeURIComponent(item.id);
       return '<article class="yk-cart-item">' +
-        '<a class="yk-cart-item__image" href="' + url + '" target="_blank" rel="noopener noreferrer"><img src="' + image + '" alt="' + title + '" loading="eager" decoding="async" onerror="this.onerror=null;this.src=&quot;assets/hero-uniform-display.png&quot;;"></a>' +
+        '<a class="yk-cart-item__image" href="' + url + '"><img src="' + image + '" alt="' + title + '" loading="eager" decoding="async" onerror="this.onerror=null;this.src=&quot;assets/hero-uniform-display.png&quot;;"></a>' +
         '<div class="yk-cart-item__body">' +
         '<h2>' + title + '</h2>' +
         '<p>' + variant + '</p>' +
@@ -157,6 +155,7 @@
       "メールアドレス: " + (data.get("email") || ""),
       "電話番号: " + (data.get("tel") || ""),
       "学校名: " + (data.get("school") || ""),
+      "お問い合わせの種類: " + (data.get("type") || ""),
       "お問い合わせ内容:",
       data.get("message") || ""
     ].join("\n");
@@ -173,6 +172,7 @@
       ["メールアドレス", data.get("email")],
       ["電話番号", data.get("tel") || "未入力"],
       ["学校名", data.get("school") || "未入力"],
+      ["お問い合わせの種類", data.get("type") || "未入力"],
       ["お問い合わせ内容", data.get("message")]
     ];
     summary.innerHTML = fields.map(function (field) {
@@ -224,8 +224,7 @@
     if (checkout) {
       event.preventDefault();
       var status = document.querySelector("[data-cart-status]");
-      if (status) status.textContent = "原本BASEのカート画面を開きます。商品情報の連携は本番接続時に行います。";
-      window.open(baseCartUrl, "_blank", "noopener,noreferrer");
+      if (status) status.textContent = "下書き確認中のため決済は行いません。本番公開後はBASEの安全な決済処理へ接続します。";
       return;
     }
 
@@ -239,10 +238,11 @@
       return;
     }
 
-    var contactOpen = event.target.closest && event.target.closest("[data-contact-open]");
-    if (contactOpen) {
+    var contactSend = event.target.closest && event.target.closest("[data-contact-send]");
+    if (contactSend) {
       event.preventDefault();
-      window.open(contactUrl, "_blank", "noopener,noreferrer");
+      var contactStatus = document.querySelector("[data-contact-send-status]");
+      if (contactStatus) contactStatus.textContent = "下書き確認中のため送信されません。7月24日の確認後に送信を有効にします。";
     }
   });
 
