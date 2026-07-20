@@ -818,12 +818,14 @@
     function ykIsDraftPreview() {
       var isBasePreview = window.location.hostname === "admin.thebase.com" && window.location.pathname.indexOf("/shop_preview/") === 0;
       var isLocalPreview = false;
+      var isCustomerPreview = false;
       try {
         var hostname = window.location.hostname;
         var isPrivateNetwork = hostname === "localhost" || hostname === "127.0.0.1" || hostname.indexOf("192.168.") === 0 || hostname.indexOf("10.") === 0 || /^172\.(1[6-9]|2\d|3[01])\./.test(hostname);
         isLocalPreview = window.location.protocol === "file:" || isPrivateNetwork || new URLSearchParams(window.location.search).get("draft-preview") === "1";
+        isCustomerPreview = hostname === "makoban.github.io" && window.location.pathname.indexOf("/yuukichiya-base-renewal-preview/") === 0;
       } catch (error) {}
-      return isBasePreview || isLocalPreview;
+      return isBasePreview || isLocalPreview || isCustomerPreview;
     }
 
     function ykPriceNumber(priceText) {
