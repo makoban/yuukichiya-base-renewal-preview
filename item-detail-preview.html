@@ -841,6 +841,8 @@
       var position = 0;
       ["elementary", "junior", "high", "kindergarten"].forEach(function (type) {
         var list = null;
+        var sharedProducts = [];
+        var sharedProductIds = {};
         ykLists.forEach(function (item) {
           if ((item.getAttribute("data-school-type") || "") === type) list = item;
         });
@@ -851,11 +853,23 @@
             return (a.r || 0) - (b.r || 0) || (b.n || 0) - (a.n || 0);
           }).forEach(function (product) {
             var id = String(product.id);
-            if (typeof ykSchoolProductOrder[id] === "undefined") {
+            var productTitle = String(product.t || "").replace(/[\s　]+/g, "");
+            var schoolName = school.replace(/[\s　]+/g, "");
+            if (schoolName && productTitle.indexOf(schoolName) !== -1 && typeof ykSchoolProductOrder[id] === "undefined") {
               ykSchoolProductOrder[id] = position;
               position += 1;
+            } else if (typeof ykSchoolProductOrder[id] === "undefined" && !sharedProductIds[id]) {
+              sharedProductIds[id] = true;
+              sharedProducts.push(product);
             }
           });
+        });
+        sharedProducts.forEach(function (product) {
+          var id = String(product.id);
+          if (typeof ykSchoolProductOrder[id] === "undefined") {
+            ykSchoolProductOrder[id] = position;
+            position += 1;
+          }
         });
       });
       ykAllProducts.slice().sort(function (a, b) {
@@ -890,6 +904,12 @@
         button.dataset.active = active ? "true" : "false";
         button.setAttribute("aria-pressed", active ? "true" : "false");
       });
+      var schoolTrigger = document.querySelector("[data-school-filter-trigger]");
+      if (schoolTrigger) {
+        var schoolActive = Boolean(ykState.schoolType || ykState.school);
+        schoolTrigger.dataset.active = schoolActive ? "true" : "false";
+        schoolTrigger.setAttribute("aria-pressed", schoolActive ? "true" : "false");
+      }
     }
 
     ykTabs.forEach(function (button) {
