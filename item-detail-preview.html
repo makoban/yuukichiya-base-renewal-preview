@@ -445,7 +445,7 @@
     .yk-preview-item-dialog__layout { height: 100%; min-height: 0; }
     .yk-preview-item-dialog__visual { min-height: 0; }
     .yk-preview-item-dialog__image { max-height: calc(100dvh - 84px); cursor: zoom-in; }
-    .yk-preview-item-dialog__body { gap: 9px; overflow: hidden; }
+    .yk-preview-item-dialog__body { min-height: 0; gap: 9px; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; -webkit-overflow-scrolling: touch; }
     .yk-preview-purchase { gap: 10px; margin-top: 3px; padding: 15px; }
     .yk-preview-purchase select { min-height: 46px; }
     .yk-preview-purchase__add { min-height: 50px; }
