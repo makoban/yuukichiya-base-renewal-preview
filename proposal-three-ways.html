@@ -143,9 +143,9 @@
     .yk-product__title { display: -webkit-box; min-height: 2.8em; overflow: hidden; font-size: 12px; font-weight: 800; line-height: 1.4; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
     .yk-product__price { font-size: 17px; font-weight: 900; }
     .yk-product__sale { color: var(--yk-accent); font-size: 12px; font-weight: 900; }
-    .yk-price-stack { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 7px; min-width: 0; min-height: 25px; }
-    .yk-price-stack del { color: #7b858a; font-size: 11px; font-weight: 800; line-height: 1.2; white-space: nowrap; }
-    .yk-price-stack strong { color: var(--yk-ink); font-size: 15px; font-weight: 900; line-height: 1.2; white-space: nowrap; }
+    .yk-price-stack { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 7px; min-width: 0; min-height: 28px; }
+    .yk-price-stack del { color: #6f7a80; font-size: 12px; font-weight: 800; line-height: 1.2; white-space: nowrap; }
+    .yk-price-stack strong { color: var(--yk-ink); font-size: 17px; font-weight: 900; line-height: 1.2; white-space: nowrap; }
     .yk-price-stack--sale strong { color: #c93729; }
     .yk-product__actions { display: grid; align-items: stretch; }
     .yk-product__button, .yk-product__detail { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 6px; border: 1px solid rgba(47,125,91,.22); border-radius: var(--yk-radius); background: #eef7f2; color: #1f553f; font: inherit; font-size: 11px; font-weight: 900; cursor: pointer; transition: background-color .18s ease, color .18s ease, transform .18s ease; }
@@ -178,7 +178,7 @@
     .yk-shelf-viewport { min-width: 0; overflow: hidden; }
     .yk-shelf-track { display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - 60px) / 6); gap: 12px; padding: 2px 2px 14px; overflow-x: auto; overscroll-behavior-inline: contain; scroll-behavior: smooth; scroll-snap-type: inline mandatory; scrollbar-color: rgba(47,125,91,.42) transparent; scrollbar-width: thin; }
     .yk-shelf-card { min-width: 0; overflow: hidden; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; box-shadow: 0 6px 14px rgba(27,43,49,.07); scroll-snap-align: start; }
-    .yk-shelf-card__link { display: grid; grid-template-rows: auto 38px 38px; height: 100%; }
+    .yk-shelf-card__link { display: grid; grid-template-rows: auto 38px 44px; height: 100%; }
     .yk-shelf-card__image { position: relative; width: 100%; aspect-ratio: 1; overflow: hidden; background: #f7f8f8; }
     .yk-shelf-card__image img { width: 100%; height: 100%; object-fit: cover; transition: transform .2s ease; }
     .yk-shelf-card:hover .yk-shelf-card__image img { transform: scale(1.025); }
@@ -358,9 +358,9 @@
       .yk-products { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; }
       .yk-product__body { gap: 6px; padding: 7px; }
       .yk-product__title { min-height: 2.8em; font-size: 11px; }
-      .yk-product__body .yk-price-stack { display: grid; align-content: start; gap: 0; min-height: 28px; }
-      .yk-product__body .yk-price-stack del { font-size: 8px; }
-      .yk-product__body .yk-price-stack strong { font-size: 12px; }
+      .yk-product__body .yk-price-stack { display: grid; align-content: start; gap: 0; min-height: 32px; }
+      .yk-product__body .yk-price-stack del { font-size: 10px; }
+      .yk-product__body .yk-price-stack strong { font-size: 15px; }
       .yk-product__button { min-height: 44px; padding: 4px; font-size: 10px; }
       .yk-store-head { gap: 8px; margin-bottom: 22px; }
       .yk-store-head h2 { font-size: 30px; }
@@ -526,12 +526,12 @@
       .yk-shelf-heading p { font-size: 12px; }
       .yk-shelf-toolbar { justify-content: space-between; }
       .yk-shelf-track { grid-auto-columns: calc((100% - 16px) / 3); gap: 8px; padding-bottom: 10px; }
-      .yk-shelf-card__link { grid-template-rows: auto 32px 38px; }
+      .yk-shelf-card__link { grid-template-rows: auto 32px 44px; }
       .yk-shelf-card__title { padding: 6px; font-size: 10px; line-height: 20px; }
       .yk-shelf-card__pricing { align-items: start; padding: 0 6px 5px; }
       .yk-shelf-card__pricing .yk-price-stack { display: grid; align-content: start; gap: 0; min-height: 0; }
-      .yk-shelf-card__pricing .yk-price-stack del { font-size: 8px; }
-      .yk-shelf-card__pricing .yk-price-stack strong { font-size: 11px; }
+      .yk-shelf-card__pricing .yk-price-stack del { font-size: 9px; }
+      .yk-shelf-card__pricing .yk-price-stack strong { font-size: 14px; }
       .yk-product-badge { top: 5px; left: 5px; min-width: 38px; min-height: 21px; padding: 2px 6px; font-size: 9px; }
       .yk-hero h1,.yk-page-hero h1 { font-size: 34px; }
       .yk-section h2,.yk-section-head h2,.yk-empty-cart h2,.yk-item h1 { font-size: 28px; }
