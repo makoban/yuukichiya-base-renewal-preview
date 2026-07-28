@@ -67,7 +67,9 @@
     .yk-site-notice__body { min-width: 0; }
     .yk-site-notice__body strong { display: block; font-size: 16px; line-height: 1.5; }
     .yk-site-notice__body p { margin: 2px 0 0; color: var(--yk-muted); font-size: 12px; font-weight: 700; line-height: 1.6; }
-    .yk-site-notice--shipping { border-color: rgba(47,125,91,.3); background: #f1f8f4; }
+    .yk-site-notice--shipping { padding: 16px 18px; border: 2px solid var(--yk-main); background: #eaf7f0; box-shadow: 0 8px 20px rgba(25,96,67,.15); }
+    .yk-site-notice--shipping .yk-site-notice__label { min-width: 142px; background: var(--yk-main); font-size: 13px; }
+    .yk-site-notice--shipping .yk-site-notice__body strong { color: #174d38; font-size: 19px; }
     .yk-site-notice--closure { border-color: rgba(217,80,63,.32); background: #fff6f3; }
     .yk-site-notice--closure .yk-site-notice__label { background: var(--yk-accent); }
     .yk-closure-periods { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 5px; }
@@ -498,6 +500,9 @@
       .yk-site-notice__label { justify-self: start; min-width: 0; min-height: 26px; padding: 0 8px; font-size: 10px; }
       .yk-site-notice__body strong { font-size: 14px; }
       .yk-site-notice__body p { font-size: 11px; }
+      .yk-site-notice--shipping { padding: 13px 12px; }
+      .yk-site-notice--shipping .yk-site-notice__label { min-width: 0; font-size: 11px; }
+      .yk-site-notice--shipping .yk-site-notice__body strong { font-size: 16px; }
       .yk-closure-periods { display: grid; gap: 3px; }
       .yk-closure-period { font-size: 11px; }
       .yk-hero__actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); width: 100%; }
@@ -621,15 +626,16 @@
       <div class="yk-site-notice yk-site-notice--closure" data-yk-major-closure hidden>
         <span class="yk-site-notice__label">営業日のお知らせ</span>
         <div class="yk-site-notice__body">
-          <strong>大型休暇前の営業日をご確認ください。</strong>
+          <strong>長期休暇中は、商品の発送を行いません。</strong>
           <div class="yk-closure-periods" data-yk-major-closure-periods aria-live="polite"></div>
+          <p>休業期間中のご注文は、休業明けの営業日から順次発送します。</p>
         </div>
       </div>
       <div class="yk-site-notice yk-site-notice--shipping">
-        <span class="yk-site-notice__label">発送について</span>
+        <span class="yk-site-notice__label">12時まで当日発送</span>
         <div class="yk-site-notice__body">
           <strong><span class="phrase">営業日の12時までのご注文は、</span><span class="phrase">当日発送します。</span></strong>
-          <p>休業日のご注文は、翌営業日以降の発送となります。</p>
+          <p>12時以降および休業日のご注文は、翌営業日以降の発送となります。</p>
         </div>
       </div>
     </section>
