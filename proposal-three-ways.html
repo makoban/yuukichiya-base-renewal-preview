@@ -855,6 +855,7 @@
               <option value="school">学校順</option>
               <option value="recommended">おすすめ順</option>
               <option value="new">新着順</option>
+              <option value="price-low">価格の安い順</option>
             </select>
           </label>
           <button class="yk-link yk-link--sub" type="button" data-show-all>全商品表示</button>
@@ -1320,6 +1321,12 @@
         });
 	      }
 	      return products.slice().sort(function (a, b) {
+	        if (ykState.sort === "price-low") {
+	          var priceA = ykPriceNumber(a.p) || Number.MAX_SAFE_INTEGER;
+	          var priceB = ykPriceNumber(b.p) || Number.MAX_SAFE_INTEGER;
+	          return priceA - priceB ||
+	            (ykSchoolProductOrder[String(a.id)] || 0) - (ykSchoolProductOrder[String(b.id)] || 0);
+	        }
 	        if (ykState.sort === "new") return (b.n || 0) - (a.n || 0);
 	        if (ykState.sort === "school") {
 	          if (ykState.school) return (a.r || 0) - (b.r || 0) || (b.n || 0) - (a.n || 0);
