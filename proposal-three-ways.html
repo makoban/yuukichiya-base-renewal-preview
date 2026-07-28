@@ -46,12 +46,8 @@
     img { display: block; max-width: 100%; }
     .yk-header { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.94); border-bottom: 1px solid var(--yk-line); backdrop-filter: blur(14px); }
     .yk-header__inner { display: grid; grid-template-columns: auto minmax(220px,1fr) auto; gap: 22px; align-items: center; max-width: var(--yk-content-max); min-height: 76px; margin: 0 auto; padding: 0 28px; }
-    .yk-logo { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
-    .yk-brand-mark { display: grid; flex: 0 0 40px; width: 40px; height: 40px; border: 2px solid var(--yk-main); border-radius: 50%; background: #eef7f2; color: #1f553f; font-family: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, serif; font-size: 21px; font-weight: 900; line-height: 1; box-shadow: 0 5px 12px rgba(23,77,56,.16); place-items: center; }
-    .yk-logo__words { display: grid; gap: 1px; min-width: 0; }
-    .yk-logo .logoText { color: var(--yk-ink); font-size: 22px; font-weight: 800; line-height: 1.2; letter-spacing: 0; }
-    .yk-logo__words small { color: var(--yk-main); font-size: 9px; font-weight: 900; line-height: 1.25; white-space: nowrap; }
-    .yk-logo .logoImage { max-height: 48px; width: auto; }
+    .yk-logo { display: inline-flex; align-items: center; min-width: 0; }
+    .yk-logo__image { width: 220px; max-width: 100%; height: auto; max-height: 58px; object-fit: contain; object-position: left center; }
     .yk-search { display: grid; grid-template-columns: 1fr auto; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #f8faf9; box-shadow: 0 8px 20px rgba(26,45,52,.06); overflow: hidden; }
     .yk-search input { min-width: 0; height: 46px; border: 0; background: transparent; padding: 0 16px; font: inherit; outline: 0; }
     .yk-search button, .yk-button { min-height: 46px; border: 0; border-radius: var(--yk-radius); background: var(--yk-main); color: #fff; padding: 0 18px; font: inherit; font-weight: 900; cursor: pointer; box-shadow: var(--yk-press); }
@@ -332,10 +328,8 @@
     :where(a,button,input,select,textarea,summary):focus-visible { outline: 3px solid rgba(47,125,91,.36); outline-offset: 3px; }
     .yk-footer { background: #1f2527; color: #fff; }
     .yk-footer__inner { display: grid; grid-template-columns: minmax(0,1.35fr) minmax(240px,.65fr); gap: 48px; max-width: var(--yk-content-max); margin: 0 auto; padding: 48px 28px; }
-    .yk-footer-brand { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
-    .yk-footer-brand h2 { margin: 0; font-size: 26px; line-height: 1.25; }
-    .yk-brand-mark--footer { border-color: rgba(255,255,255,.76); background: #fff; color: #1f553f; box-shadow: none; }
-    .yk-footer-brand__tagline { margin: 2px 0 0!important; color: #b7ddca!important; font-size: 11px!important; line-height: 1.35!important; }
+    .yk-footer-brand { display: inline-flex; align-items: center; max-width: 100%; margin-bottom: 18px; padding: 9px 12px; border-radius: var(--yk-radius); background: #fff; }
+    .yk-footer-brand img { width: min(300px,100%); height: auto; }
     .yk-footer p, .yk-footer li { color: rgba(255,255,255,.72); font-size: 14px; font-weight: 700; }
     .yk-footer ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
     @media (max-width: 920px) {
@@ -508,9 +502,7 @@
       .yk-hero__inner { position: relative; z-index: 1; }
       .yk-header__inner,.yk-hero__inner,.yk-section,.yk-page-hero__inner,.yk-page-section,.yk-footer__inner { padding-right: clamp(14px,4.5vw,18px); padding-left: clamp(14px,4.5vw,18px); }
       .yk-header__inner { grid-template-columns: minmax(0,1fr); gap: 10px; }
-      .yk-logo { gap: 9px; }
-      .yk-brand-mark { flex-basis: 36px; width: 36px; height: 36px; font-size: 19px; }
-      .yk-logo .logoText { font-size: 20px; white-space: nowrap; }
+      .yk-logo__image { width: min(220px,68vw); max-height: 48px; }
       .yk-nav { grid-template-columns: .7fr 1.15fr 1.25fr .75fr; gap: 4px; font-size: 11px; }
       .yk-nav > [data-yk-preview-cart-open] { gap: 3px; padding-right: 2px; padding-left: 2px; }
       .yk-nav .yk-cart-count { flex: 0 0 auto; min-width: 17px; height: 17px; margin-left: 0; padding: 0 4px; font-size: 10px; }
@@ -557,8 +549,8 @@
       .yk-feature b { margin-bottom: 5px; font-size: 15px; line-height: 1.4; }
       .yk-feature p { font-size: 11px; line-height: 1.65; }
       .yk-pickup__image,.yk-payment-image { width: 100%; }
-      .yk-pickup__image { padding: 18px clamp(10px,3vw,14px) 22px; }
-      .yk-pickup__image img { border-radius: 6px; }
+      .yk-pickup__image { padding: 18px 0 22px; }
+      .yk-pickup__image img { border-radius: 0; }
       .yk-store-gallery { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin: 0 0 14px; }
       .yk-has-mobile-gallery > .yk-card > img,.yk-has-mobile-gallery > .yk-store-card > img { display: none; }
       .yk-store-card dl { grid-template-columns: minmax(72px,auto) minmax(0,1fr); }
@@ -628,8 +620,7 @@
       .yk-hero__button,.yk-page-actions .yk-button,.yk-sort-control { width: 100%; }
       .yk-hero__button { padding-right: 8px; padding-left: 8px; font-size: 13px; }
       .yk-hero h1,.yk-page-hero h1 { font-size: 30px; }
-      .yk-logo .logoText { font-size: 19px; }
-      .yk-logo__words small { font-size: 8px; }
+      .yk-logo__image { width: min(206px,68vw); }
       .yk-school-tab { font-size: 12px; }
     }
   </style>
@@ -640,11 +631,7 @@
   <header class="yk-header">
     <div class="yk-header__inner">
       <a class="yk-logo" href="#top" aria-label="勇吉屋ネット TOP">
-        <span class="yk-brand-mark" aria-hidden="true">勇</span>
-        <span class="yk-logo__words">
-          <strong class="logoText">勇吉屋ネット</strong>
-          <small>学生服・学校用品 専門店</small>
-        </span>
+        <img class="yk-logo__image" src="assets/yuukichiya-logo.png" width="720" height="217" alt="勇吉屋">
       </a>
 
       <form class="yk-search" action="#yk-results" method="get" id="yk-site-search">
@@ -662,24 +649,6 @@
   </header>
 
   <main class="yk-main" id="top">
-
-    <section class="yk-site-notices" aria-label="発送と営業日のお知らせ">
-      <div class="yk-site-notice yk-site-notice--closure" data-yk-major-closure hidden>
-        <span class="yk-site-notice__label">営業日のお知らせ</span>
-        <div class="yk-site-notice__body">
-          <strong>長期休暇中は、商品の発送を行いません。</strong>
-          <div class="yk-closure-periods" data-yk-major-closure-periods aria-live="polite"></div>
-          <p>休業期間中のご注文は、休業明けの営業日から順次発送します。</p>
-        </div>
-      </div>
-      <div class="yk-site-notice yk-site-notice--shipping">
-        <span class="yk-site-notice__label">12時まで当日発送</span>
-        <div class="yk-site-notice__body">
-          <strong><span class="phrase">営業日の12時までのご注文は、</span><span class="phrase">当日発送します。</span></strong>
-          <p>12時以降および休業日のご注文は、翌営業日以降の発送となります。</p>
-        </div>
-      </div>
-    </section>
 
     <section class="yk-hero">
       <div class="yk-hero__inner">
@@ -1001,6 +970,24 @@
       </section>
     </div>
 
+    <section class="yk-site-notices" aria-label="発送と営業日のお知らせ">
+      <div class="yk-site-notice yk-site-notice--closure" data-yk-major-closure hidden>
+        <span class="yk-site-notice__label">営業日のお知らせ</span>
+        <div class="yk-site-notice__body">
+          <strong>長期休暇中は、商品の発送を行いません。</strong>
+          <div class="yk-closure-periods" data-yk-major-closure-periods aria-live="polite"></div>
+          <p>休業期間中のご注文は、休業明けの営業日から順次発送します。</p>
+        </div>
+      </div>
+      <div class="yk-site-notice yk-site-notice--shipping">
+        <span class="yk-site-notice__label">12時まで当日発送</span>
+        <div class="yk-site-notice__body">
+          <strong><span class="phrase">営業日の12時までのご注文は、</span><span class="phrase">当日発送します。</span></strong>
+          <p>12時以降および休業日のご注文は、翌営業日以降の発送となります。</p>
+        </div>
+      </div>
+    </section>
+
 
       <section class="yk-pickup" id="yk-notice" aria-label="お支払い方法">
         <figure class="yk-pickup__image">
@@ -1087,11 +1074,7 @@
     <div class="yk-footer__inner">
       <div>
         <div class="yk-footer-brand">
-          <span class="yk-brand-mark yk-brand-mark--footer" aria-hidden="true">勇</span>
-          <div>
-            <h2>勇吉屋ネット</h2>
-            <p class="yk-footer-brand__tagline">学生服・学校用品 専門店</p>
-          </div>
+          <img src="assets/yuukichiya-logo.png" width="720" height="217" alt="勇吉屋">
         </div>
         <p>豊田市で創業78年の学生衣料品販売専門店。学校用品のご注文と店舗相談に対応しています。</p>
       </div>
