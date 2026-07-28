@@ -60,6 +60,19 @@
     .cart-badge { display: block!important; }
     .cart-qty { position: absolute; top: -6px; right: -6px; min-width: 16px; height: 16px; padding: 0 3px; border-radius: 50%; background: var(--yk-accent); color: #fff; font-size: 10px; font-weight: 800; line-height: 16px; text-align: center; }
     .yk-main { min-width: 0; }
+    .yk-site-notices { display: grid; gap: 10px; max-width: var(--yk-content-max); margin: 0 auto; padding: 14px 28px; }
+    .yk-site-notice { display: grid; grid-template-columns: auto minmax(0,1fr); gap: 14px; align-items: center; min-width: 0; padding: 13px 16px; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; box-shadow: 0 6px 16px rgba(28,45,52,.07); }
+    .yk-site-notice[hidden] { display: none; }
+    .yk-site-notice__label { display: inline-flex; align-items: center; justify-content: center; min-width: 104px; min-height: 36px; padding: 0 12px; border-radius: 4px; background: var(--yk-main); color: #fff; font-size: 12px; font-weight: 900; line-height: 1; white-space: nowrap; }
+    .yk-site-notice__body { min-width: 0; }
+    .yk-site-notice__body strong { display: block; font-size: 16px; line-height: 1.5; }
+    .yk-site-notice__body p { margin: 2px 0 0; color: var(--yk-muted); font-size: 12px; font-weight: 700; line-height: 1.6; }
+    .yk-site-notice--shipping { border-color: rgba(47,125,91,.3); background: #f1f8f4; }
+    .yk-site-notice--closure { border-color: rgba(217,80,63,.32); background: #fff6f3; }
+    .yk-site-notice--closure .yk-site-notice__label { background: var(--yk-accent); }
+    .yk-closure-periods { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 5px; }
+    .yk-closure-period { display: inline-flex; flex-wrap: wrap; gap: 2px 6px; color: #713329; font-size: 12px; font-weight: 900; }
+    .yk-closure-period span { white-space: nowrap; }
     .yk-hero { border-bottom: 1px solid var(--yk-line); background: linear-gradient(90deg, #fbfcf9 0%, #fbfcf9 52%, #edf2ef 100%); color: var(--yk-ink); }
 
     .yk-hero { background: linear-gradient(90deg, rgba(251,252,249,.99) 0%, rgba(251,252,249,.94) 34%, rgba(251,252,249,.42) 55%, rgba(251,252,249,.06) 74%), url("assets/hero-uniform-display.png") center right / cover no-repeat; }
@@ -164,7 +177,9 @@
     .yk-shelf-card__image img { width: 100%; height: 100%; object-fit: cover; transition: transform .2s ease; }
     .yk-shelf-card:hover .yk-shelf-card__image img { transform: scale(1.025); }
     .yk-shelf-card__title { display: block; min-width: 0; padding: 9px; overflow: hidden; color: var(--yk-ink); font-size: 12px; font-weight: 800; line-height: 20px; text-overflow: ellipsis; white-space: nowrap; }
-    .yk-sale-badge { position: absolute; z-index: 2; top: 8px; left: 8px; display: inline-flex; align-items: center; justify-content: center; min-width: 48px; min-height: 26px; padding: 3px 9px; border-radius: 4px; background: #d94232; color: #fff; font-size: 11px; font-weight: 900; line-height: 1; letter-spacing: 0; box-shadow: 0 3px 10px rgba(88,20,14,.25); white-space: nowrap; pointer-events: none; }
+    .yk-product-badge { position: absolute; z-index: 2; top: 8px; left: 8px; display: inline-flex; align-items: center; justify-content: center; min-width: 48px; min-height: 26px; padding: 3px 9px; border-radius: 4px; color: #fff; font-size: 11px; font-weight: 900; line-height: 1; letter-spacing: 0; white-space: nowrap; pointer-events: none; }
+    .yk-sale-badge { background: #d94232; box-shadow: 0 3px 10px rgba(88,20,14,.25); }
+    .yk-new-badge { background: #2474a8; box-shadow: 0 3px 10px rgba(16,62,92,.25); }
     .yk-shelf-count { margin: 8px 0 0; color: var(--yk-muted); font-size: 12px; font-weight: 800; }
     .yk-pickup { background: #f5fbf8; border-top: 1px solid var(--yk-line); border-bottom: 1px solid var(--yk-line); }
     .yk-pickup__image { display: flex; align-items: center; justify-content: center; max-width: var(--yk-content-max); margin: 0 auto; padding: 42px 28px; }
@@ -478,6 +493,13 @@
       .yk-nav #baseMenu .base,.yk-nav #baseMenu li:first-child { display: none; }
       .yk-nav #baseMenu img { height: 20px; }
       .yk-search,.yk-search input { width: 100%; }
+      .yk-site-notices { padding: 10px 14px; }
+      .yk-site-notice { grid-template-columns: minmax(0,1fr); gap: 7px; padding: 11px 12px; }
+      .yk-site-notice__label { justify-self: start; min-width: 0; min-height: 26px; padding: 0 8px; font-size: 10px; }
+      .yk-site-notice__body strong { font-size: 14px; }
+      .yk-site-notice__body p { font-size: 11px; }
+      .yk-closure-periods { display: grid; gap: 3px; }
+      .yk-closure-period { font-size: 11px; }
       .yk-hero__actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); width: 100%; }
       .yk-hero__actions .yk-hero__button:first-child { grid-column: 1 / -1; }
       .yk-shelf-section { padding-top: 34px; padding-bottom: 36px; }
@@ -489,7 +511,7 @@
       .yk-shelf-track { grid-auto-columns: calc((100% - 16px) / 3); gap: 8px; padding-bottom: 10px; }
       .yk-shelf-card__link { grid-template-rows: auto 32px; }
       .yk-shelf-card__title { padding: 6px; font-size: 10px; line-height: 20px; }
-      .yk-sale-badge { top: 5px; left: 5px; min-width: 38px; min-height: 21px; padding: 2px 6px; font-size: 9px; }
+      .yk-product-badge { top: 5px; left: 5px; min-width: 38px; min-height: 21px; padding: 2px 6px; font-size: 9px; }
       .yk-hero h1,.yk-page-hero h1 { font-size: 34px; }
       .yk-section h2,.yk-section-head h2,.yk-empty-cart h2,.yk-item h1 { font-size: 28px; }
       .yk-school-tabs { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 5px; overflow: visible; }
@@ -595,7 +617,22 @@
 
   <main class="yk-main" id="top">
 
-
+    <section class="yk-site-notices" aria-label="発送と営業日のお知らせ">
+      <div class="yk-site-notice yk-site-notice--closure" data-yk-major-closure hidden>
+        <span class="yk-site-notice__label">営業日のお知らせ</span>
+        <div class="yk-site-notice__body">
+          <strong>大型休暇前の営業日をご確認ください。</strong>
+          <div class="yk-closure-periods" data-yk-major-closure-periods aria-live="polite"></div>
+        </div>
+      </div>
+      <div class="yk-site-notice yk-site-notice--shipping">
+        <span class="yk-site-notice__label">発送について</span>
+        <div class="yk-site-notice__body">
+          <strong><span class="phrase">営業日の12時までのご注文は、</span><span class="phrase">当日発送します。</span></strong>
+          <p>休業日のご注文は、翌営業日以降の発送となります。</p>
+        </div>
+      </div>
+    </section>
 
     <section class="yk-hero">
       <div class="yk-hero__inner">
@@ -1285,10 +1322,35 @@
       return ids;
     }, {});
 
-    function ykSaleBadge(product) {
-      return ykPriceDownIds[String(product.id)]
-        ? '<span class="yk-sale-badge" aria-hidden="true">SALE</span>'
-        : "";
+    // BASEのCSVには商品追加日がないため、確定できた日付だけを登録する。
+    var ykProductAddedDates = {
+      "150298943": "2026-07-24"
+    };
+
+    function ykProductAddedDate(product) {
+      return product && (product.addedAt || ykProductAddedDates[String(product.id)] || "");
+    }
+
+    function ykIsNewProduct(product) {
+      if (!product || ykPriceDownIds[String(product.id)]) return false;
+      var addedAt = ykProductAddedDate(product);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(addedAt)) return false;
+      var addedDay = ykDateDayNumber(addedAt);
+      var todayDay = ykDateDayNumber(ykDateKeyInTokyo());
+      var newThrough = new Date(addedDay * 86400000);
+      newThrough.setUTCFullYear(newThrough.getUTCFullYear() + 1);
+      var newThroughDay = newThrough.getTime() / 86400000;
+      return addedDay <= todayDay && todayDay <= newThroughDay;
+    }
+
+    function ykProductBadge(product) {
+      if (ykPriceDownIds[String(product.id)]) {
+        return '<span class="yk-product-badge yk-sale-badge" aria-hidden="true">SALE</span>';
+      }
+      if (ykIsNewProduct(product)) {
+        return '<span class="yk-product-badge yk-new-badge" aria-hidden="true">NEW</span>';
+      }
+      return "";
     }
 
     function ykProductCard(product) {
@@ -1296,8 +1358,8 @@
         window.location.hostname !== "admin.thebase.com" && window.location.hostname !== "developers.thebase.com";
       var productUrl = ykProductUrl(product);
       var photo = soldOut
-        ? '<span class="yk-product__photo" aria-label="' + ykEscapeHtml(product.t) + 'は在庫なし">' + ykSaleBadge(product) + '<img src="' + ykEscapeHtml(product.img) + '" alt="' + ykEscapeHtml(product.t) + '" loading="lazy" decoding="async"></span>'
-        : '<a class="yk-product__photo" href="' + ykEscapeHtml(productUrl) + '" data-product-page="' + ykEscapeHtml(product.id) + '" aria-label="' + ykEscapeHtml(product.t) + 'の種類・サイズを選ぶ">' + ykSaleBadge(product) + '<img src="' + ykEscapeHtml(product.img) + '" alt="' + ykEscapeHtml(product.t) + '" loading="lazy" decoding="async"></a>';
+        ? '<span class="yk-product__photo" aria-label="' + ykEscapeHtml(product.t) + 'は在庫なし">' + ykProductBadge(product) + '<img src="' + ykEscapeHtml(product.img) + '" alt="' + ykEscapeHtml(product.t) + '" loading="lazy" decoding="async"></span>'
+        : '<a class="yk-product__photo" href="' + ykEscapeHtml(productUrl) + '" data-product-page="' + ykEscapeHtml(product.id) + '" aria-label="' + ykEscapeHtml(product.t) + 'の種類・サイズを選ぶ">' + ykProductBadge(product) + '<img src="' + ykEscapeHtml(product.img) + '" alt="' + ykEscapeHtml(product.t) + '" loading="lazy" decoding="async"></a>';
       var action = soldOut
         ? '<button class="yk-product__button yk-product__button--soldout" type="button" disabled>在庫なし</button>'
         : '<a class="yk-product__button" href="' + ykEscapeHtml(productUrl) + '" data-product-page="' + ykEscapeHtml(product.id) + '">サイズを選ぶ</a>';
@@ -1336,7 +1398,7 @@
       return [
         '<article class="yk-shelf-card">',
         '<a class="yk-shelf-card__link" href="' + ykEscapeHtml(productUrl) + '" data-product-page="' + ykEscapeHtml(product.id) + '" aria-label="' + ykEscapeHtml(product.t) + 'の詳細を見る">',
-        '<span class="yk-shelf-card__image">' + ykSaleBadge(product) + '<img src="' + ykEscapeHtml(image240) + '" srcset="' + ykEscapeHtml(image240) + ' 240w, ' + ykEscapeHtml(image480) + ' 480w" sizes="(max-width:560px) calc((100vw - 44px) / 3), calc((min(100vw,1800px) - 116px) / 6)" alt="' + ykEscapeHtml(product.t) + '" loading="lazy" decoding="async"></span>',
+        '<span class="yk-shelf-card__image">' + ykProductBadge(product) + '<img src="' + ykEscapeHtml(image240) + '" srcset="' + ykEscapeHtml(image240) + ' 240w, ' + ykEscapeHtml(image480) + ' 480w" sizes="(max-width:560px) calc((100vw - 44px) / 3), calc((min(100vw,1800px) - 116px) / 6)" alt="' + ykEscapeHtml(product.t) + '" loading="lazy" decoding="async"></span>',
         '<span class="yk-shelf-card__title">' + ykEscapeHtml(product.t) + '</span>',
         '</a>',
         '</article>'
@@ -1372,6 +1434,151 @@
           track.scrollBy({ left: direction * Math.max(220, track.clientWidth * .82), behavior: "smooth" });
         });
       });
+    }
+
+    var ykMajorClosureFeedUrl = "https://kokotomo-sns.bantex.jp/api/public/hp-calendar/yuukichiya/events.json";
+    var ykMajorClosureLeadDays = 14;
+
+    function ykDateKeyInTokyo() {
+      if (window.ykMajorClosureBaseDate && /^\d{4}-\d{2}-\d{2}$/.test(window.ykMajorClosureBaseDate)) {
+        return window.ykMajorClosureBaseDate;
+      }
+      var parts = new Intl.DateTimeFormat("ja-JP", {
+        timeZone: "Asia/Tokyo",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).formatToParts(new Date());
+      var values = {};
+      parts.forEach(function (part) { values[part.type] = part.value; });
+      return values.year + "-" + values.month + "-" + values.day;
+    }
+
+    function ykDateDayNumber(dateKey) {
+      var parts = String(dateKey || "").split("-").map(Number);
+      if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2]) return NaN;
+      return Date.UTC(parts[0], parts[1] - 1, parts[2]) / 86400000;
+    }
+
+    function ykDayNumberDateKey(dayNumber) {
+      return new Date(dayNumber * 86400000).toISOString().slice(0, 10);
+    }
+
+    function ykEventDateKey(event, side) {
+      var value = event && event[side];
+      if (!value) return "";
+      return String(value.date || value.dateTime || "").slice(0, 10);
+    }
+
+    function ykMajorClosurePeriods(calendarData) {
+      var stores = calendarData && calendarData.stores;
+      if (!stores || typeof stores !== "object") return [];
+      var closurePattern = /休業|定休日|休み/;
+      var majorPattern = /夏季休業|冬季休業|年末年始/;
+      var periods = [];
+
+      Object.keys(stores).forEach(function (storeName) {
+        var closedDays = {};
+        (Array.isArray(stores[storeName]) ? stores[storeName] : []).forEach(function (event) {
+          var summary = String(event && event.summary || "");
+          if (!closurePattern.test(summary) || event.status === "cancelled") return;
+          var startDay = ykDateDayNumber(ykEventDateKey(event, "start"));
+          var endDay = ykDateDayNumber(ykEventDateKey(event, "end"));
+          if (!isFinite(startDay)) return;
+          if (!isFinite(endDay) || endDay <= startDay) endDay = startDay + 1;
+          for (var day = startDay; day < endDay; day += 1) {
+            if (!closedDays[day]) closedDays[day] = { majorTitles: [] };
+            if (majorPattern.test(summary) && closedDays[day].majorTitles.indexOf(summary) === -1) {
+              closedDays[day].majorTitles.push(summary);
+            }
+          }
+        });
+
+        var dayNumbers = Object.keys(closedDays).map(Number).sort(function (a, b) { return a - b; });
+        var run = null;
+        dayNumbers.forEach(function (day, index) {
+          if (!run || day !== run.endDay + 1) {
+            if (run && run.majorTitles.length) periods.push(run);
+            run = { store: storeName, startDay: day, endDay: day, majorTitles: [] };
+          } else {
+            run.endDay = day;
+          }
+          closedDays[day].majorTitles.forEach(function (title) {
+            if (run.majorTitles.indexOf(title) === -1) run.majorTitles.push(title);
+          });
+          if (index === dayNumbers.length - 1 && run && run.majorTitles.length) periods.push(run);
+        });
+      });
+
+      var today = ykDateDayNumber(ykDateKeyInTokyo());
+      var leadLimit = today + ykMajorClosureLeadDays;
+      var merged = {};
+      periods.forEach(function (period) {
+        if (period.endDay < today || period.startDay > leadLimit) return;
+        var title = period.majorTitles[0] || "大型休業";
+        var key = title + "|" + period.startDay + "|" + period.endDay;
+        if (!merged[key]) {
+          merged[key] = {
+            title: title,
+            startDay: period.startDay,
+            endDay: period.endDay,
+            stores: []
+          };
+        }
+        if (merged[key].stores.indexOf(period.store) === -1) merged[key].stores.push(period.store);
+      });
+      return Object.keys(merged).map(function (key) { return merged[key]; }).sort(function (a, b) {
+        return a.startDay - b.startDay;
+      });
+    }
+
+    function ykFormatClosureDate(dayNumber) {
+      var date = new Date(dayNumber * 86400000);
+      var weekdays = ["日", "月", "火", "水", "木", "金", "土"];
+      return (date.getUTCMonth() + 1) + "月" + date.getUTCDate() + "日（" + weekdays[date.getUTCDay()] + "）";
+    }
+
+    function ykRenderMajorClosureNotice(calendarData) {
+      var notice = document.querySelector("[data-yk-major-closure]");
+      var target = document.querySelector("[data-yk-major-closure-periods]");
+      if (!notice || !target) return;
+      var periods = ykMajorClosurePeriods(calendarData);
+      target.innerHTML = "";
+      periods.forEach(function (period) {
+        var item = document.createElement("span");
+        item.className = "yk-closure-period";
+        var title = document.createElement("span");
+        title.textContent = period.title + "：";
+        var dates = document.createElement("span");
+        dates.textContent = ykFormatClosureDate(period.startDay) + "〜" + ykFormatClosureDate(period.endDay);
+        var stores = document.createElement("span");
+        stores.textContent = "／" + period.stores.join("・");
+        item.appendChild(title);
+        item.appendChild(dates);
+        item.appendChild(stores);
+        target.appendChild(item);
+      });
+      notice.hidden = periods.length === 0;
+      notice.setAttribute("data-status", periods.length ? "visible" : "none");
+    }
+
+    function ykInitMajorClosureNotice() {
+      var notice = document.querySelector("[data-yk-major-closure]");
+      if (!notice || !window.fetch) return Promise.resolve([]);
+      return fetch(ykMajorClosureFeedUrl, { cache: "no-store" })
+        .then(function (response) {
+          if (!response.ok) throw new Error("calendar response " + response.status);
+          return response.json();
+        })
+        .then(function (calendarData) {
+          ykRenderMajorClosureNotice(calendarData);
+          return ykMajorClosurePeriods(calendarData);
+        })
+        .catch(function () {
+          notice.hidden = true;
+          notice.setAttribute("data-status", "unavailable");
+          return [];
+        });
     }
 
     function ykFindProduct(productId) {
@@ -1885,6 +2092,7 @@
     }
 
     ykInitShelves();
+    ykInitMajorClosureNotice();
     ykSyncItemViewport();
     ykSyncSchoolFilters();
     if (ykAllProducts.length) ykRenderProducts();
