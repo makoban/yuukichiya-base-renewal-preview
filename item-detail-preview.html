@@ -538,16 +538,16 @@
 <body>
   <header class="yk-header">
     <div class="yk-header__inner">
-      <a class="yk-logo" href="#top"><span class="logoText">勇吉屋ネット</span></a>
+      <a class="yk-logo" href="index.html#top"><span class="logoText">勇吉屋ネット</span></a>
 
-      <form class="yk-search" action="#yk-results" method="get" id="yk-site-search">
+      <form class="yk-search" action="index.html" method="get">
         <input id="yk-header-query" type="search" name="q" placeholder="学校名・商品名で探す" value="">
         <button type="submit">検索</button>
       </form>
 
       <nav class="yk-nav">
-        <a href="#top">TOP</a>
-        <a href="#yk-stores">店舗について</a>
+        <a href="index.html#top">TOP</a>
+        <a href="index.html#yk-stores">店舗について</a>
         <a href="contact.html">お問い合わせ</a>
         <a href="cart.html" data-yk-preview-cart-open>カート<span class="yk-cart-count" data-cart-count hidden>0</span></a>
       </nav>
@@ -556,7 +556,7 @@
 
   <main class="yk-main" id="top">
     <div class="yk-item-page">
-      <nav class="yk-item-breadcrumb" aria-label="パンくずリスト"><a href="base_theme_migration_preview.html#yk-results">商品一覧</a><span aria-hidden="true">/</span><span>商品詳細</span></nav>
+      <nav class="yk-item-breadcrumb" aria-label="パンくずリスト"><a href="index.html#yk-results">商品一覧</a><span aria-hidden="true">/</span><span>商品詳細</span></nav>
       <section class="yk-section yk-item">
         <div class="yk-item__gallery">
           <div class="yk-item__mainImage"><img src="https://baseec-img-mng.akamaized.net/images/item/origin/6ba4e8851d064705fde61bb92124e7b1.jpg?imformat=generic&amp;q=90&amp;im=Resize,width=640,type=normal" alt="遮熱赤白帽子 M/L"></div>
@@ -604,10 +604,10 @@
       <div>
         <h3>ご利用案内</h3>
         <ul>
-          <li><a href="#yk-stores">店舗について</a></li>
+          <li><a href="index.html#yk-stores">店舗について</a></li>
           <li><a href="contact.html">お問い合わせ</a></li>
-          <li><a href="#yk-notice">プライバシーポリシー</a></li>
-          <li><a href="#yk-notice">特定商取引法に基づく表記</a></li>
+          <li><a href="privacy.html">個人情報の取扱い</a></li>
+          <li><a href="https://yuukichiya.base.shop/law" target="_blank" rel="noopener noreferrer">特定商取引法に基づく表記</a></li>
         </ul>
       </div>
     </div>
@@ -617,14 +617,14 @@
     <button class="yk-dialog__close" type="button" aria-label="商品詳細を閉じる" data-yk-preview-item-close>&times;</button>
     <div class="yk-preview-item-dialog__layout">
       <div class="yk-preview-item-dialog__visual">
-        <span class="yk-preview-badge">BASE下書き確認用</span>
+        <span class="yk-preview-badge">商品詳細</span>
         <img class="yk-preview-item-dialog__image" src="" alt="" data-yk-preview-item-image>
       </div>
       <div class="yk-preview-item-dialog__body">
         <p class="yk-preview-item-dialog__eyebrow">Item details</p>
         <h2 class="yk-preview-item-dialog__title" id="yk-preview-item-title" data-yk-preview-item-title></h2>
         <p class="yk-preview-item-dialog__price" data-yk-preview-item-price></p>
-        <p class="yk-preview-item-dialog__lead">商品の種類・サイズと数量を選んで、確認用カートへ追加できます。</p>
+        <p class="yk-preview-item-dialog__lead">商品の種類・サイズと数量を選んで、カートへ追加できます。</p>
         <div class="yk-preview-purchase">
           <h3>種類・サイズを選ぶ</h3>
           <label>種類・サイズ
@@ -640,8 +640,8 @@
           <p class="yk-preview-purchase__status" data-yk-preview-item-status aria-live="polite"></p>
         </div>
         <ul class="yk-preview-item-dialog__guide">
-          <li>現在は公開前の確認用のため、決済は行われません。</li>
-          <li>本番公開後は、BASEに登録された在庫・種類・価格が使用されます。</li>
+          <li>学校名・種類・サイズにお間違いがないかご確認ください。</li>
+          <li>在庫状況や価格は、ご注文時の表示をご確認ください。</li>
         </ul>
       </div>
     </div>
@@ -649,7 +649,7 @@
   <dialog class="yk-preview-cart-dialog" id="yk-preview-cart-dialog" aria-labelledby="yk-preview-cart-title">
     <button class="yk-dialog__close" type="button" aria-label="カートを閉じる" data-yk-preview-cart-close>&times;</button>
     <div class="yk-preview-cart-dialog__head">
-      <p>Cart preview</p>
+      <p>Cart</p>
       <h2 id="yk-preview-cart-title">カート</h2>
     </div>
     <div class="yk-preview-cart-dialog__body">
@@ -659,10 +659,10 @@
         <span>合計</span><span data-yk-preview-cart-total>¥0</span>
       </div>
       <div class="yk-preview-cart-actions">
-        <button class="yk-preview-cart-checkout" type="button" disabled>公開前のため決済は行いません</button>
+        <button class="yk-preview-cart-checkout" type="button" disabled>ご注文の確定はできません</button>
         <button class="yk-preview-cart-clear" type="button" data-yk-preview-cart-clear hidden>カートを空にする</button>
       </div>
-      <p class="yk-preview-cart-note">7月24日の確認前は下書き内だけで動きます。本番公開後はBASEの安全な決済画面へ進みます。</p>
+      <p class="yk-preview-cart-note">商品を選び直す場合は、カートを閉じて商品一覧へお戻りください。</p>
     </div>
   </dialog>
   <!-- YK_PREVIEW_COMMERCE_END -->
@@ -1133,7 +1133,7 @@
       if (lead) {
         lead.textContent = ykState.schoolType || ykState.school || ykState.specialCategory || ykState.query
           ? "選択した条件に合う商品だけを、この画面内で表示しています。"
-          : "デフォルトは学校順の全商品です。小学校・中学校・高校・園・その他の順に表示します。";
+          : "全商品を学校順に表示しています。学校区分や学校名から絞り込めます。";
       }
     }
 

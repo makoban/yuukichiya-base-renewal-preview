@@ -224,7 +224,7 @@
     if (checkout) {
       event.preventDefault();
       var status = document.querySelector("[data-cart-status]");
-      if (status) status.textContent = "下書き確認中のため決済は行いません。本番公開後はBASEの安全な決済処理へ接続します。";
+      if (status) status.textContent = "この画面ではご注文を確定できません。商品ページから購入手続きへお進みください。";
       return;
     }
 
@@ -242,7 +242,7 @@
     if (contactSend) {
       event.preventDefault();
       var contactStatus = document.querySelector("[data-contact-send-status]");
-      if (contactStatus) contactStatus.textContent = "下書き確認中のため送信されません。7月24日の確認後に送信を有効にします。";
+      if (contactStatus) contactStatus.textContent = "送信機能は現在準備中です。お急ぎの場合は店舗へお電話ください。";
     }
   });
 

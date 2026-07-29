@@ -2,8 +2,8 @@
 
 これはBASE本番へ適用する前の確認用プレビューです。
 
-- `index.html`: BASE HTML編集 Appへの移設を想定したメインプレビュー
-- `base-theme-migration-preview.html`: `index.html` と同じ内容の控え
+- `index.html`: お客様向け表示を確認するメインプレビュー
+- `base-theme-migration-preview.html`: BASE HTML編集 Appへの移設内容を確認する控え
 - `contact.html`: お問い合わせページの確認用プレビュー
 - `cart.html`: カートページの確認用プレビュー
 - `item-detail-preview.html`: 商品詳細ページの確認用プレビュー

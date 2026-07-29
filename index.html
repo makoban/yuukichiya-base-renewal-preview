@@ -4,8 +4,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>勇吉屋ネット｜学生服・学校用品を学校名で探す</title>
+  <meta name="robots" content="noindex, nofollow">
+  <title>勇吉屋ネット｜学生服・学校用品を探す</title>
   <meta name="description" content="勇吉屋ネットの学生服・学校用品オンラインショップです。学校区分と学校名から必要な商品を探して注文できます。">
+  <meta name="robots" content="noindex, nofollow">
   <meta name="BASE-Theme-Name" content="Yuukichiya School Finder">
   <meta name="BASE-Theme-Version" content="1.0">
 
@@ -39,13 +41,14 @@
 
     * { box-sizing: border-box; }
     body { margin: 0; color: var(--yk-ink); font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif; line-height: 1.7; }
+    .phrase { display: inline-block; max-width: 100%; white-space: nowrap; }
     a { color: inherit; text-decoration: none; }
     a[href^="tel:"] { white-space: nowrap; }
     img { display: block; max-width: 100%; }
     .yk-header { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.94); border-bottom: 1px solid var(--yk-line); backdrop-filter: blur(14px); }
     .yk-header__inner { display: grid; grid-template-columns: auto minmax(220px,1fr) auto; gap: 22px; align-items: center; max-width: var(--yk-content-max); min-height: 76px; margin: 0 auto; padding: 0 28px; }
-    .yk-logo .logoText { color: var(--yk-ink); font-size: 22px; font-weight: 800; letter-spacing: 0; }
-    .yk-logo .logoImage { max-height: 48px; width: auto; }
+    .yk-logo { display: inline-flex; align-items: center; min-width: 0; }
+    .yk-logo__image { width: 220px; max-width: 100%; height: auto; max-height: 58px; object-fit: contain; object-position: left center; }
     .yk-search { display: grid; grid-template-columns: 1fr auto; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #f8faf9; box-shadow: 0 8px 20px rgba(26,45,52,.06); overflow: hidden; }
     .yk-search input { min-width: 0; height: 46px; border: 0; background: transparent; padding: 0 16px; font: inherit; outline: 0; }
     .yk-search button, .yk-button { min-height: 46px; border: 0; border-radius: var(--yk-radius); background: var(--yk-main); color: #fff; padding: 0 18px; font: inherit; font-weight: 900; cursor: pointer; box-shadow: var(--yk-press); }
@@ -58,12 +61,28 @@
     .cart-badge { display: block!important; }
     .cart-qty { position: absolute; top: -6px; right: -6px; min-width: 16px; height: 16px; padding: 0 3px; border-radius: 50%; background: var(--yk-accent); color: #fff; font-size: 10px; font-weight: 800; line-height: 16px; text-align: center; }
     .yk-main { min-width: 0; }
+    .yk-site-notices { display: grid; gap: 10px; max-width: var(--yk-content-max); margin: 0 auto; padding: 14px 28px; }
+    .yk-site-notice { display: grid; grid-template-columns: auto minmax(0,1fr); gap: 14px; align-items: center; min-width: 0; padding: 13px 16px; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; box-shadow: 0 6px 16px rgba(28,45,52,.07); }
+    .yk-site-notice[hidden] { display: none; }
+    .yk-site-notice__label { display: inline-flex; align-items: center; justify-content: center; min-width: 104px; min-height: 36px; padding: 0 12px; border-radius: 4px; background: var(--yk-main); color: #fff; font-size: 12px; font-weight: 900; line-height: 1; white-space: nowrap; }
+    .yk-site-notice__body { min-width: 0; }
+    .yk-site-notice__body strong { display: block; font-size: 16px; line-height: 1.5; }
+    .yk-site-notice__body p { margin: 2px 0 0; color: var(--yk-muted); font-size: 12px; font-weight: 700; line-height: 1.6; }
+    .yk-site-notice--shipping { padding: 16px 18px; border: 2px solid var(--yk-main); background: #eaf7f0; box-shadow: 0 8px 20px rgba(25,96,67,.15); }
+    .yk-site-notice--shipping .yk-site-notice__label { min-width: 142px; background: var(--yk-main); font-size: 13px; }
+    .yk-site-notice--shipping .yk-site-notice__body strong { color: #174d38; font-size: 19px; }
+    .yk-site-notice--closure { border-color: rgba(217,80,63,.32); background: #fff6f3; }
+    .yk-site-notice--closure .yk-site-notice__label { background: var(--yk-accent); }
+    .yk-closure-periods { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 5px; }
+    .yk-closure-period { display: inline-flex; flex-wrap: wrap; gap: 2px 6px; color: #713329; font-size: 12px; font-weight: 900; }
+    .yk-closure-period span { white-space: nowrap; }
     .yk-hero { border-bottom: 1px solid var(--yk-line); background: linear-gradient(90deg, #fbfcf9 0%, #fbfcf9 52%, #edf2ef 100%); color: var(--yk-ink); }
 
-    .yk-hero { background: linear-gradient(90deg, rgba(251,252,249,.99) 0%, rgba(251,252,249,.94) 34%, rgba(251,252,249,.42) 55%, rgba(251,252,249,.06) 74%), url("assets/hero-uniform-display.png") center right / cover no-repeat; }
+    .yk-hero { background: linear-gradient(90deg, rgba(251,252,249,.99) 0%, rgba(251,252,249,.94) 34%, rgba(251,252,249,.42) 55%, rgba(251,252,249,.06) 74%), url("assets/hero-uniform-display-desktop.jpg") center right / cover no-repeat; }
 
     .yk-hero__inner { display: flex; align-items: center; max-width: var(--yk-content-max); min-height: 620px; margin: 0 auto; padding: 86px 28px 68px; }
     .yk-hero__copy { max-width: 560px; }
+    .yk-hero__mobile-visual { display: none; }
     .yk-eyebrow { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 18px; color: #1f553f; font-size: 13px; font-weight: 800; }
     .yk-eyebrow::before { display: block; width: 36px; height: 2px; background: var(--yk-accent); content: ""; }
     .yk-hero h1 { max-width: 680px; margin: 0; font-size: 60px; line-height: 1.08; letter-spacing: 0; }
@@ -74,6 +93,16 @@
     .yk-hero__button--sub[data-active="true"] { border-color: var(--yk-main); background: var(--yk-main); color: #fff; box-shadow: var(--yk-shadow); }
     .yk-hero__notes { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 0; padding: 0; list-style: none; }
     .yk-hero__notes li { display: inline-flex; align-items: center; min-height: 34px; padding: 0 12px; border: 1px solid rgba(47,125,91,.18); border-radius: 999px; background: rgba(255,255,255,.76); color: #1f553f; font-size: 12px; font-weight: 800; box-shadow: 0 8px 18px rgba(28,45,52,.07); }
+    .yk-free-shipping { max-width: var(--yk-content-max); margin: 18px auto 0; padding: 0 28px; }
+    .yk-free-shipping__inner { display: grid; grid-template-columns: minmax(280px,.72fr) minmax(360px,1.28fr); min-height: 176px; overflow: hidden; border: 2px solid rgba(47,125,91,.42); border-radius: var(--yk-radius); background: #fbfcf9; box-shadow: 0 12px 28px rgba(28,45,52,.11); }
+    .yk-free-shipping__copy { display: grid; align-content: center; gap: 6px; min-width: 0; padding: 24px 28px; background: #fbfcf9; }
+    .yk-free-shipping__label { display: inline-flex; align-items: center; justify-content: center; width: max-content; min-height: 30px; padding: 0 10px; border-radius: 4px; background: var(--yk-main); color: #fff; font-size: 12px; font-weight: 900; }
+    .yk-free-shipping strong { color: #174d38; font-size: 27px; line-height: 1.35; }
+    .yk-free-shipping p { margin: 0; color: var(--yk-muted); font-size: 13px; font-weight: 800; }
+    .yk-free-shipping picture { min-width: 0; }
+    .yk-free-shipping img { width: 100%; height: 100%; object-fit: cover; object-position: right center; }
+    .yk-free-shipping-badge { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 14px; max-width: var(--yk-content-max); min-height: 62px; margin: 0 auto 18px; padding: 12px 28px; border: 1px solid rgba(47,125,91,.32); border-radius: var(--yk-radius); background: #eef8f2; color: #174d38; font-weight: 900; text-align: center; }
+    .yk-free-shipping-badge b { display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px; border-radius: 999px; background: var(--yk-main); color: #fff; font-size: 13px; }
     .yk-section { max-width: var(--yk-content-max); margin: 0 auto; padding: 70px 28px; }
     .yk-section__head { display: flex; justify-content: space-between; align-items: end; gap: 22px; margin-bottom: 28px; }
     .yk-section h2 { margin: 0; font-size: 40px; line-height: 1.2; letter-spacing: 0; }
@@ -118,14 +147,18 @@
     .yk-products { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 12px; }
     .yk-product { position: relative; display: grid; grid-template-rows: auto 1fr; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; box-shadow: 0 6px 14px rgba(27,43,49,.07); overflow: hidden; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
     .yk-product:hover { transform: translateY(-2px); border-color: rgba(47,125,91,.4); box-shadow: 0 10px 22px rgba(27,43,49,.12); }
-    .yk-product__photo { display: block; width: 100%; aspect-ratio: 1; overflow: hidden; border: 0; background: #f7f8f8; color: inherit; cursor: pointer; }
+    .yk-product__photo { position: relative; display: block; width: 100%; aspect-ratio: 1; overflow: hidden; border: 0; background: #f7f8f8; color: inherit; cursor: pointer; }
     button.yk-product__photo { padding: 0; }
     .yk-product__photo img { width: 100%; height: 100%; object-fit: cover; transition: transform .24s ease; }
     .yk-product:hover img { transform: scale(1.025); }
-    .yk-product__body { display: grid; grid-template-rows: auto auto; gap: 7px; min-width: 0; padding: 9px; }
+    .yk-product__body { display: grid; grid-template-rows: auto auto auto; gap: 7px; min-width: 0; padding: 9px; }
     .yk-product__title { display: -webkit-box; min-height: 2.8em; overflow: hidden; font-size: 12px; font-weight: 800; line-height: 1.4; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
     .yk-product__price { font-size: 17px; font-weight: 900; }
     .yk-product__sale { color: var(--yk-accent); font-size: 12px; font-weight: 900; }
+    .yk-price-stack { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 7px; min-width: 0; min-height: 28px; }
+    .yk-price-stack del { color: #6f7a80; font-size: 12px; font-weight: 800; line-height: 1.2; white-space: nowrap; }
+    .yk-price-stack strong { color: var(--yk-ink); font-size: 17px; font-weight: 900; line-height: 1.2; white-space: nowrap; }
+    .yk-price-stack--sale strong { color: #c93729; }
     .yk-product__actions { display: grid; align-items: stretch; }
     .yk-product__button, .yk-product__detail { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 6px; border: 1px solid rgba(47,125,91,.22); border-radius: var(--yk-radius); background: #eef7f2; color: #1f553f; font: inherit; font-size: 11px; font-weight: 900; cursor: pointer; transition: background-color .18s ease, color .18s ease, transform .18s ease; }
     .yk-product__button:hover, .yk-product__button:focus-visible { background: var(--yk-main); color: #fff; }
@@ -137,9 +170,40 @@
     .yk-product[data-sold-out="true"] .yk-product__photo img { transform: none; }
     .yk-product__detail { background: #fff; color: var(--yk-ink); }
     .product-bottom { display: grid; grid-template-columns: 1fr; gap: 10px; align-items: stretch; }
+    .yk-proposal-note { display: inline-flex; align-items: center; min-height: 30px; margin: 0 0 14px; padding: 0 11px; border: 1px solid rgba(47,125,91,.22); border-radius: 999px; background: rgba(255,255,255,.9); color: #1f553f; font-size: 12px; font-weight: 900; }
+    .yk-shelf-band { border-bottom: 1px solid var(--yk-line); }
+    .yk-shelf-band--price { background: #fff8f5; }
+    .yk-shelf-band--goods { background: #f2f8f5; }
+    .yk-shelf-section { padding-top: 52px; padding-bottom: 54px; }
+    .yk-shelf-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
+    .yk-shelf-heading { min-width: 0; }
+    .yk-shelf-heading h2 { display: flex; align-items: center; gap: 10px; font-size: 32px; }
+    .yk-shelf-heading h2::before { width: 7px; height: 30px; border-radius: 2px; background: var(--yk-accent); content: ""; }
+    .yk-shelf-band--goods .yk-shelf-heading h2::before { background: var(--yk-main); }
+    .yk-shelf-heading p { margin: 7px 0 0; color: var(--yk-muted); font-size: 14px; font-weight: 700; }
+    .yk-shelf-toolbar { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; }
+    .yk-shelf-sort { display: inline-flex; align-items: center; gap: 7px; min-height: 42px; padding: 0 10px; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; color: var(--yk-muted); font-size: 12px; font-weight: 900; box-shadow: 0 6px 16px rgba(28,45,52,.06); }
+    .yk-shelf-sort select { min-height: 34px; border: 0; background: transparent; color: var(--yk-ink); font: inherit; font-weight: 900; outline: 0; }
+    .yk-shelf-nav { display: flex; gap: 6px; }
+    .yk-shelf-nav button { display: grid; width: 42px; height: 42px; padding: 0; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; color: var(--yk-ink); font: inherit; font-size: 25px; line-height: 1; cursor: pointer; box-shadow: 0 6px 16px rgba(28,45,52,.06); place-items: center; }
+    .yk-shelf-nav button:hover,.yk-shelf-nav button:focus-visible { border-color: var(--yk-main); color: var(--yk-main); }
+    .yk-shelf-viewport { min-width: 0; overflow: hidden; }
+    .yk-shelf-track { display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - 60px) / 6); gap: 12px; padding: 2px 2px 14px; overflow-x: auto; overscroll-behavior-inline: contain; scroll-behavior: smooth; scroll-snap-type: inline mandatory; scrollbar-color: rgba(47,125,91,.42) transparent; scrollbar-width: thin; }
+    .yk-shelf-card { min-width: 0; overflow: hidden; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; box-shadow: 0 6px 14px rgba(27,43,49,.07); scroll-snap-align: start; }
+    .yk-shelf-card__link { display: grid; grid-template-rows: auto 38px 44px; height: 100%; }
+    .yk-shelf-card__image { position: relative; width: 100%; aspect-ratio: 1; overflow: hidden; background: #f7f8f8; }
+    .yk-shelf-card__image img { width: 100%; height: 100%; object-fit: cover; transition: transform .2s ease; }
+    .yk-shelf-card:hover .yk-shelf-card__image img { transform: scale(1.025); }
+    .yk-shelf-card__title { display: block; min-width: 0; padding: 9px; overflow: hidden; color: var(--yk-ink); font-size: 12px; font-weight: 800; line-height: 20px; text-overflow: ellipsis; white-space: nowrap; }
+    .yk-shelf-card__pricing { display: flex; align-items: center; min-width: 0; padding: 0 9px 8px; }
+    .yk-product-badge { position: absolute; z-index: 2; top: 8px; left: 8px; display: inline-flex; align-items: center; justify-content: center; min-width: 48px; min-height: 26px; padding: 3px 9px; border-radius: 4px; color: #fff; font-size: 11px; font-weight: 900; line-height: 1; letter-spacing: 0; white-space: nowrap; pointer-events: none; }
+    .yk-sale-badge { background: #d94232; box-shadow: 0 3px 10px rgba(88,20,14,.25); }
+    .yk-new-badge { background: #2474a8; box-shadow: 0 3px 10px rgba(16,62,92,.25); }
+    .yk-shelf-count { margin: 8px 0 0; color: var(--yk-muted); font-size: 12px; font-weight: 800; }
     .yk-pickup { background: #f5fbf8; border-top: 1px solid var(--yk-line); border-bottom: 1px solid var(--yk-line); }
     .yk-pickup__image { display: flex; align-items: center; justify-content: center; max-width: var(--yk-content-max); margin: 0 auto; padding: 42px 28px; }
-    .yk-pickup__image img { width: 100%; height: auto; border-radius: var(--yk-radius); object-fit: contain; box-shadow: 0 16px 34px rgba(28,45,52,.12); }
+    .yk-pickup__image picture { display: block; width: 100%; }
+    .yk-pickup__image img { width: 100%; height: auto; border-radius: var(--yk-radius); object-fit: contain; box-shadow: 0 16px 34px rgba(28,45,52,.12); cursor: zoom-in; }
     .yk-store-band { background: #f7f6f1; border-top: 1px solid var(--yk-line); }
     .yk-store-head { display: grid; grid-template-columns: minmax(160px,260px) 1fr; gap: 28px; align-items: end; margin-bottom: 28px; }
     .yk-store-eyebrow { margin: 0; color: var(--yk-main); font-size: 13px; font-weight: 900; line-height: 1.4; text-transform: uppercase; }
@@ -241,6 +305,9 @@
     .yk-preview-item-dialog__eyebrow { margin: 0; color: var(--yk-main); font-size: 12px; font-weight: 900; }
     .yk-preview-item-dialog__title { margin: 0; padding-right: 30px; font-size: 30px; line-height: 1.35; text-wrap: pretty; }
     .yk-preview-item-dialog__price { margin: 0; font-size: 28px; font-weight: 900; }
+    .yk-preview-item-dialog__price .yk-price-stack { min-height: 0; }
+    .yk-preview-item-dialog__price .yk-price-stack del { font-size: 15px; }
+    .yk-preview-item-dialog__price .yk-price-stack strong { font-size: 28px; }
     .yk-preview-item-dialog__lead { margin: 0; color: var(--yk-muted); font-size: 13px; font-weight: 800; }
     .yk-preview-purchase { display: grid; gap: 14px; margin-top: 8px; padding: 20px; border: 1px solid rgba(47,125,91,.22); border-radius: var(--yk-radius); background: #fff; box-shadow: var(--yk-shadow); }
     .yk-preview-purchase h3 { margin: 0; font-size: 20px; line-height: 1.4; }
@@ -272,6 +339,8 @@
     :where(a,button,input,select,textarea,summary):focus-visible { outline: 3px solid rgba(47,125,91,.36); outline-offset: 3px; }
     .yk-footer { background: #1f2527; color: #fff; }
     .yk-footer__inner { display: grid; grid-template-columns: minmax(0,1.35fr) minmax(240px,.65fr); gap: 48px; max-width: var(--yk-content-max); margin: 0 auto; padding: 48px 28px; }
+    .yk-footer-brand { display: inline-flex; align-items: center; max-width: 100%; margin-bottom: 18px; padding: 9px 12px; border-radius: var(--yk-radius); background: #fff; }
+    .yk-footer-brand img { width: min(300px,100%); height: auto; }
     .yk-footer p, .yk-footer li { color: rgba(255,255,255,.72); font-size: 14px; font-weight: 700; }
     .yk-footer ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
     @media (max-width: 920px) {
@@ -304,6 +373,9 @@
       .yk-products { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; }
       .yk-product__body { gap: 6px; padding: 7px; }
       .yk-product__title { min-height: 2.8em; font-size: 11px; }
+      .yk-product__body .yk-price-stack { display: grid; align-content: start; gap: 0; min-height: 32px; }
+      .yk-product__body .yk-price-stack del { font-size: 10px; }
+      .yk-product__body .yk-price-stack strong { font-size: 15px; }
       .yk-product__button { min-height: 44px; padding: 4px; font-size: 10px; }
       .yk-store-head { gap: 8px; margin-bottom: 22px; }
       .yk-store-head h2 { font-size: 30px; }
@@ -337,6 +409,7 @@
       .yk-preview-item-dialog__body { padding: 24px 18px 22px; }
       .yk-preview-item-dialog__title { font-size: 23px; }
       .yk-preview-item-dialog__price { font-size: 24px; }
+      .yk-preview-item-dialog__price .yk-price-stack strong { font-size: 24px; }
       .yk-preview-purchase { padding: 17px; }
       .yk-preview-cart-dialog__head { padding: 28px 64px 20px 20px; }
       .yk-preview-cart-dialog__head h2 { font-size: 25px; }
@@ -435,12 +508,18 @@
     .yk-preview-item-dialog__guide li { font-size: 11px; }
     @media (max-width: 560px) {
       :where(.yk-section[id],.yk-store-band[id],.yk-pickup[id]) { scroll-margin-top: 116px; }
-      .yk-hero { position: relative; }
-      .yk-hero::before { position: absolute; z-index: 0; inset: 0; background: linear-gradient(180deg,rgba(251,252,249,.97) 0%,rgba(251,252,249,.9) 48%,rgba(251,252,249,.46) 68%,rgba(251,252,249,0) 84%); content: ""; pointer-events: none; }
+      .yk-hero { position: relative; background: #f5f8f6; }
+      .yk-hero::before { display: none; }
       .yk-hero__inner { position: relative; z-index: 1; }
       .yk-header__inner,.yk-hero__inner,.yk-section,.yk-page-hero__inner,.yk-page-section,.yk-footer__inner { padding-right: clamp(14px,4.5vw,18px); padding-left: clamp(14px,4.5vw,18px); }
+      .yk-free-shipping { padding-right: clamp(14px,4.5vw,18px); padding-left: clamp(14px,4.5vw,18px); }
+      .yk-free-shipping__inner { grid-template-columns: 1fr; }
+      .yk-free-shipping__copy { padding: 20px; }
+      .yk-free-shipping strong { font-size: 22px; }
+      .yk-free-shipping picture { aspect-ratio: 16 / 7; }
+      .yk-free-shipping-badge { margin-right: clamp(14px,4.5vw,18px); margin-left: clamp(14px,4.5vw,18px); padding-right: 14px; padding-left: 14px; }
       .yk-header__inner { grid-template-columns: minmax(0,1fr); gap: 10px; }
-      .yk-logo .logoText { font-size: 20px; white-space: nowrap; }
+      .yk-logo__image { width: min(220px,68vw); max-height: 48px; }
       .yk-nav { grid-template-columns: .7fr 1.15fr 1.25fr .75fr; gap: 4px; font-size: 11px; }
       .yk-nav > [data-yk-preview-cart-open] { gap: 3px; padding-right: 2px; padding-left: 2px; }
       .yk-nav .yk-cart-count { flex: 0 0 auto; min-width: 17px; height: 17px; margin-left: 0; padding: 0 4px; font-size: 10px; }
@@ -449,8 +528,35 @@
       .yk-nav #baseMenu .base,.yk-nav #baseMenu li:first-child { display: none; }
       .yk-nav #baseMenu img { height: 20px; }
       .yk-search,.yk-search input { width: 100%; }
+      .yk-site-notices { padding: 10px 14px; }
+      .yk-site-notice { grid-template-columns: minmax(0,1fr); gap: 7px; padding: 11px 12px; }
+      .yk-site-notice__label { justify-self: start; min-width: 0; min-height: 26px; padding: 0 8px; font-size: 10px; }
+      .yk-site-notice__body strong { font-size: 14px; }
+      .yk-site-notice__body p { font-size: 11px; }
+      .yk-site-notice--shipping { padding: 13px 12px; }
+      .yk-site-notice--shipping .yk-site-notice__label { min-width: 0; font-size: 11px; }
+      .yk-site-notice--shipping .yk-site-notice__body strong { font-size: 16px; }
+      .yk-closure-periods { display: grid; gap: 3px; }
+      .yk-closure-period { font-size: 11px; }
       .yk-hero__actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); width: 100%; }
       .yk-hero__actions .yk-hero__button:first-child { grid-column: 1 / -1; }
+      .yk-hero__inner { min-height: 0; padding-top: 20px; padding-bottom: 34px; }
+      .yk-hero__copy { width: 100%; max-width: none; }
+      .yk-hero__mobile-visual { display: block; width: 100%; aspect-ratio: 16 / 9; margin: 0 0 20px; overflow: hidden; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #eef3f0 url("assets/hero-uniform-display-mobile.jpg") center / cover no-repeat; box-shadow: 0 12px 28px rgba(28,45,52,.13); }
+      .yk-shelf-section { padding-top: 34px; padding-bottom: 36px; }
+      .yk-shelf-head { align-items: stretch; flex-direction: column; gap: 14px; margin-bottom: 14px; }
+      .yk-shelf-heading h2 { font-size: 25px; }
+      .yk-shelf-heading h2::before { height: 25px; }
+      .yk-shelf-heading p { font-size: 12px; }
+      .yk-shelf-toolbar { justify-content: space-between; }
+      .yk-shelf-track { grid-auto-columns: calc((100% - 16px) / 3); gap: 8px; padding-bottom: 10px; }
+      .yk-shelf-card__link { grid-template-rows: auto 32px 44px; }
+      .yk-shelf-card__title { padding: 6px; font-size: 10px; line-height: 20px; }
+      .yk-shelf-card__pricing { align-items: start; padding: 0 6px 5px; }
+      .yk-shelf-card__pricing .yk-price-stack { display: grid; align-content: start; gap: 0; min-height: 0; }
+      .yk-shelf-card__pricing .yk-price-stack del { font-size: 9px; }
+      .yk-shelf-card__pricing .yk-price-stack strong { font-size: 14px; }
+      .yk-product-badge { top: 5px; left: 5px; min-width: 38px; min-height: 21px; padding: 2px 6px; font-size: 9px; }
       .yk-hero h1,.yk-page-hero h1 { font-size: 34px; }
       .yk-section h2,.yk-section-head h2,.yk-empty-cart h2,.yk-item h1 { font-size: 28px; }
       .yk-school-tabs { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 5px; overflow: visible; }
@@ -459,8 +565,9 @@
       .yk-feature__body { padding: 11px 12px 13px; }
       .yk-feature b { margin-bottom: 5px; font-size: 15px; line-height: 1.4; }
       .yk-feature p { font-size: 11px; line-height: 1.65; }
-      .yk-pickup__image,.yk-payment-image { width: min(82vw,320px); }
-      .yk-pickup__image { padding: 16px 0; }
+      .yk-pickup__image,.yk-payment-image { width: 100%; }
+      .yk-pickup__image { padding: 18px 0 22px; }
+      .yk-pickup__image img { border-radius: 0; }
       .yk-store-gallery { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin: 0 0 14px; }
       .yk-has-mobile-gallery > .yk-card > img,.yk-has-mobile-gallery > .yk-store-card > img { display: none; }
       .yk-store-card dl { grid-template-columns: minmax(72px,auto) minmax(0,1fr); }
@@ -508,6 +615,8 @@
       .yk-preview-item-dialog__eyebrow { display: none; }
       .yk-preview-item-dialog__title { padding-right: 34px; font-size: 19px; line-height: 1.25; }
       .yk-preview-item-dialog__price { font-size: 21px; line-height: 1.25; }
+      .yk-preview-item-dialog__price .yk-price-stack del { font-size: 12px; }
+      .yk-preview-item-dialog__price .yk-price-stack strong { font-size: 21px; }
       .yk-preview-item-dialog__lead { font-size: 10px; line-height: 1.45; }
       .yk-preview-purchase { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; margin: 0; padding: 9px; }
       .yk-preview-purchase h3,
@@ -522,13 +631,14 @@
     }
     @media (max-width: 360px) {
       .yk-header__inner,.yk-hero__inner,.yk-section,.yk-page-hero__inner,.yk-page-section,.yk-footer__inner { padding-right: 14px; padding-left: 14px; }
+      .yk-free-shipping { padding-right: 14px; padding-left: 14px; }
       .yk-nav { gap: 6px; }
       .yk-hero__actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); width: 100%; }
       .yk-page-actions { display: grid; grid-template-columns: 1fr; width: 100%; }
       .yk-hero__button,.yk-page-actions .yk-button,.yk-sort-control { width: 100%; }
       .yk-hero__button { padding-right: 8px; padding-left: 8px; font-size: 13px; }
       .yk-hero h1,.yk-page-hero h1 { font-size: 30px; }
-      .yk-logo .logoText { font-size: 19px; }
+      .yk-logo__image { width: min(206px,68vw); }
       .yk-school-tab { font-size: 12px; }
     }
   </style>
@@ -538,7 +648,9 @@
 <body>
   <header class="yk-header">
     <div class="yk-header__inner">
-      <a class="yk-logo" href="#top"><span class="logoText">勇吉屋ネット</span></a>
+      <a class="yk-logo" href="#top" aria-label="勇吉屋ネット TOP">
+        <img class="yk-logo__image" src="assets/yuukichiya-logo.png" width="720" height="217" alt="勇吉屋">
+      </a>
 
       <form class="yk-search" action="#yk-results" method="get" id="yk-site-search">
         <input id="yk-header-query" type="search" name="q" placeholder="学校名・商品名で探す" value="">
@@ -556,33 +668,100 @@
 
   <main class="yk-main" id="top">
 
-
-
     <section class="yk-hero">
       <div class="yk-hero__inner">
         <div class="yk-hero__copy">
+          <figure class="yk-hero__mobile-visual" role="img" aria-label="学生服・体操服・学用品をそろえた売場"></figure>
           <p class="yk-eyebrow">豊田市の学生服・学校用品店</p>
-          <h1>学生服・通学用品を学校名で探す。</h1>
-          <p>学校指定の制服・体操服・バッグ・シューズを、学校名から探して注文できます。サイズや指定品で迷ったら店舗までご相談ください。</p>
+          <h1><span class="phrase">必要な商品を、</span><span class="phrase">すぐに探せます。</span></h1>
+          <p><span class="phrase">お買い得品、よく使う学用品、</span><span class="phrase">学校指定品から、</span><span class="phrase">目的に合わせてお選びいただけます。</span></p>
           <div class="yk-hero__actions">
+            <a class="yk-hero__button yk-hero__button--sub" href="#yk-price-down">プライスダウン</a>
+            <a class="yk-hero__button yk-hero__button--sub" href="#yk-school-goods">学用品</a>
             <a class="yk-hero__button yk-hero__button--sub" href="#yk-categories" data-school-filter-trigger data-active="false" aria-pressed="false">学校名で探す</a>
-            <button class="yk-hero__button yk-hero__button--sub" type="button" data-special-category="priceDown" data-special-category-label="プライスダウン" data-active="false" aria-pressed="false">プライスダウン</button>
-            <button class="yk-hero__button yk-hero__button--sub" type="button" data-special-category="commuting" data-special-category-label="学用品" data-active="false" aria-pressed="false">学用品</button>
           </div>
           <ul class="yk-hero__notes">
             <li>豊田市の学生衣料専門店</li>
-            <li>制服・体操服・通学用品</li>
+            <li>制服・体操服・学用品</li>
             <li>店舗相談も可能</li>
           </ul>
         </div>
       </div>
     </section>
 
+    <aside class="yk-free-shipping" aria-label="送料無料のご案内">
+      <div class="yk-free-shipping__inner">
+        <div class="yk-free-shipping__copy">
+          <span class="yk-free-shipping__label">送料がお得</span>
+          <strong><span class="phrase">5,000円以上の</span><span class="phrase">お買い上げで送料無料</span></strong>
+          <p><span class="phrase">1回のご注文金額が</span><span class="phrase">5,000円以上になると、</span><span class="phrase">送料が無料になります。</span></p>
+        </div>
+        <picture>
+          <source media="(max-width: 680px)" srcset="assets/free-shipping-illustration-gpt-image-mobile.jpg">
+          <img src="assets/free-shipping-illustration-gpt-image.jpg" width="1800" height="600" alt="配送箱、通学バッグ、学生服と配送車のイメージ" loading="lazy" decoding="async">
+        </picture>
+      </div>
+    </aside>
+
+    <div class="yk-shelf-band yk-shelf-band--price" id="yk-price-down">
+      <section class="yk-section yk-shelf-section">
+        <div class="yk-shelf-head">
+          <div class="yk-shelf-heading">
+            <h2>プライスダウン</h2>
+            <p><span class="phrase">お買い得になった商品を、</span><span class="phrase">横にスライドしてまとめて確認できます。</span></p>
+            <p class="yk-shelf-count" data-shelf-count="priceDown"></p>
+          </div>
+          <div class="yk-shelf-toolbar">
+            <label class="yk-shelf-sort">並び替え
+              <select data-shelf-sort="priceDown" aria-label="プライスダウン商品の並び替え">
+                <option value="new">新着順</option>
+                <option value="popular">売れている順</option>
+              </select>
+            </label>
+            <div class="yk-shelf-nav" aria-label="プライスダウン商品を横に移動">
+              <button type="button" data-shelf-scroll="priceDown" data-direction="-1" aria-label="前の商品を見る" title="前の商品を見る">‹</button>
+              <button type="button" data-shelf-scroll="priceDown" data-direction="1" aria-label="次の商品を見る" title="次の商品を見る">›</button>
+            </div>
+          </div>
+        </div>
+        <div class="yk-shelf-viewport">
+          <div class="yk-shelf-track" id="yk-shelf-priceDown" aria-live="polite"></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="yk-shelf-band yk-shelf-band--goods" id="yk-school-goods">
+      <section class="yk-section yk-shelf-section">
+        <div class="yk-shelf-head">
+          <div class="yk-shelf-heading">
+            <h2>学用品</h2>
+            <p><span class="phrase">水着、帽子、シューズ、バッグなど、</span><span class="phrase">学校生活で使う商品を、</span><span class="phrase">まとめて確認できます。</span></p>
+            <p class="yk-shelf-count" data-shelf-count="commuting"></p>
+          </div>
+          <div class="yk-shelf-toolbar">
+            <label class="yk-shelf-sort">並び替え
+              <select data-shelf-sort="commuting" aria-label="学用品の並び替え">
+                <option value="new">新着順</option>
+                <option value="popular">売れている順</option>
+              </select>
+            </label>
+            <div class="yk-shelf-nav" aria-label="学用品を横に移動">
+              <button type="button" data-shelf-scroll="commuting" data-direction="-1" aria-label="前の商品を見る" title="前の商品を見る">‹</button>
+              <button type="button" data-shelf-scroll="commuting" data-direction="1" aria-label="次の商品を見る" title="次の商品を見る">›</button>
+            </div>
+          </div>
+        </div>
+        <div class="yk-shelf-viewport">
+          <div class="yk-shelf-track" id="yk-shelf-commuting" aria-live="polite"></div>
+        </div>
+      </section>
+    </div>
+
     <section class="yk-section" id="yk-categories">
       <div class="yk-section__head">
         <div>
           <h2>学校名で探す</h2>
-          <p class="yk-section__lead">学校区分または学校名を選ぶと、該当する商品だけをこの画面内に表示します。</p>
+          <p class="yk-section__lead"><span class="phrase">学校区分または学校名を選ぶと、</span><span class="phrase">該当する商品だけを表示します。</span></p>
         </div>
       </div>
       <div class="yk-school-panel">
@@ -691,7 +870,7 @@
       <div class="yk-section__head yk-results-head">
         <div>
           <h2>検索結果</h2>
-          <p class="yk-section__lead" id="yk-result-lead">デフォルトは学校順の全商品です。小学校・中学校・高校・園・その他の順に表示します。</p>
+          <p class="yk-section__lead" id="yk-result-lead">全商品を学校順に表示しています。学校区分や学校名から絞り込めます。</p>
           <div class="yk-result-tags" id="yk-active-filters" aria-live="polite"></div>
         </div>
         <div class="yk-result-toolbar">
@@ -700,6 +879,7 @@
               <option value="school">学校順</option>
               <option value="recommended">おすすめ順</option>
               <option value="new">新着順</option>
+              <option value="price-low">価格の安い順</option>
             </select>
           </label>
           <button class="yk-link yk-link--sub" type="button" data-show-all>全商品表示</button>
@@ -709,11 +889,11 @@
       <div class="yk-products" id="products">
                 <article class="yk-product">
           <a class="yk-product__photo" href="https://yuukichiya.base.shop/items/137799376"><img src="https://baseec-img-mng.akamaized.net/images/item/origin/6ba4e8851d064705fde61bb92124e7b1.jpg?imformat=generic&amp;q=90&amp;im=Resize,width=640,type=normal" alt="遮熱赤白帽子 M/L" loading="lazy" decoding="async"></a>
-          <div class="yk-product__body"><div class="yk-product__sale">通学用品 / 2種類</div><div class="yk-product__title">遮熱赤白帽子 M/L</div><div class="product-bottom"><span class="yk-product__price">¥980</span><a class="yk-product__button" href="https://yuukichiya.base.shop/items/137799376">商品を見る</a></div></div>
+          <div class="yk-product__body"><div class="yk-product__sale">学用品 / 2種類</div><div class="yk-product__title">遮熱赤白帽子 M/L</div><div class="product-bottom"><span class="yk-product__price">¥980</span><a class="yk-product__button" href="https://yuukichiya.base.shop/items/137799376">商品を見る</a></div></div>
         </article>
         <article class="yk-product">
           <a class="yk-product__photo" href="https://yuukichiya.base.shop/items/137799545"><img src="https://baseec-img-mng.akamaized.net/images/item/origin/07ab116c1472dd6130bb6cc1727f3ef2.jpg?imformat=generic&amp;q=90&amp;im=Resize,width=640,type=normal" alt="遮熱赤白帽子 LL" loading="lazy" decoding="async"></a>
-          <div class="yk-product__body"><div class="yk-product__sale">通学用品</div><div class="yk-product__title">遮熱赤白帽子 LL</div><div class="product-bottom"><span class="yk-product__price">¥1,030</span><a class="yk-product__button" href="https://yuukichiya.base.shop/items/137799545">商品を見る</a></div></div>
+          <div class="yk-product__body"><div class="yk-product__sale">学用品</div><div class="yk-product__title">遮熱赤白帽子 LL</div><div class="product-bottom"><span class="yk-product__price">¥1,030</span><a class="yk-product__button" href="https://yuukichiya.base.shop/items/137799545">商品を見る</a></div></div>
         </article>
         <article class="yk-product">
           <a class="yk-product__photo" href="https://yuukichiya.base.shop/items/149346499"><img src="https://baseec-img-mng.akamaized.net/images/item/origin/8ce4f01a4cae7ac46adae298f5f74844.jpg?imformat=generic&amp;q=90&amp;im=Resize,width=640,type=normal" alt="旧タイプ　 南天白中　ジャージ上衣" loading="lazy" decoding="async"></a>
@@ -725,7 +905,7 @@
         </article>
         <article class="yk-product">
           <a class="yk-product__photo" href="https://yuukichiya.base.shop/items/149345597"><img src="https://baseec-img-mng.akamaized.net/images/item/origin/b14a35f5c82fb546127c0d09c48f63ed.jpg?imformat=generic&amp;q=90&amp;im=Resize,width=640,type=normal" alt="セパレート水着　Lサイズ　1点物" loading="lazy" decoding="async"></a>
-          <div class="yk-product__body"><div class="yk-product__sale">通学用品</div><div class="yk-product__title">セパレート水着　Lサイズ　1点物</div><div class="product-bottom"><span class="yk-product__price">¥1,980</span><a class="yk-product__button" href="https://yuukichiya.base.shop/items/149345597">商品を見る</a></div></div>
+          <div class="yk-product__body"><div class="yk-product__sale">学用品</div><div class="yk-product__title">セパレート水着　Lサイズ　1点物</div><div class="product-bottom"><span class="yk-product__price">¥1,980</span><a class="yk-product__button" href="https://yuukichiya.base.shop/items/149345597">商品を見る</a></div></div>
         </article>
         <article class="yk-product">
           <a class="yk-product__photo" href="https://yuukichiya.base.shop/items/149345486"><img src="https://baseec-img-mng.akamaized.net/images/item/origin/b2989dc3fcee20f8af02133a5a98fccb.jpg?imformat=generic&amp;q=90&amp;im=Resize,width=640,type=normal" alt="旧タイプ　 鶴城中　ジャージ上下セット　Ｌサイズ" loading="lazy" decoding="async"></a>
@@ -793,11 +973,11 @@
         </article>
         <article class="yk-product">
           <a class="yk-product__photo" href="https://yuukichiya.base.shop/items/74982449"><img src="https://baseec-img-mng.akamaized.net/images/item/origin/d1da9f21399e4082be7638ba9c6747f8.jpg?imformat=generic&amp;q=90&amp;im=Resize,width=640,type=normal" alt="女子水着　パット付きワンピース" loading="lazy" decoding="async"></a>
-          <div class="yk-product__body"><div class="yk-product__sale">通学用品 / 7種類</div><div class="yk-product__title">女子水着　パット付きワンピース</div><div class="product-bottom"><span class="yk-product__price">¥1,600</span><a class="yk-product__button" href="https://yuukichiya.base.shop/items/74982449">商品を見る</a></div></div>
+          <div class="yk-product__body"><div class="yk-product__sale">学用品 / 7種類</div><div class="yk-product__title">女子水着　パット付きワンピース</div><div class="product-bottom"><span class="yk-product__price">¥1,600</span><a class="yk-product__button" href="https://yuukichiya.base.shop/items/74982449">商品を見る</a></div></div>
         </article>
         <article class="yk-product">
           <a class="yk-product__photo" href="https://yuukichiya.base.shop/items/144607714"><img src="https://baseec-img-mng.akamaized.net/images/item/origin/cc4f0379ad25fd12e9fd259a65a38b5e.jpg?imformat=generic&amp;q=90&amp;im=Resize,width=640,type=normal" alt="競泳用男子水着" loading="lazy" decoding="async"></a>
-          <div class="yk-product__body"><div class="yk-product__sale">通学用品 / 7種類</div><div class="yk-product__title">競泳用男子水着</div><div class="product-bottom"><span class="yk-product__price">¥1,100</span><a class="yk-product__button" href="https://yuukichiya.base.shop/items/144607714">商品を見る</a></div></div>
+          <div class="yk-product__body"><div class="yk-product__sale">学用品 / 7種類</div><div class="yk-product__title">競泳用男子水着</div><div class="product-bottom"><span class="yk-product__price">¥1,100</span><a class="yk-product__button" href="https://yuukichiya.base.shop/items/144607714">商品を見る</a></div></div>
         </article>
         <article class="yk-product">
           <a class="yk-product__photo" href="https://yuukichiya.base.shop/items/100352421"><img src="https://baseec-img-mng.akamaized.net/images/item/origin/5c7f1914ebc38f425a350507abee37d4.jpg?imformat=generic&amp;q=90&amp;im=Resize,width=640,type=normal" alt="濃紺　ハーフパンツ　ナンバー17　付き" loading="lazy" decoding="async"></a>
@@ -813,7 +993,7 @@
     <div class="yk-feature-band" id="yk-feature-image">
       <section class="yk-section">
         <div class="yk-feature-grid">
-          <article class="yk-feature"><figure class="yk-feature__image"><img src="assets/feature-school-items-gpt-image2-v2.jpg" alt="制服・体操服・通学用品の学校指定品" loading="lazy" decoding="async"></figure><div class="yk-feature__body"><b>学校指定品に対応</b><p>学校ごとに必要な制服・体操服・通学用品を探せます。</p></div></article>
+          <article class="yk-feature"><figure class="yk-feature__image"><img src="assets/feature-school-items-gpt-image2-v2.jpg" alt="制服・体操服・学用品の学校指定品" loading="lazy" decoding="async"></figure><div class="yk-feature__body"><b>学校指定品に対応</b><p>学校ごとに必要な制服・体操服・学用品を探せます。</p></div></article>
           <article class="yk-feature"><figure class="yk-feature__image"><img src="assets/feature-store-consultation-gpt-image2-v2.jpg" alt="店舗で制服の採寸とサイズ相談をする様子" loading="lazy" decoding="async"></figure><div class="yk-feature__body"><b>店舗でも相談OK</b><p>サイズや指定品で迷ったときは、本店・髙橋店でご相談いただけます。</p></div></article>
           <article class="yk-feature"><figure class="yk-feature__image"><img src="assets/feature-seasonal-supplies-gpt-image2-v2.jpg" alt="水着・赤白帽子・雨具などの季節用品" loading="lazy" decoding="async"></figure><div class="yk-feature__body"><b>季節用品も掲載</b><p>水着用品、赤白帽子など、時期に必要な用品も探せます。</p></div></article>
           <article class="yk-feature"><figure class="yk-feature__image"><img src="assets/feature-smartphone-search-gpt-image2-v2.jpg" alt="スマホで制服・学校用品を探す親子" loading="lazy" decoding="async"></figure><div class="yk-feature__body"><b>スマホで探しやすい</b><p>外出先からでも学校名を選んで、必要な商品へ進めます。</p></div></article>
@@ -821,10 +1001,36 @@
       </section>
     </div>
 
+    <div class="yk-free-shipping-badge" aria-label="送料無料のご案内">
+      <b>送料無料</b>
+      <span>5,000円以上のお買い上げが対象です。</span>
+    </div>
+
+    <section class="yk-site-notices" aria-label="発送と営業日のお知らせ">
+      <div class="yk-site-notice yk-site-notice--closure" data-yk-major-closure hidden>
+        <span class="yk-site-notice__label">営業日のお知らせ</span>
+        <div class="yk-site-notice__body">
+          <strong>長期休暇期間中も、ご注文いただけます。</strong>
+          <div class="yk-closure-periods" data-yk-major-closure-periods aria-live="polite"></div>
+          <p>商品の発送は、休業明けの営業日から順次対応いたします。</p>
+        </div>
+      </div>
+      <div class="yk-site-notice yk-site-notice--shipping">
+        <span class="yk-site-notice__label">12時まで当日発送</span>
+        <div class="yk-site-notice__body">
+          <strong><span class="phrase">営業日の12時までのご注文は、</span><span class="phrase">当日発送します。</span></strong>
+          <p>12時以降および休業日のご注文は、翌営業日以降の発送となります。</p>
+        </div>
+      </div>
+    </section>
+
 
       <section class="yk-pickup" id="yk-notice" aria-label="お支払い方法">
         <figure class="yk-pickup__image">
-          <img src="assets/payment-methods-gpt-image2-aligned-20260724.jpg" alt="PAY IDあと払い、クレジットカード、PayPay、キャリア決済、銀行振込、コンビニ決済またはPay-easyのお支払い方法一覧" loading="lazy" decoding="async">
+          <picture>
+            <source media="(max-width: 560px)" srcset="assets/payment-methods-mobile.jpg">
+            <img src="assets/payment-methods-gpt-image2-aligned-20260724.jpg" width="1672" height="939" alt="PAY IDあと払い、クレジットカード、PayPay、キャリア決済、銀行振込、コンビニ決済またはPay-easyのお支払い方法一覧" loading="lazy" decoding="async">
+          </picture>
         </figure>
       </section>
 
@@ -841,7 +1047,7 @@
         <div class="yk-store-grid">
           <article class="yk-store-card">
 
-            <img src="assets/store-main-shops-hp.jpg" alt="新HPで使用している勇吉屋 本店の店舗イメージ" loading="lazy" decoding="async">
+            <img src="assets/store-main-shops-hp.jpg" alt="勇吉屋 本店の外観" loading="lazy" decoding="async">
 
             <div class="yk-store-card__body">
               <h3>勇吉屋 本店</h3>
@@ -858,7 +1064,7 @@
           </article>
           <article class="yk-store-card">
 
-            <img src="assets/store-takahashi-shops-hp.jpg" alt="新HPで使用している勇吉屋 髙橋店の店舗イメージ" loading="lazy" decoding="async">
+            <img src="assets/store-takahashi-shops-hp.jpg" alt="勇吉屋 髙橋店の外観" loading="lazy" decoding="async">
 
             <div class="yk-store-card__body">
               <h3>勇吉屋 髙橋店</h3>
@@ -903,7 +1109,9 @@
   <footer class="yk-footer">
     <div class="yk-footer__inner">
       <div>
-        <h2>勇吉屋ネット</h2>
+        <div class="yk-footer-brand">
+          <img src="assets/yuukichiya-logo.png" width="720" height="217" alt="勇吉屋">
+        </div>
         <p>豊田市で創業78年の学生衣料品販売専門店。学校用品のご注文と店舗相談に対応しています。</p>
       </div>
       <div>
@@ -911,8 +1119,8 @@
         <ul>
           <li><a href="#yk-stores">店舗について</a></li>
           <li><a href="contact.html">お問い合わせ</a></li>
-          <li><a href="#yk-notice">プライバシーポリシー</a></li>
-          <li><a href="#yk-notice">特定商取引法に基づく表記</a></li>
+          <li><a href="privacy.html">個人情報の取扱い</a></li>
+          <li><a href="https://yuukichiya.base.shop/law" target="_blank" rel="noopener noreferrer">特定商取引法に基づく表記</a></li>
         </ul>
       </div>
     </div>
@@ -922,14 +1130,14 @@
     <button class="yk-dialog__close" type="button" aria-label="商品詳細を閉じる" data-yk-preview-item-close>&times;</button>
     <div class="yk-preview-item-dialog__layout">
       <div class="yk-preview-item-dialog__visual">
-        <span class="yk-preview-badge">BASE下書き確認用</span>
+        <span class="yk-preview-badge">商品詳細</span>
         <img class="yk-preview-item-dialog__image" src="" alt="" data-yk-preview-item-image>
       </div>
       <div class="yk-preview-item-dialog__body">
         <p class="yk-preview-item-dialog__eyebrow">Item details</p>
         <h2 class="yk-preview-item-dialog__title" id="yk-preview-item-title" data-yk-preview-item-title></h2>
         <p class="yk-preview-item-dialog__price" data-yk-preview-item-price></p>
-        <p class="yk-preview-item-dialog__lead">商品の種類・サイズと数量を選んで、確認用カートへ追加できます。</p>
+        <p class="yk-preview-item-dialog__lead">商品の種類・サイズと数量を選んで、カートへ追加できます。</p>
         <div class="yk-preview-purchase">
           <h3>種類・サイズを選ぶ</h3>
           <label>種類・サイズ
@@ -945,8 +1153,8 @@
           <p class="yk-preview-purchase__status" data-yk-preview-item-status aria-live="polite"></p>
         </div>
         <ul class="yk-preview-item-dialog__guide">
-          <li>現在は公開前の確認用のため、決済は行われません。</li>
-          <li>本番公開後は、BASEに登録された在庫・種類・価格が使用されます。</li>
+          <li>学校名・種類・サイズにお間違いがないかご確認ください。</li>
+          <li>在庫状況や価格は、ご注文時の表示をご確認ください。</li>
         </ul>
       </div>
     </div>
@@ -954,7 +1162,7 @@
   <dialog class="yk-preview-cart-dialog" id="yk-preview-cart-dialog" aria-labelledby="yk-preview-cart-title">
     <button class="yk-dialog__close" type="button" aria-label="カートを閉じる" data-yk-preview-cart-close>&times;</button>
     <div class="yk-preview-cart-dialog__head">
-      <p>Cart preview</p>
+      <p>Cart</p>
       <h2 id="yk-preview-cart-title">カート</h2>
     </div>
     <div class="yk-preview-cart-dialog__body">
@@ -964,10 +1172,10 @@
         <span>合計</span><span data-yk-preview-cart-total>¥0</span>
       </div>
       <div class="yk-preview-cart-actions">
-        <button class="yk-preview-cart-checkout" type="button" disabled>公開前のため決済は行いません</button>
+        <button class="yk-preview-cart-checkout" type="button" disabled>ご注文の確定はできません</button>
         <button class="yk-preview-cart-clear" type="button" data-yk-preview-cart-clear hidden>カートを空にする</button>
       </div>
-      <p class="yk-preview-cart-note">7月24日の確認前は下書き内だけで動きます。本番公開後はBASEの安全な決済画面へ進みます。</p>
+      <p class="yk-preview-cart-note">商品を選び直す場合は、カートを閉じて商品一覧へお戻りください。</p>
     </div>
   </dialog>
   <!-- YK_PREVIEW_COMMERCE_END -->
@@ -1165,6 +1373,12 @@
         });
 	      }
 	      return products.slice().sort(function (a, b) {
+	        if (ykState.sort === "price-low") {
+	          var priceA = ykPriceNumber(a.p) || Number.MAX_SAFE_INTEGER;
+	          var priceB = ykPriceNumber(b.p) || Number.MAX_SAFE_INTEGER;
+	          return priceA - priceB ||
+	            (ykSchoolProductOrder[String(a.id)] || 0) - (ykSchoolProductOrder[String(b.id)] || 0);
+	        }
 	        if (ykState.sort === "new") return (b.n || 0) - (a.n || 0);
 	        if (ykState.sort === "school") {
 	          if (ykState.school) return (a.r || 0) - (b.r || 0) || (b.n || 0) - (a.n || 0);
@@ -1186,13 +1400,78 @@
       return url;
     }
 
+    var ykPriceDownIds = (ykSpecialCatalog.priceDown || []).reduce(function (ids, product) {
+      ids[String(product.id)] = true;
+      return ids;
+    }, {});
+
+    // BASEの商品ページで通常価格と販売価格の両方を確認できた商品だけを登録する。
+    var ykProperPriceData = {
+      "145086937": { proper: "¥8,300", discount: "50%OFF" },
+      "145087529": { proper: "¥15,000", discount: "50%OFF" },
+      "145087738": { proper: "¥4,400", discount: "50%OFF" },
+      "151900296": { proper: "¥11,440", discount: "70%OFF" }
+    };
+
+    function ykProductPriceMarkup(product) {
+      var current = product && product.p ? String(product.p) : "";
+      if (!current) {
+        return '<span class="yk-price-stack"><strong>価格は商品ページでご確認ください</strong></span>';
+      }
+      var sale = ykProperPriceData[String(product.id)] || null;
+      var proper = product && (product.properPrice || product.proper_price || product.pp) ||
+        (sale && sale.proper) || "";
+      var properNumber = ykPriceNumber(proper);
+      var currentNumber = ykPriceNumber(current);
+      if (properNumber > currentNumber && currentNumber > 0) {
+        return [
+          '<span class="yk-price-stack yk-price-stack--sale">',
+          '<del aria-label="通常価格 ' + ykEscapeHtml(proper) + '">' + ykEscapeHtml(proper) + '</del>',
+          '<strong aria-label="販売価格 ' + ykEscapeHtml(current) + '">' + ykEscapeHtml(current) + '</strong>',
+          '</span>'
+        ].join("");
+      }
+      return '<span class="yk-price-stack"><strong>' + ykEscapeHtml(current) + '</strong></span>';
+    }
+
+    // BASEのCSVには商品追加日がないため、確定できた日付だけを登録する。
+    var ykProductAddedDates = {
+      "150298943": "2026-07-24"
+    };
+
+    function ykProductAddedDate(product) {
+      return product && (product.addedAt || ykProductAddedDates[String(product.id)] || "");
+    }
+
+    function ykIsNewProduct(product) {
+      if (!product || ykPriceDownIds[String(product.id)]) return false;
+      var addedAt = ykProductAddedDate(product);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(addedAt)) return false;
+      var addedDay = ykDateDayNumber(addedAt);
+      var todayDay = ykDateDayNumber(ykDateKeyInTokyo());
+      var newThrough = new Date(addedDay * 86400000);
+      newThrough.setUTCFullYear(newThrough.getUTCFullYear() + 1);
+      var newThroughDay = newThrough.getTime() / 86400000;
+      return addedDay <= todayDay && todayDay <= newThroughDay;
+    }
+
+    function ykProductBadge(product) {
+      if (ykPriceDownIds[String(product.id)]) {
+        return '<span class="yk-product-badge yk-sale-badge" aria-hidden="true">SALE</span>';
+      }
+      if (ykIsNewProduct(product)) {
+        return '<span class="yk-product-badge yk-new-badge" aria-hidden="true">NEW</span>';
+      }
+      return "";
+    }
+
     function ykProductCard(product) {
       var soldOut = product.s === false && ykIsDraftPreview() &&
         window.location.hostname !== "admin.thebase.com" && window.location.hostname !== "developers.thebase.com";
       var productUrl = ykProductUrl(product);
       var photo = soldOut
-        ? '<span class="yk-product__photo" aria-label="' + ykEscapeHtml(product.t) + 'は在庫なし"><img src="' + ykEscapeHtml(product.img) + '" alt="' + ykEscapeHtml(product.t) + '" loading="lazy" decoding="async"></span>'
-        : '<a class="yk-product__photo" href="' + ykEscapeHtml(productUrl) + '" data-product-page="' + ykEscapeHtml(product.id) + '" aria-label="' + ykEscapeHtml(product.t) + 'の種類・サイズを選ぶ"><img src="' + ykEscapeHtml(product.img) + '" alt="' + ykEscapeHtml(product.t) + '" loading="lazy" decoding="async"></a>';
+        ? '<span class="yk-product__photo" aria-label="' + ykEscapeHtml(product.t) + 'は在庫なし">' + ykProductBadge(product) + '<img src="' + ykEscapeHtml(product.img) + '" alt="' + ykEscapeHtml(product.t) + '" loading="lazy" decoding="async"></span>'
+        : '<a class="yk-product__photo" href="' + ykEscapeHtml(productUrl) + '" data-product-page="' + ykEscapeHtml(product.id) + '" aria-label="' + ykEscapeHtml(product.t) + 'の種類・サイズを選ぶ">' + ykProductBadge(product) + '<img src="' + ykEscapeHtml(product.img) + '" alt="' + ykEscapeHtml(product.t) + '" loading="lazy" decoding="async"></a>';
       var action = soldOut
         ? '<button class="yk-product__button yk-product__button--soldout" type="button" disabled>在庫なし</button>'
         : '<a class="yk-product__button" href="' + ykEscapeHtml(productUrl) + '" data-product-page="' + ykEscapeHtml(product.id) + '">サイズを選ぶ</a>';
@@ -1201,12 +1480,219 @@
         photo,
         '<span class="yk-product__body">',
         '<span class="yk-product__title">' + ykEscapeHtml(product.t) + '</span>',
+        '<span class="yk-product__pricing">' + ykProductPriceMarkup(product) + '</span>',
         '<span class="yk-product__actions">',
         action,
         '</span>',
         '</span>',
         '</article>'
       ].join("");
+    }
+
+    var ykShelfState = { priceDown: "new", commuting: "new" };
+
+    function ykShelfProducts(category) {
+      var products = (ykSpecialCatalog[category] || []).slice();
+      var sort = ykShelfState[category] || "new";
+      return products.sort(function (a, b) {
+        if (sort === "popular") return (a.r || 0) - (b.r || 0) || (b.n || 0) - (a.n || 0);
+        return (b.n || 0) - (a.n || 0) || (a.r || 0) - (b.r || 0);
+      });
+    }
+
+    function ykShelfImageUrl(url, width) {
+      return String(url || "").replace(/width=\d+/, "width=" + width);
+    }
+
+    function ykShelfCard(product) {
+      var productUrl = ykProductUrl(product);
+      var image240 = ykShelfImageUrl(product.img, 240);
+      var image480 = ykShelfImageUrl(product.img, 480);
+      return [
+        '<article class="yk-shelf-card">',
+        '<a class="yk-shelf-card__link" href="' + ykEscapeHtml(productUrl) + '" data-product-page="' + ykEscapeHtml(product.id) + '" aria-label="' + ykEscapeHtml(product.t) + 'の詳細を見る">',
+        '<span class="yk-shelf-card__image">' + ykProductBadge(product) + '<img src="' + ykEscapeHtml(image240) + '" srcset="' + ykEscapeHtml(image240) + ' 240w, ' + ykEscapeHtml(image480) + ' 480w" sizes="(max-width:560px) calc((100vw - 44px) / 3), calc((min(100vw,1800px) - 116px) / 6)" alt="' + ykEscapeHtml(product.t) + '" loading="lazy" decoding="async"></span>',
+        '<span class="yk-shelf-card__title">' + ykEscapeHtml(product.t) + '</span>',
+        '<span class="yk-shelf-card__pricing">' + ykProductPriceMarkup(product) + '</span>',
+        '</a>',
+        '</article>'
+      ].join("");
+    }
+
+    function ykRenderShelf(category) {
+      var track = document.getElementById("yk-shelf-" + category);
+      if (!track) return;
+      var products = ykShelfProducts(category);
+      track.innerHTML = products.map(ykShelfCard).join("");
+      track.scrollLeft = 0;
+      var count = document.querySelector('[data-shelf-count="' + category + '"]');
+      if (count) count.textContent = products.length + "商品";
+    }
+
+    function ykInitShelves() {
+      ["priceDown", "commuting"].forEach(ykRenderShelf);
+      document.querySelectorAll("[data-shelf-sort]").forEach(function (select) {
+        select.addEventListener("change", function () {
+          var category = select.getAttribute("data-shelf-sort") || "";
+          if (!category) return;
+          ykShelfState[category] = select.value;
+          ykRenderShelf(category);
+        });
+      });
+      document.querySelectorAll("[data-shelf-scroll]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          var category = button.getAttribute("data-shelf-scroll") || "";
+          var track = document.getElementById("yk-shelf-" + category);
+          if (!track) return;
+          var direction = Number(button.getAttribute("data-direction")) || 1;
+          track.scrollBy({ left: direction * Math.max(220, track.clientWidth * .82), behavior: "smooth" });
+        });
+      });
+    }
+
+    var ykMajorClosureFeedUrl = "https://kokotomo-sns.bantex.jp/api/public/hp-calendar/yuukichiya/events.json";
+    var ykMajorClosureLeadDays = 14;
+
+    function ykDateKeyInTokyo() {
+      if (window.ykMajorClosureBaseDate && /^\d{4}-\d{2}-\d{2}$/.test(window.ykMajorClosureBaseDate)) {
+        return window.ykMajorClosureBaseDate;
+      }
+      var parts = new Intl.DateTimeFormat("ja-JP", {
+        timeZone: "Asia/Tokyo",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).formatToParts(new Date());
+      var values = {};
+      parts.forEach(function (part) { values[part.type] = part.value; });
+      return values.year + "-" + values.month + "-" + values.day;
+    }
+
+    function ykDateDayNumber(dateKey) {
+      var parts = String(dateKey || "").split("-").map(Number);
+      if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2]) return NaN;
+      return Date.UTC(parts[0], parts[1] - 1, parts[2]) / 86400000;
+    }
+
+    function ykDayNumberDateKey(dayNumber) {
+      return new Date(dayNumber * 86400000).toISOString().slice(0, 10);
+    }
+
+    function ykEventDateKey(event, side) {
+      var value = event && event[side];
+      if (!value) return "";
+      return String(value.date || value.dateTime || "").slice(0, 10);
+    }
+
+    function ykMajorClosurePeriods(calendarData) {
+      var stores = calendarData && calendarData.stores;
+      if (!stores || typeof stores !== "object") return [];
+      var closurePattern = /休業|定休日|休み/;
+      var majorPattern = /夏季休業|冬季休業|年末年始/;
+      var periods = [];
+
+      Object.keys(stores).forEach(function (storeName) {
+        var closedDays = {};
+        (Array.isArray(stores[storeName]) ? stores[storeName] : []).forEach(function (event) {
+          var summary = String(event && event.summary || "");
+          if (!closurePattern.test(summary) || event.status === "cancelled") return;
+          var startDay = ykDateDayNumber(ykEventDateKey(event, "start"));
+          var endDay = ykDateDayNumber(ykEventDateKey(event, "end"));
+          if (!isFinite(startDay)) return;
+          if (!isFinite(endDay) || endDay <= startDay) endDay = startDay + 1;
+          for (var day = startDay; day < endDay; day += 1) {
+            if (!closedDays[day]) closedDays[day] = { majorTitles: [] };
+            if (majorPattern.test(summary) && closedDays[day].majorTitles.indexOf(summary) === -1) {
+              closedDays[day].majorTitles.push(summary);
+            }
+          }
+        });
+
+        var dayNumbers = Object.keys(closedDays).map(Number).sort(function (a, b) { return a - b; });
+        var run = null;
+        dayNumbers.forEach(function (day, index) {
+          if (!run || day !== run.endDay + 1) {
+            if (run && run.majorTitles.length) periods.push(run);
+            run = { store: storeName, startDay: day, endDay: day, majorTitles: [] };
+          } else {
+            run.endDay = day;
+          }
+          closedDays[day].majorTitles.forEach(function (title) {
+            if (run.majorTitles.indexOf(title) === -1) run.majorTitles.push(title);
+          });
+          if (index === dayNumbers.length - 1 && run && run.majorTitles.length) periods.push(run);
+        });
+      });
+
+      var today = ykDateDayNumber(ykDateKeyInTokyo());
+      var leadLimit = today + ykMajorClosureLeadDays;
+      var merged = {};
+      periods.forEach(function (period) {
+        if (period.endDay < today || period.startDay > leadLimit) return;
+        var title = period.majorTitles[0] || "大型休業";
+        var key = title + "|" + period.startDay + "|" + period.endDay;
+        if (!merged[key]) {
+          merged[key] = {
+            title: title,
+            startDay: period.startDay,
+            endDay: period.endDay,
+            stores: []
+          };
+        }
+        if (merged[key].stores.indexOf(period.store) === -1) merged[key].stores.push(period.store);
+      });
+      return Object.keys(merged).map(function (key) { return merged[key]; }).sort(function (a, b) {
+        return a.startDay - b.startDay;
+      });
+    }
+
+    function ykFormatClosureDate(dayNumber) {
+      var date = new Date(dayNumber * 86400000);
+      var weekdays = ["日", "月", "火", "水", "木", "金", "土"];
+      return (date.getUTCMonth() + 1) + "月" + date.getUTCDate() + "日（" + weekdays[date.getUTCDay()] + "）";
+    }
+
+    function ykRenderMajorClosureNotice(calendarData) {
+      var notice = document.querySelector("[data-yk-major-closure]");
+      var target = document.querySelector("[data-yk-major-closure-periods]");
+      if (!notice || !target) return;
+      var periods = ykMajorClosurePeriods(calendarData);
+      target.innerHTML = "";
+      periods.forEach(function (period) {
+        var item = document.createElement("span");
+        item.className = "yk-closure-period";
+        var title = document.createElement("span");
+        title.textContent = period.title + "：";
+        var dates = document.createElement("span");
+        dates.textContent = ykFormatClosureDate(period.startDay) + "〜" + ykFormatClosureDate(period.endDay);
+        var stores = document.createElement("span");
+        stores.textContent = "／" + period.stores.join("・");
+        item.appendChild(title);
+        item.appendChild(dates);
+        item.appendChild(stores);
+        target.appendChild(item);
+      });
+      notice.hidden = periods.length === 0;
+      notice.setAttribute("data-status", periods.length ? "visible" : "none");
+    }
+
+    function ykInitMajorClosureNotice() {
+      var notice = document.querySelector("[data-yk-major-closure]");
+      if (!notice || !window.fetch) return Promise.resolve([]);
+      return fetch(ykMajorClosureFeedUrl, { cache: "no-store" })
+        .then(function (response) {
+          if (!response.ok) throw new Error("calendar response " + response.status);
+          return response.json();
+        })
+        .then(function (calendarData) {
+          ykRenderMajorClosureNotice(calendarData);
+          return ykMajorClosurePeriods(calendarData);
+        })
+        .catch(function () {
+          notice.hidden = true;
+          notice.setAttribute("data-status", "unavailable");
+          return [];
+        });
     }
 
     function ykFindProduct(productId) {
@@ -1303,7 +1789,7 @@
       variants = variants.filter(function (item, index) { return item && variants.indexOf(item) === index; });
       if (image) { image.src = product.img || ""; image.alt = product.t || "商品画像"; }
       if (title) title.textContent = product.t || "商品";
-      if (price) price.textContent = product.p || "価格は商品ページでご確認ください";
+      if (price) price.innerHTML = ykProductPriceMarkup(product);
       if (variant) {
         variant.innerHTML = variants.map(function (item) {
           return '<option value="' + ykEscapeHtml(item) + '">' + ykEscapeHtml(item) + "</option>";
@@ -1438,7 +1924,7 @@
       if (lead) {
         lead.textContent = ykState.schoolType || ykState.school || ykState.specialCategory || ykState.query
           ? "選択した条件に合う商品だけを、この画面内で表示しています。"
-          : "デフォルトは学校順の全商品です。小学校・中学校・高校・園・その他の順に表示します。";
+          : "全商品を学校順に表示しています。学校区分や学校名から絞り込めます。";
       }
     }
 
@@ -1719,6 +2205,8 @@
       }
     }
 
+    ykInitShelves();
+    ykInitMajorClosureNotice();
     ykSyncItemViewport();
     ykSyncSchoolFilters();
     if (ykAllProducts.length) ykRenderProducts();
