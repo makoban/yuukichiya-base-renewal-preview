@@ -1,0 +1,46 @@
+.yk-page-top {
+  position: fixed;
+  z-index: 50;
+  right: max(18px, env(safe-area-inset-right));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  display: grid;
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, .72);
+  border-radius: 50%;
+  background: #2f7d5b;
+  color: #fff;
+  box-shadow: 0 10px 26px rgba(23, 52, 92, .25);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity .2s ease, transform .2s ease, background .2s ease;
+  place-items: center;
+}
+
+.yk-page-top::before {
+  width: 11px;
+  height: 11px;
+  border-top: 3px solid currentColor;
+  border-left: 3px solid currentColor;
+  content: "";
+  transform: translateY(3px) rotate(45deg);
+}
+
+.yk-page-top.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.yk-page-top:hover,
+.yk-page-top:focus-visible {
+  background: #17345c;
+}
+
+.yk-page-top:focus-visible {
+  outline: 3px solid #e7b84d;
+  outline-offset: 3px;
+}
