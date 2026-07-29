@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
   <title>お問い合わせ｜勇吉屋ネット</title>
   <meta name="description" content="勇吉屋ネットのお問い合わせページです。学校指定品、サイズ、在庫、店舗相談について本店・髙橋店へ相談できます。">
   <style>
@@ -58,8 +59,8 @@
     .yk-form label { display: grid; gap: 6px; color: var(--yk-ink); font-weight: 900; }
     .yk-form input, .yk-form select, .yk-form textarea { width: 100%; min-width: 0; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; padding: 12px 14px; color: var(--yk-ink); font: inherit; outline: 0; }
     .yk-form input:focus, .yk-form select:focus, .yk-form textarea:focus { border-color: rgba(47,125,91,.58); box-shadow: 0 0 0 3px rgba(47,125,91,.12); }
-    .yk-form__privacy { display: grid!important; grid-template-columns: 22px minmax(0,1fr); gap: 9px!important; align-items: start; color: var(--yk-muted)!important; font-size: 12px; }
-    .yk-form__privacy input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--yk-main); }
+    .yk-form__privacy-link { margin: 0; color: var(--yk-muted); font-size: 12px; font-weight: 800; }
+    .yk-form__privacy-link a { color: var(--yk-main); font-weight: 900; text-decoration: underline; text-underline-offset: 3px; }
     .yk-form-status { min-height: 1.7em; margin: 0; color: var(--yk-main); font-size: 13px; font-weight: 900; }
     .yk-contact-confirm { scroll-margin-top: 96px; }
     .yk-contact-summary { display: grid; grid-template-columns: minmax(112px, auto) minmax(0, 1fr); gap: 8px 12px; margin: 0 0 18px; }
@@ -128,14 +129,14 @@
 <body>
   <header class="yk-header">
     <div class="yk-header__inner">
-      <a class="yk-logo" href="index.html#top"><span class="logoText">勇吉屋ネット</span></a>
-      <form class="yk-search" action="index.html" method="get">
+      <a class="yk-logo" href="proposal-three-ways.html#top"><span class="logoText">勇吉屋ネット</span></a>
+      <form class="yk-search" action="proposal-three-ways.html" method="get">
         <input type="search" name="q" placeholder="学校名・商品名で探す">
         <button type="submit">検索</button>
       </form>
       <nav class="yk-nav" aria-label="主要ナビゲーション">
-        <a href="index.html#top">TOP</a>
-        <a href="index.html#yk-stores">店舗について</a>
+        <a href="proposal-three-ways.html#top">TOP</a>
+        <a href="proposal-three-ways.html#yk-stores">店舗について</a>
         <a href="contact.html" aria-current="page">お問い合わせ</a>
         <a href="cart.html">カート<span class="yk-cart-count" data-cart-count hidden>0</span></a>
       </nav>
@@ -181,7 +182,7 @@
               </select>
             </label>
             <label>お問い合わせ内容<textarea name="message" rows="6" required></textarea></label>
-            <label class="yk-form__privacy"><input type="checkbox" name="privacy" value="同意する" required><span>入力内容をお問い合わせ対応のために利用することに同意します。</span></label>
+            <p class="yk-form__privacy-link">必要に応じて、<a href="privacy.html">個人情報の取扱いについて</a>をご確認いただけます。</p>
             <button class="yk-button" type="submit">入力内容を確認</button>
             <p class="yk-form-status">旧お問い合わせページへ移動せず、この新画面内で確認できます。</p>
           </form>
@@ -196,7 +197,7 @@
             <button class="yk-button" type="button" data-contact-send>メールで送信する</button>
             <button class="yk-button yk-button--sub" type="button" data-contact-edit>修正する</button>
           </div>
-          <p class="yk-form-status" data-contact-send-status>7月24日の確認後に送信を有効にします。</p>
+          <p class="yk-form-status" data-contact-send-status>正式公開時に実際の送信を有効にします。</p>
         </div>
       </article>
     </section>
@@ -241,8 +242,9 @@
       <div>
         <h3>ご利用案内</h3>
         <ul>
-          <li><a href="index.html#yk-stores">店舗について</a></li>
+          <li><a href="proposal-three-ways.html#yk-stores">店舗について</a></li>
           <li><a href="contact.html">お問い合わせ</a></li>
+          <li><a href="privacy.html">個人情報の取扱い</a></li>
           <li><a href="cart.html">カート</a></li>
         </ul>
       </div>
