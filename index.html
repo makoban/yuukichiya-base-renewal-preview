@@ -126,6 +126,8 @@
     .yk-school-panel { display: grid; grid-template-columns: 240px 1fr; gap: 14px; padding: 14px; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: var(--yk-wash); box-shadow: 0 16px 36px rgba(29,49,55,.09); }
     .yk-school-tabs { display: grid; align-content: start; gap: 10px; }
     .yk-school-tab { display: flex; justify-content: space-between; align-items: center; width: 100%; min-height: 64px; padding: 0 18px; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; color: var(--yk-ink); font: inherit; font-weight: 800; text-align: left; cursor: pointer; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+    .yk-school-tab__label { display: block; color: inherit; line-height: 1.35; opacity: 1; visibility: visible; white-space: nowrap; }
+    .yk-school-tab__count { color: inherit; opacity: .72; white-space: nowrap; }
     .yk-school-tab[data-active="true"] { background: var(--yk-main); color: #fff; border-color: var(--yk-main); box-shadow: var(--yk-shadow); }
     .yk-school-list { display: none; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; }
     .yk-school-list[data-active="true"] { display: grid; }
@@ -351,7 +353,7 @@
       .yk-item { gap: 30px; }
       .yk-school-tabs { grid-template-columns: repeat(5,minmax(0,1fr)); }
       .yk-school-tab { justify-content: center; min-height: 54px; padding: 0 10px; font-size: 14px; }
-      .yk-school-tab span { display: none; }
+      .yk-school-tab__count { display: none; }
       .yk-school-list, .yk-feature-grid, .yk-store-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
       .yk-school-list--all { grid-template-columns: 1fr; }
       .yk-products { grid-template-columns: repeat(4,minmax(0,1fr)); }
@@ -367,7 +369,7 @@
       .yk-nav > a { display: flex; align-items: center; justify-content: center; min-height: 38px; padding: 4px; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; text-align: center; }
       .yk-nav #baseMenu { display: flex; align-items: center; justify-content: center; min-width: 38px; }
       .yk-section__head { display: grid; align-items: start; }
-      .yk-school-tabs { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 6px; overflow: visible; }
+      .yk-school-tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; overflow: visible; overscroll-behavior: auto; scroll-snap-type: none; scrollbar-width: none; }
       .yk-school-tab { min-width: 0; }
       .yk-school-list, .yk-guide-strip, .yk-store-grid, .yk-store-head { grid-template-columns: 1fr; }
       .yk-products { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; }
@@ -559,8 +561,8 @@
       .yk-product-badge { top: 5px; left: 5px; min-width: 38px; min-height: 21px; padding: 2px 6px; font-size: 9px; }
       .yk-hero h1,.yk-page-hero h1 { font-size: 34px; }
       .yk-section h2,.yk-section-head h2,.yk-empty-cart h2,.yk-item h1 { font-size: 28px; }
-      .yk-school-tabs { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 5px; overflow: visible; }
-      .yk-school-tab { min-width: 0; min-height: 48px; padding: 0 3px; font-size: 12px; }
+      .yk-school-tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; overflow: visible; overscroll-behavior: auto; scroll-snap-type: none; scrollbar-width: none; }
+      .yk-school-tab { min-width: 0; min-height: 48px; padding: 0 8px; font-size: 13px; }
       .yk-feature-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
       .yk-feature__body { padding: 11px 12px 13px; }
       .yk-feature b { margin-bottom: 5px; font-size: 15px; line-height: 1.4; }
@@ -765,11 +767,11 @@
       </div>
       <div class="yk-school-panel">
         <div class="yk-school-tabs" role="tablist" aria-label="学校区分">
-          <button class="yk-school-tab" type="button" role="tab" aria-controls="yk-all-schools" aria-selected="true" data-target="yk-all-schools" data-school-type="" data-school-type-label="全商品" data-active="true">全商品</button>
-          <button class="yk-school-tab" type="button" role="tab" aria-controls="yk-kindergarten" aria-selected="false" data-target="yk-kindergarten" data-school-type="kindergarten" data-school-type-label="園">園 <span>8</span></button>
-          <button class="yk-school-tab" type="button" role="tab" aria-controls="yk-elementary" aria-selected="false" data-target="yk-elementary" data-school-type="elementary" data-school-type-label="小学校">小学校 <span>41</span></button>
-          <button class="yk-school-tab" type="button" role="tab" aria-controls="yk-junior" aria-selected="false" data-target="yk-junior" data-school-type="junior" data-school-type-label="中学校">中学校 <span>19</span></button>
-          <button class="yk-school-tab" type="button" role="tab" aria-controls="yk-high" aria-selected="false" data-target="yk-high" data-school-type="high" data-school-type-label="高校">高校 <span>7</span></button>
+          <button class="yk-school-tab" type="button" role="tab" aria-controls="yk-all-schools" aria-selected="true" data-target="yk-all-schools" data-school-type="" data-school-type-label="全商品" data-active="true"><span class="yk-school-tab__label">全商品</span></button>
+          <button class="yk-school-tab" type="button" role="tab" aria-controls="yk-kindergarten" aria-selected="false" data-target="yk-kindergarten" data-school-type="kindergarten" data-school-type-label="園"><span class="yk-school-tab__label">園</span><span class="yk-school-tab__count">8</span></button>
+          <button class="yk-school-tab" type="button" role="tab" aria-controls="yk-elementary" aria-selected="false" data-target="yk-elementary" data-school-type="elementary" data-school-type-label="小学校"><span class="yk-school-tab__label">小学校</span><span class="yk-school-tab__count">41</span></button>
+          <button class="yk-school-tab" type="button" role="tab" aria-controls="yk-junior" aria-selected="false" data-target="yk-junior" data-school-type="junior" data-school-type-label="中学校"><span class="yk-school-tab__label">中学校</span><span class="yk-school-tab__count">19</span></button>
+          <button class="yk-school-tab" type="button" role="tab" aria-controls="yk-high" aria-selected="false" data-target="yk-high" data-school-type="high" data-school-type-label="高校"><span class="yk-school-tab__label">高校</span><span class="yk-school-tab__count">7</span></button>
         </div>
         <div>
           <div class="yk-school-list yk-school-list--all" id="yk-all-schools" data-school-type="" data-active="true">
