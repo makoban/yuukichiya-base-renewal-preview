@@ -722,6 +722,7 @@
           <div class="yk-shelf-toolbar">
             <label class="yk-shelf-sort">並び替え
               <select data-shelf-sort="priceDown" aria-label="プライスダウン商品の並び替え">
+                <option value="category" selected>カテゴリ</option>
                 <option value="new">新着順</option>
                 <option value="popular">売れている順</option>
               </select>
@@ -749,6 +750,7 @@
           <div class="yk-shelf-toolbar">
             <label class="yk-shelf-sort">並び替え
               <select data-shelf-sort="commuting" aria-label="学用品の並び替え">
+                <option value="category" selected>カテゴリ</option>
                 <option value="new">新着順</option>
                 <option value="popular">売れている順</option>
               </select>
@@ -1500,12 +1502,17 @@
       ].join("");
     }
 
-    var ykShelfState = { priceDown: "new", commuting: "new" };
+    var ykShelfState = { priceDown: "category", commuting: "category" };
 
     function ykShelfProducts(category) {
       var products = (ykSpecialCatalog[category] || []).slice();
-      var sort = ykShelfState[category] || "new";
+      var sort = ykShelfState[category] || "category";
       return products.sort(function (a, b) {
+        if (sort === "category") {
+          var aRank = Number(a.r) > 0 ? Number(a.r) : Number.MAX_SAFE_INTEGER;
+          var bRank = Number(b.r) > 0 ? Number(b.r) : Number.MAX_SAFE_INTEGER;
+          return aRank - bRank || (b.n || 0) - (a.n || 0);
+        }
         if (sort === "popular") return (a.r || 0) - (b.r || 0) || (b.n || 0) - (a.n || 0);
         return (b.n || 0) - (a.n || 0) || (a.r || 0) - (b.r || 0);
       });
