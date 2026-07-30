@@ -48,11 +48,20 @@ function parseOptionGroups(html) {
       const value = valueMatch ? valueMatch[1].trim() : "";
       const label = decodeHtml(optionMatch[2]);
       if (!value || !label || /選択する（必須）|選択なし/.test(label)) continue;
-      const priceMatch = label.match(/[¥￥]\s*([\d,]+)/);
+      const currencyPriceMatch = label.match(/([+＋\-−－])?\s*[¥￥]\s*([+＋\-−－])?\s*([\d,]+)/);
+      const yenPriceMatch = label.match(/([+＋\-−－])\s*([\d,]+)\s*円/);
+      const priceMatch = currencyPriceMatch || yenPriceMatch;
+      const signText = priceMatch
+        ? (currencyPriceMatch ? `${priceMatch[1] || ""}${priceMatch[2] || ""}` : priceMatch[1])
+        : "";
+      const amountText = priceMatch
+        ? (currencyPriceMatch ? priceMatch[3] : priceMatch[2])
+        : "";
+      const sign = /[\-−－]/.test(signText) ? -1 : 1;
       values.push({
         value,
         label,
-        price: priceMatch ? Number(priceMatch[1].replace(/,/g, "")) : 0,
+        price: priceMatch ? sign * Number(amountText.replace(/,/g, "")) : 0,
       });
     }
 

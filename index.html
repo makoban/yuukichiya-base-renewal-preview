@@ -166,6 +166,7 @@
     .yk-price-stack del { color: #6f7a80; font-size: 12px; font-weight: 800; line-height: 1.2; white-space: nowrap; }
     .yk-price-stack strong { color: var(--yk-ink); font-size: 17px; font-weight: 900; line-height: 1.2; white-space: nowrap; }
     .yk-price-stack--sale strong { color: #c93729; }
+    .yk-price-stack--range strong { font-size: 15px; letter-spacing: -.025em; }
     .yk-product__actions { display: grid; align-items: stretch; }
     .yk-product__button, .yk-product__detail { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 6px; border: 1px solid rgba(47,125,91,.22); border-radius: var(--yk-radius); background: #eef7f2; color: #1f553f; font: inherit; font-size: 11px; font-weight: 900; cursor: pointer; transition: background-color .18s ease, color .18s ease, transform .18s ease; }
     .yk-product__button:hover, .yk-product__button:focus-visible { background: var(--yk-main); color: #fff; }
@@ -389,6 +390,7 @@
       .yk-product__body .yk-price-stack { display: grid; align-content: start; gap: 0; min-height: 32px; }
       .yk-product__body .yk-price-stack del { font-size: 10px; }
       .yk-product__body .yk-price-stack strong { font-size: 15px; }
+      .yk-product__body .yk-price-stack--range strong { font-size: 11.5px; letter-spacing: -.04em; }
       .yk-product__button { min-height: 44px; padding: 4px; font-size: 10px; }
       .yk-store-head { gap: 8px; margin-bottom: 22px; }
       .yk-store-head h2 { font-size: 30px; }
@@ -570,6 +572,7 @@
       .yk-shelf-card__pricing .yk-price-stack { display: grid; align-content: start; gap: 0; min-height: 0; }
       .yk-shelf-card__pricing .yk-price-stack del { font-size: 9px; }
       .yk-shelf-card__pricing .yk-price-stack strong { font-size: 14px; }
+      .yk-shelf-card__pricing .yk-price-stack--range strong { font-size: 10.5px; letter-spacing: -.045em; }
       .yk-product-badges { top: 5px; left: 5px; gap: 3px; }
       .yk-product-badge { min-width: 38px; min-height: 21px; padding: 2px 6px; font-size: 9px; }
       .yk-hero h1,.yk-page-hero h1 { font-size: 34px; }
@@ -655,6 +658,12 @@
       .yk-hero h1,.yk-page-hero h1 { font-size: 30px; }
       .yk-logo__image { width: min(206px,68vw); }
       .yk-school-tab { font-size: 12px; }
+      .yk-product__body .yk-price-stack--range strong { font-size: 10px; }
+      .yk-shelf-card__pricing .yk-price-stack--range strong { font-size: 9.5px; }
+    }
+    @media (max-width: 340px) {
+      .yk-product__body .yk-price-stack--range strong,
+      .yk-shelf-card__pricing .yk-price-stack--range strong { font-size: 9px; }
     }
   </style>
   <link rel="stylesheet" href="assets/yk-page-top.css">
@@ -1451,11 +1460,45 @@
       "151900296": { proper: "¥11,440", discount: "70%OFF" }
     };
 
+    function ykProductOptionPriceRange(product) {
+      if (!product || !product.id) return null;
+      var optionGroups = (window.ykProductOptions || {})[String(product.id)];
+      if (!Array.isArray(optionGroups) || !optionGroups.length) return null;
+      var minimumAdjustment = 0;
+      var maximumAdjustment = 0;
+      var hasAdjustment = false;
+      optionGroups.forEach(function (group) {
+        var prices = (group.values || []).map(function (choice) {
+          return Number(choice.price) || 0;
+        });
+        if (!prices.length) return;
+        if (!group.required) prices.push(0);
+        minimumAdjustment += Math.min.apply(Math, prices);
+        maximumAdjustment += Math.max.apply(Math, prices);
+        if (prices.some(function (price) { return price !== 0; })) hasAdjustment = true;
+      });
+      if (!hasAdjustment) return null;
+      var basePrice = ykPriceNumber(product.p);
+      return {
+        minimum: basePrice + minimumAdjustment,
+        maximum: basePrice + maximumAdjustment
+      };
+    }
+
     function ykProductPriceMarkup(product) {
       var current = product && product.p ? String(product.p) : "";
       if (!current) {
         return '<span class="yk-price-stack"><strong>価格は商品ページでご確認ください</strong></span>';
       }
+      var optionRange = ykProductOptionPriceRange(product);
+      var displayCurrent = optionRange
+        ? (optionRange.minimum === optionRange.maximum
+          ? ykFormatYen(optionRange.minimum)
+          : ykFormatYen(optionRange.minimum) + "〜" + ykFormatYen(optionRange.maximum))
+        : current;
+      var rangeClass = optionRange && optionRange.minimum !== optionRange.maximum
+        ? " yk-price-stack--range"
+        : "";
       var sale = ykProperPriceData[String(product.id)] || null;
       var proper = product && (product.properPrice || product.proper_price || product.pp) ||
         (sale && sale.proper) || "";
@@ -1463,13 +1506,13 @@
       var currentNumber = ykPriceNumber(current);
       if (properNumber > currentNumber && currentNumber > 0) {
         return [
-          '<span class="yk-price-stack yk-price-stack--sale">',
+          '<span class="yk-price-stack yk-price-stack--sale' + rangeClass + '">',
           '<del aria-label="通常価格 ' + ykEscapeHtml(proper) + '">' + ykEscapeHtml(proper) + '</del>',
-          '<strong aria-label="販売価格 ' + ykEscapeHtml(current) + '">' + ykEscapeHtml(current) + '</strong>',
+          '<strong aria-label="販売価格 ' + ykEscapeHtml(displayCurrent) + '">' + ykEscapeHtml(displayCurrent) + '</strong>',
           '</span>'
         ].join("");
       }
-      return '<span class="yk-price-stack"><strong>' + ykEscapeHtml(current) + '</strong></span>';
+      return '<span class="yk-price-stack' + rangeClass + '"><strong>' + ykEscapeHtml(displayCurrent) + '</strong></span>';
     }
 
     // BASEのCSVには商品追加日がないため、確定できた登録日と移行時点のNEW商品を記録する。
@@ -1801,6 +1844,12 @@
       return "¥" + Number(value || 0).toLocaleString("ja-JP");
     }
 
+    function ykFormatSignedYen(value) {
+      var amount = Number(value) || 0;
+      if (!amount) return ykFormatYen(0);
+      return (amount > 0 ? "+" : "−") + ykFormatYen(Math.abs(amount));
+    }
+
     function ykReadPreviewCart() {
       try {
         var stored = JSON.parse(window.localStorage.getItem(ykPreviewCartKey) || "[]");
@@ -1907,15 +1956,19 @@
       var price = dialog.querySelector("[data-yk-preview-item-price]");
       if (!price || !product) return;
       var selection = ykPreviewSelection(dialog, product);
-      if (!selection.extraPrice) {
+      var optionNodes = dialog.querySelectorAll("[data-yk-preview-option-select]");
+      if (!optionNodes.length || !selection.valid) {
         price.innerHTML = ykProductPriceMarkup(product);
         return;
       }
       var basePrice = ykPriceNumber(product.p);
+      var adjustmentNote = selection.extraPrice
+        ? '<small>商品価格 ' + ykFormatYen(basePrice) + " ／ サイズ調整 " +
+          ykFormatSignedYen(selection.extraPrice) + "</small>"
+        : "";
       price.innerHTML = '<span class="yk-price-stack"><strong>' +
         ykFormatYen(basePrice + selection.extraPrice) +
-        '</strong><small>商品価格 ' + ykFormatYen(basePrice) + " ＋ 追加料金 " +
-        ykFormatYen(selection.extraPrice) + "</small></span>";
+        "</strong>" + adjustmentNote + "</span>";
     }
 
     function ykOpenPreviewItem(product, trigger, options) {
