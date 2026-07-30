@@ -203,7 +203,8 @@
     .yk-shelf-card:hover .yk-shelf-card__image img { transform: scale(1.025); }
     .yk-shelf-card__title { display: block; min-width: 0; padding: 9px; overflow: hidden; color: var(--yk-ink); font-size: 12px; font-weight: 800; line-height: 20px; text-overflow: ellipsis; white-space: nowrap; }
     .yk-shelf-card__pricing { display: flex; align-items: center; min-width: 0; padding: 0 9px 8px; }
-    .yk-product-badge { position: absolute; z-index: 2; top: 8px; left: 8px; display: inline-flex; align-items: center; justify-content: center; min-width: 48px; min-height: 26px; padding: 3px 9px; border-radius: 4px; color: #fff; font-size: 11px; font-weight: 900; line-height: 1; letter-spacing: 0; white-space: nowrap; pointer-events: none; }
+    .yk-product-badges { position: absolute; z-index: 2; top: 8px; left: 8px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; pointer-events: none; }
+    .yk-product-badge { position: static; display: inline-flex; align-items: center; justify-content: center; min-width: 48px; min-height: 26px; padding: 3px 9px; border-radius: 4px; color: #fff; font-size: 11px; font-weight: 900; line-height: 1; letter-spacing: 0; white-space: nowrap; }
     .yk-sale-badge { background: #d94232; box-shadow: 0 3px 10px rgba(88,20,14,.25); }
     .yk-new-badge { background: #2474a8; box-shadow: 0 3px 10px rgba(16,62,92,.25); }
     .yk-shelf-count { margin: 8px 0 0; color: var(--yk-muted); font-size: 12px; font-weight: 800; }
@@ -564,7 +565,8 @@
       .yk-shelf-card__pricing .yk-price-stack { display: grid; align-content: start; gap: 0; min-height: 0; }
       .yk-shelf-card__pricing .yk-price-stack del { font-size: 9px; }
       .yk-shelf-card__pricing .yk-price-stack strong { font-size: 14px; }
-      .yk-product-badge { top: 5px; left: 5px; min-width: 38px; min-height: 21px; padding: 2px 6px; font-size: 9px; }
+      .yk-product-badges { top: 5px; left: 5px; gap: 3px; }
+      .yk-product-badge { min-width: 38px; min-height: 21px; padding: 2px 6px; font-size: 9px; }
       .yk-hero h1,.yk-page-hero h1 { font-size: 34px; }
       .yk-section h2,.yk-section-head h2,.yk-empty-cart h2,.yk-item h1 { font-size: 28px; }
       .yk-school-tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; overflow: visible; overscroll-behavior: auto; scroll-snap-type: none; scrollbar-width: none; }
@@ -1200,6 +1202,13 @@
     var ykLists = document.querySelectorAll(".yk-school-list");
     var ykPageSize = 50;
     var ykState = { schoolType: "", school: "", specialCategory: "", query: "", sort: "school", page: 1 };
+    // 原本BASEで新たに確認できた商品を、原本の商品表示順を保ったまま先頭データへ追加する。
+    ykAllProducts = [
+      {"id":"151900296","t":"自重堂　吸汗速乾長袖ブルゾン","v":"サイズ S","vs":["サイズ S","サイズ M","サイズ L","サイズ LL","サイズ 3L","サイズ 4L","サイズ 5L"],"p":"¥3,432","img":"https://baseec-img-mng.akamaized.net/images/item/origin/8dde0fe08f91ce67b7e2ae9a36027b6f.jpg?imformat=generic&q=90&im=Resize,width=640,type=normal","u":"https://yuukichiya.base.shop/items/151900296","n":151900296,"r":-1,"s":true,"i":[]},
+      {"id":"151900275","t":"ラッシュガード黒","v":"サイズ 130","vs":["サイズ 130","サイズ 140","サイズ SS","サイズ S","サイズ M","サイズ L","サイズ LL","サイズ 3L","サイズ 4L"],"p":"¥3,500","img":"https://baseec-img-mng.akamaized.net/images/item/origin/cfee1ad7dcd59acc13b411082071152b.jpg?imformat=generic&q=90&im=Resize,width=640,type=normal","u":"https://yuukichiya.base.shop/items/151900275","n":151900275,"r":0.5,"s":true,"i":[]},
+      {"id":"151791830","t":"梅坪台中学校　旧タイプ半袖シャツ","v":"サイズ 160","vs":["サイズ 160","サイズ 165","サイズ 170","サイズ 175","サイズ 185","サイズ 190"],"p":"¥1,600","img":"https://baseec-img-mng.akamaized.net/images/item/origin/6185e844b1962441fbc7a678d5c98130.jpg?imformat=generic&q=90&im=Resize,width=640,type=normal","u":"https://yuukichiya.base.shop/items/151791830","n":151791830,"r":2.5,"s":true,"i":[]}
+    ].concat(ykAllProducts);
+
     var ykSchoolProductOrder = {};
     /* YK_PREVIEW_COMMERCE_START */
     var ykPreviewCartKey = "yuukichiya.theme-preview-cart.v1";
@@ -1447,9 +1456,28 @@
       return '<span class="yk-price-stack"><strong>' + ykEscapeHtml(current) + '</strong></span>';
     }
 
-    // BASEのCSVには商品追加日がないため、確定できた日付だけを登録する。
+    // BASEのCSVには商品追加日がないため、確定できた登録日と移行時点のNEW商品を記録する。
+    // 今後の商品同期でも登録日を addedAt に保存し、登録日から1年間だけNEWを表示する。
     var ykProductAddedDates = {
-      "150298943": "2026-07-24"
+      "72180234": "2026-07-30",
+      "86518650": "2026-07-30",
+      "95000541": "2026-07-30",
+      "95000578": "2026-07-30",
+      "95876363": "2026-07-30",
+      "95876481": "2026-07-30",
+      "95876679": "2026-07-30",
+      "95876824": "2026-07-30",
+      "95877507": "2026-07-30",
+      "95877557": "2026-07-30",
+      "95877601": "2026-07-30",
+      "95877631": "2026-07-30",
+      "120410037": "2026-07-30",
+      "137799376": "2026-07-30",
+      "137799545": "2026-07-30",
+      "150298943": "2026-07-24",
+      "151791830": "2026-07-30",
+      "151900275": "2026-07-30",
+      "151900296": "2026-07-30"
     };
 
     function ykProductAddedDate(product) {
@@ -1457,7 +1485,7 @@
     }
 
     function ykIsNewProduct(product) {
-      if (!product || ykPriceDownIds[String(product.id)]) return false;
+      if (!product) return false;
       var addedAt = ykProductAddedDate(product);
       if (!/^\d{4}-\d{2}-\d{2}$/.test(addedAt)) return false;
       var addedDay = ykDateDayNumber(addedAt);
@@ -1469,13 +1497,16 @@
     }
 
     function ykProductBadge(product) {
-      if (ykPriceDownIds[String(product.id)]) {
-        return '<span class="yk-product-badge yk-sale-badge" aria-hidden="true">SALE</span>';
-      }
+      var badges = [];
       if (ykIsNewProduct(product)) {
-        return '<span class="yk-product-badge yk-new-badge" aria-hidden="true">NEW</span>';
+        badges.push('<span class="yk-product-badge yk-new-badge">NEW</span>');
       }
-      return "";
+      if (ykPriceDownIds[String(product.id)]) {
+        badges.push('<span class="yk-product-badge yk-sale-badge">SALE</span>');
+      }
+      return badges.length
+        ? '<span class="yk-product-badges" aria-hidden="true">' + badges.join("") + '</span>'
+        : "";
     }
 
     function ykProductCard(product) {
