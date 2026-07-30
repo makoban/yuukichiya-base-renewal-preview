@@ -242,7 +242,10 @@
     if (contactSend) {
       event.preventDefault();
       var contactStatus = document.querySelector("[data-contact-send-status]");
-      if (contactStatus) contactStatus.textContent = "送信機能は現在準備中です。お急ぎの場合は店舗へお電話ください。";
+      var contactForm = document.querySelector("[data-contact-form]");
+      if (!contactForm) return;
+      if (contactStatus) contactStatus.textContent = "送信しています…";
+      HTMLFormElement.prototype.submit.call(contactForm);
     }
   });
 

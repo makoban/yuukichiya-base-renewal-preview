@@ -168,7 +168,8 @@
           </div>
         </article>
         <article class="yk-card">
-          <form class="yk-form" data-contact-form novalidate>
+          <form class="yk-form" action="https://yuukichiya-web.sakura.ne.jp/contact-submit.php" method="post" accept-charset="UTF-8" data-contact-form novalidate>
+            <div hidden aria-hidden="true"><label>ウェブサイト<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
             <label>お名前<input type="text" name="name" autocomplete="name" required></label>
             <label>メールアドレス<input type="email" name="email" autocomplete="email" required></label>
             <label>電話番号<input type="tel" name="tel" autocomplete="tel"></label>
@@ -195,10 +196,10 @@
           <p>入力内容をご確認ください。</p>
           <dl class="yk-contact-summary" data-contact-summary></dl>
           <div class="yk-page-actions">
-            <button class="yk-button" type="button" data-contact-send>メールで送信する</button>
+            <button class="yk-button" type="button" data-contact-send>送信する</button>
             <button class="yk-button yk-button--sub" type="button" data-contact-edit>修正する</button>
           </div>
-          <p class="yk-form-status" data-contact-send-status>送信機能は現在準備中です。お急ぎの場合は店舗へお電話ください。</p>
+          <p class="yk-form-status" data-contact-send-status>内容をご確認のうえ、送信してください。</p>
         </div>
       </article>
     </section>
