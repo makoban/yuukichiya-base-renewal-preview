@@ -81,17 +81,19 @@
     .yk-hero { background: linear-gradient(90deg, rgba(251,252,249,.99) 0%, rgba(251,252,249,.94) 34%, rgba(251,252,249,.42) 55%, rgba(251,252,249,.06) 74%), url("assets/hero-uniform-display-desktop.jpg") center right / cover no-repeat; }
 
     .yk-hero__inner { display: flex; align-items: center; max-width: var(--yk-content-max); min-height: 620px; margin: 0 auto; padding: 86px 28px 68px; }
-    .yk-hero__copy { max-width: 560px; }
+    .yk-hero__copy { width: min(680px,100%); max-width: 680px; }
     .yk-hero__mobile-visual { display: none; }
-    .yk-renewal-badge { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 5px 9px; max-width: 100%; margin: 0 0 15px; padding: 8px 13px 8px 8px; border: 1px solid rgba(226,167,55,.45); border-radius: 999px; background: linear-gradient(120deg,#fffbea,#ffe09e 55%,#ffc7b5); color: #6e321d; font-size: 14px; font-weight: 900; line-height: 1.35; letter-spacing: .01em; box-shadow: 0 10px 24px rgba(83,55,20,.16),inset 0 1px 0 rgba(255,255,255,.9); }
+    .yk-renewal-badge { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 9px; width: max-content; max-width: 100%; margin: 0 0 15px; padding: 8px 13px 8px 8px; border: 1px solid rgba(226,167,55,.45); border-radius: 999px; background: linear-gradient(120deg,#fffbea,#ffe09e 55%,#ffc7b5); color: #6e321d; font-size: 14px; font-weight: 900; line-height: 1.35; letter-spacing: .01em; box-shadow: 0 10px 24px rgba(83,55,20,.16),inset 0 1px 0 rgba(255,255,255,.9); }
     .yk-renewal-badge__new { display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center; min-height: 25px; padding: 0 8px; border-radius: 999px; background: var(--yk-accent); color: #fff; font-size: 10px; letter-spacing: .08em; box-shadow: 0 3px 8px rgba(133,43,29,.2); }
     .yk-renewal-badge__copy { display: inline-flex; flex-wrap: wrap; gap: 0 .38em; min-width: 0; }
     .yk-renewal-badge__copy::after { color: #c27812; content: "✦"; }
     .yk-renewal-badge__copy > span { white-space: nowrap; }
-    .yk-eyebrow { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 18px; color: #1f553f; font-size: 13px; font-weight: 800; }
+    .yk-eyebrow { display: flex; align-items: center; gap: 10px; width: max-content; max-width: 100%; margin: 0 0 18px; color: #1f553f; font-size: 13px; font-weight: 800; }
     .yk-eyebrow::before { display: block; width: 36px; height: 2px; background: var(--yk-accent); content: ""; }
     .yk-hero h1 { max-width: 680px; margin: 0; font-size: 60px; line-height: 1.08; letter-spacing: 0; }
     .yk-hero p { max-width: 560px; margin: 20px 0 0; color: var(--yk-muted); font-weight: 700; }
+    .yk-hero .yk-renewal-badge { max-width: 100%; margin: 0 0 24px; }
+    .yk-hero .yk-eyebrow { margin: 0 0 22px; }
     .yk-hero__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
     .yk-hero__button { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 18px; border: 0; border-radius: var(--yk-radius); background: var(--yk-main); color: #fff; font: inherit; font-weight: 900; white-space: nowrap; cursor: pointer; box-shadow: var(--yk-press); }
     .yk-hero__button--sub { border: 1px solid var(--yk-line); background: #fff; color: var(--yk-ink); }
@@ -558,7 +560,8 @@
       .yk-hero__inner { min-height: 0; padding-top: 20px; padding-bottom: 34px; }
       .yk-hero__copy { width: 100%; max-width: none; }
       .yk-hero__mobile-visual { display: block; width: 100%; aspect-ratio: 16 / 9; margin: 0 0 20px; overflow: hidden; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #eef3f0 url("assets/hero-uniform-display-mobile.jpg") center / cover no-repeat; box-shadow: 0 12px 28px rgba(28,45,52,.13); }
-      .yk-renewal-badge { margin-bottom: 12px; padding: 7px 11px 7px 7px; font-size: 13px; }
+      .yk-hero .yk-renewal-badge { margin-bottom: 14px; padding: 7px 11px 7px 7px; font-size: 13px; }
+      .yk-hero .yk-eyebrow { margin-bottom: 16px; }
       .yk-shelf-section { padding-top: 34px; padding-bottom: 36px; }
       .yk-shelf-head { align-items: stretch; flex-direction: column; gap: 14px; margin-bottom: 14px; }
       .yk-shelf-heading h2 { font-size: 25px; }
