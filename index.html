@@ -341,6 +341,7 @@
     .yk-preview-purchase__add { min-height: 58px; border: 0; border-radius: var(--yk-radius); background: var(--yk-main); color: #fff; padding: 10px 16px; font: inherit; font-size: 16px; font-weight: 900; cursor: pointer; box-shadow: var(--yk-shadow); }
     .yk-preview-purchase__add:disabled { background: #d9dee1; color: #697278; cursor: not-allowed; box-shadow: none; }
     .yk-preview-purchase__status { min-height: 1.6em; margin: 0; color: var(--yk-main); font-size: 12px; font-weight: 900; }
+    .yk-preview-purchase__stock { color: var(--yk-muted); font-size: 11px; font-weight: 800; }
     .yk-preview-item-dialog__guide { display: grid; gap: 8px; margin: 4px 0 0; padding: 0; list-style: none; }
     .yk-preview-item-dialog__guide li { padding-left: 13px; border-left: 3px solid var(--yk-main); color: var(--yk-muted); font-size: 13px; font-weight: 800; }
     .yk-preview-cart-dialog { width: min(720px,calc(100% - 28px)); max-height: calc(100dvh - 28px); padding: 0; overflow: auto; border: 0; border-radius: var(--yk-radius); background: #fff; color: var(--yk-ink); box-shadow: 0 28px 80px rgba(12,29,34,.36); }
@@ -1203,9 +1204,9 @@
           </div>
           <label>数量
             <select data-yk-preview-item-quantity aria-label="数量">
-              <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
-              <option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
+              <option value="1">1</option>
             </select>
+            <span class="yk-preview-purchase__stock" data-yk-preview-stock-status aria-live="polite"></span>
           </label>
           <button class="yk-preview-purchase__add" type="button" data-yk-preview-add-cart>カートに入れる</button>
           <p class="yk-preview-purchase__status" data-yk-preview-item-status aria-live="polite"></p>
@@ -1238,6 +1239,7 @@
   </dialog>
   <!-- YK_PREVIEW_COMMERCE_END -->
   <script src="assets/base-production-catalog.js?v=20260731-ec-fixes"></script>
+  <script src="assets/preview-product-inventory.js?v=20260731-stock-limit"></script>
   <script src="assets/search-relevance.js?v=20260731-search-strict"></script>
   <script>
     window.ykCurrentCatalog = {
@@ -2281,6 +2283,54 @@
       ykUpdatePreviewCartCount(cart);
     }
 
+    function ykPreviewInventory(product) {
+      var inventory = window.ykProductInventory || {};
+      return product ? inventory[String(product.id)] || null : null;
+    }
+
+    function ykPreviewCartInventoryVariant(item) {
+      if (item && item.inventoryVariant) return String(item.inventoryVariant);
+      var match = String(item && item.variant || "").match(/(?:^|\s\/\s)種類・サイズ：([^/]+)/);
+      return match ? match[1].trim() : "";
+    }
+
+    function ykPreviewStockLimit(product, inventoryVariant) {
+      var inventory = ykPreviewInventory(product);
+      if (!inventory) return null;
+      var variants = inventory.variants || {};
+      if (inventoryVariant && Object.prototype.hasOwnProperty.call(variants, inventoryVariant)) {
+        return Math.max(0, Number(variants[inventoryVariant]) || 0);
+      }
+      return inventory.stock === null || inventory.stock === undefined
+        ? null
+        : Math.max(0, Number(inventory.stock) || 0);
+    }
+
+    function ykPreviewReservedQuantity(product, inventoryVariant) {
+      var inventory = ykPreviewInventory(product);
+      var variants = inventory && inventory.variants || {};
+      var variantScoped = Boolean(
+        inventoryVariant && Object.prototype.hasOwnProperty.call(variants, inventoryVariant)
+      );
+      return ykReadPreviewCart().reduce(function (total, item) {
+        if (String(item.id) !== String(product.id)) return total;
+        if (variantScoped && ykPreviewCartInventoryVariant(item) !== inventoryVariant) return total;
+        return total + Math.max(0, Number(item.quantity) || 0);
+      }, 0);
+    }
+
+    function ykPreviewStockState(product, selection) {
+      var inventoryVariant = selection && selection.inventoryVariant || "";
+      var limit = ykPreviewStockLimit(product, inventoryVariant);
+      var reserved = limit === null ? 0 : ykPreviewReservedQuantity(product, inventoryVariant);
+      return {
+        inventoryVariant: inventoryVariant,
+        limit: limit,
+        reserved: reserved,
+        remaining: limit === null ? null : Math.max(0, limit - reserved)
+      };
+    }
+
     function ykUpdatePreviewCartCount(cart) {
       var items = cart || ykReadPreviewCart();
       var quantity = items.reduce(function (total, item) { return total + (Number(item.quantity) || 0); }, 0);
@@ -2370,10 +2420,17 @@
         var variants = (ykProductVariants[product.id] || product.vs || []).slice();
         variants = variants.filter(function (item, index) { return item && variants.indexOf(item) === index; });
         if (variants.length) {
+          var inventory = ykPreviewInventory(product);
+          var variantStocks = inventory && inventory.variants || {};
+          var selectedAssigned = false;
           hasChoiceOptions = true;
           controls.push('<label>種類・サイズ<select data-yk-preview-item-variant aria-label="種類・サイズ">' +
             variants.map(function (item) {
-              return '<option value="' + ykEscapeHtml(item) + '">' + ykEscapeHtml(item) + "</option>";
+              var hasStock = !Object.prototype.hasOwnProperty.call(variantStocks, item) || Number(variantStocks[item]) > 0;
+              var selected = hasStock && !selectedAssigned ? " selected" : "";
+              if (selected) selectedAssigned = true;
+              return '<option value="' + ykEscapeHtml(item) + '"' + selected + (hasStock ? "" : " disabled") + '>' +
+                ykEscapeHtml(item) + (hasStock ? "" : "（在庫なし）") + "</option>";
             }).join("") + "</select></label>");
         }
       }
@@ -2397,6 +2454,7 @@
       var labels = [];
       var extraPrice = 0;
       var invalidNode = null;
+      var inventoryVariant = "";
       if (optionNodes.length) {
         optionNodes.forEach(function (node) {
           if (!node.value && node.getAttribute("data-option-required") === "true" && !invalidNode) {
@@ -2411,6 +2469,7 @@
       } else {
         var variantNode = dialog.querySelector("[data-yk-preview-item-variant]");
         var variantValue = variantNode ? variantNode.value : "";
+        inventoryVariant = variantValue;
         if (variantNode && !variantValue && !invalidNode) invalidNode = variantNode;
         if (variantValue) labels.push("種類・サイズ：" + variantValue);
       }
@@ -2419,7 +2478,54 @@
         if (!value && node.getAttribute("data-condition-required") === "true" && !invalidNode) invalidNode = node;
         if (value) labels.push((node.getAttribute("data-condition-name") || "入力項目") + "：" + value);
       });
-      return { valid: !invalidNode, invalidNode: invalidNode, label: labels.join(" / "), extraPrice: extraPrice };
+      return {
+        valid: !invalidNode,
+        invalidNode: invalidNode,
+        label: labels.join(" / "),
+        extraPrice: extraPrice,
+        inventoryVariant: inventoryVariant
+      };
+    }
+
+    function ykRefreshPreviewQuantity(dialog, product) {
+      var quantity = dialog.querySelector("[data-yk-preview-item-quantity]");
+      var stockNote = dialog.querySelector("[data-yk-preview-stock-status]");
+      var addButton = dialog.querySelector("[data-yk-preview-add-cart]");
+      var status = dialog.querySelector("[data-yk-preview-item-status]");
+      if (!quantity || !product) return;
+      var soldOut = product.s === false;
+      var selection = ykPreviewSelection(dialog, product);
+      var stock = ykPreviewStockState(product, selection);
+      var optionLimit = soldOut ? 0 : stock.remaining === null ? 10 : Math.min(10, stock.remaining);
+      var previousValue = Math.max(1, Number(quantity.value) || 1);
+      if (optionLimit > 0) {
+        quantity.innerHTML = Array.from({ length: optionLimit }, function (_, index) {
+          var value = index + 1;
+          return '<option value="' + value + '">' + value + "</option>";
+        }).join("");
+        quantity.value = String(Math.min(previousValue, optionLimit));
+      } else {
+        quantity.innerHTML = '<option value="">在庫なし</option>';
+      }
+      quantity.disabled = optionLimit === 0;
+      if (stockNote) {
+        if (soldOut) stockNote.textContent = "現在は在庫切れです。";
+        else if (stock.limit === null) stockNote.textContent = "1回に選べる数量は10点までです。";
+        else if (stock.reserved > 0) {
+          stockNote.textContent = "在庫" + stock.limit + "点・カート内" + stock.reserved +
+            "点・追加可能" + stock.remaining + "点";
+        } else if (stock.limit > 10) stockNote.textContent = "在庫" + stock.limit + "点・1回10点まで";
+        else stockNote.textContent = "購入可能数は" + stock.remaining + "点です。";
+      }
+      if (addButton) {
+        addButton.disabled = optionLimit === 0;
+        addButton.textContent = soldOut ? "SOLD OUT" : optionLimit === 0 ? "在庫上限です" : "カートに入れる";
+      }
+      if (status && !soldOut && optionLimit === 0) {
+        status.textContent = stock.reserved > 0
+          ? "カート内の商品で在庫上限に達しています。"
+          : "選択した種類・サイズは在庫切れです。";
+      }
     }
 
     function ykRefreshPreviewPrice(dialog, product) {
@@ -2473,10 +2579,9 @@
           ? "種類・サイズを選ぶ"
           : optionSummary.hasTextConditions ? "必要事項を入力する" : "数量を選ぶ";
       }
-      if (quantity) { quantity.value = "1"; quantity.disabled = soldOut; }
-      if (addButton) { addButton.disabled = soldOut; addButton.textContent = soldOut ? "SOLD OUT" : "カートに入れる"; }
       if (status) status.textContent = soldOut ? "この商品は在庫切れのため購入できません。" : "";
       dialog.dataset.productId = product.id;
+      ykRefreshPreviewQuantity(dialog, product);
       dialog.ykPreviousFocus = trigger || document.activeElement;
       dialog.ykPreviousHash = options && options.fromHash ? "" : window.location.hash;
       if (!dialog.open) {
@@ -2518,6 +2623,12 @@
       }
       var selectedVariant = selection.label;
       var selectedQuantity = Math.max(1, Number(quantityNode ? quantityNode.value : 1) || 1);
+      var stock = ykPreviewStockState(product, selection);
+      if (stock.remaining !== null && selectedQuantity > stock.remaining) {
+        if (status) status.textContent = "在庫数を超える数量はカートに入れられません。";
+        ykRefreshPreviewQuantity(dialog, product);
+        return;
+      }
       var cart = ykReadPreviewCart();
       var existing = cart.find(function (item) {
         return String(item.id) === String(product.id) && item.variant === selectedVariant;
@@ -2527,6 +2638,7 @@
         id: product.id,
         title: product.t,
         variant: selectedVariant,
+        inventoryVariant: selection.inventoryVariant,
         quantity: selectedQuantity,
         price: ykPriceNumber(product.p) + selection.extraPrice,
         image: product.img
@@ -2793,11 +2905,14 @@
         if (event.target === ykPreviewItemDialog) ykClosePreviewItem();
       });
       ykPreviewItemDialog.addEventListener("change", function (event) {
-        if (!event.target.matches("[data-yk-preview-option-select]")) return;
+        if (!event.target.matches("[data-yk-preview-option-select],[data-yk-preview-item-variant]")) return;
         var product = ykFindProduct(ykPreviewItemDialog.dataset.productId);
         var status = ykPreviewItemDialog.querySelector("[data-yk-preview-item-status]");
         if (status) status.textContent = "";
-        ykRefreshPreviewPrice(ykPreviewItemDialog, product);
+        if (event.target.matches("[data-yk-preview-option-select]")) {
+          ykRefreshPreviewPrice(ykPreviewItemDialog, product);
+        }
+        ykRefreshPreviewQuantity(ykPreviewItemDialog, product);
       });
       ykPreviewItemDialog.addEventListener("close", function () {
         var image = ykPreviewItemDialog.querySelector("[data-yk-preview-item-image]");
