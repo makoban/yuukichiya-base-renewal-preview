@@ -1,0 +1,169 @@
+import { chromium } from "playwright";
+import { mkdir, writeFile } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const outputDir = resolve(root, "qa");
+const widths = [320, 360, 375, 390, 393, 412, 430, 1440];
+
+export async function verifySearchOptionsStaging(
+  url = "http://127.0.0.1:8788/?draft-preview=1",
+) {
+  await mkdir(outputDir, { recursive: true });
+  const browser = await chromium.launch({
+    headless: true,
+    executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  });
+  const results = [];
+
+  try {
+    for (const width of widths) {
+      const page = await browser.newPage({
+        viewport: { width, height: width === 1440 ? 1000 : 844 },
+      });
+      const browserErrors = [];
+      page.on("pageerror", (error) => browserErrors.push(error.message));
+      await page.goto(url, { waitUntil: "networkidle" });
+
+      const result = await page.evaluate(() => {
+        const rootElement = document.documentElement;
+        const heroSearch = document.querySelector(".yk-hero-search")?.getBoundingClientRect();
+        const priceDown = document.querySelector("#yk-price-down")?.getBoundingClientRect();
+        const overflowing = Array.from(document.querySelectorAll("body *"))
+          .filter((element) => {
+            const style = getComputedStyle(element);
+            if (
+              style.display === "none" ||
+              style.position === "fixed" ||
+              element.closest(".yk-shelf-viewport")
+            ) return false;
+            const rect = element.getBoundingClientRect();
+            return rect.left < -1 || rect.right > rootElement.clientWidth + 1;
+          })
+          .slice(0, 8)
+          .map((element) => ({
+            tag: element.tagName,
+            className: String(element.className || ""),
+          }));
+        return {
+          clientWidth: rootElement.clientWidth,
+          scrollWidth: rootElement.scrollWidth,
+          overflowing,
+          heroSearchAbovePriceDown: Boolean(heroSearch && priceDown) &&
+            heroSearch.bottom <= priceDown.top + 1,
+          priceDownCountText:
+            document.querySelector('[data-shelf-count="priceDown"]')?.textContent.trim() || "",
+          priceDownCards: document.querySelectorAll("#yk-shelf-priceDown .yk-shelf-card").length,
+          defaultProductTotal: Number(
+            (document.querySelector("#yk-result-count")?.textContent || "").match(/全(\d+)件/)?.[1] || 0,
+          ),
+          renewalBadgePresent: Boolean(document.querySelector(".yk-renewal-badge")),
+          freeShippingPresent: Boolean(document.querySelector(".yk-free-shipping")),
+          selectedHeroImage: document.querySelector(".yk-hero__mobile-visual")
+            ? getComputedStyle(document.querySelector(".yk-hero__mobile-visual")).backgroundImage
+            : "",
+        };
+      });
+      result.browserErrors = browserErrors;
+
+      if (width === 390 || width === 1440) {
+        const runSearch = async (query) => {
+          await page.locator("#yk-hero-query").fill(query);
+          await page.locator("[data-yk-search-form]").evaluate((form) => form.requestSubmit());
+          return page.evaluate(() => ({
+            total: Number(
+              (document.querySelector("#yk-result-count")?.textContent || "").match(/全(\d+)件/)?.[1] || 0,
+            ),
+            sort: document.querySelector("#yk-result-sort")?.value || "",
+            firstTitle:
+              document.querySelector(".yk-product__title")?.textContent.replace(/\s+/g, " ").trim() || "",
+          }));
+        };
+
+        result.synonymSearch = await runSearch("体操着");
+        await page.locator("[data-show-all]").click();
+        result.multiWordSearch = await runSearch("青木小 赤白ぼうし");
+        await page.locator("[data-show-all]").click();
+        result.typoSearch = await runSearch("ジャージ上依");
+
+        await page.evaluate(() => {
+          localStorage.removeItem("yuukichiya.theme-preview-cart.v1");
+          ykOpenPreviewItem(ykFindProduct("73632857"), document.body);
+        });
+        result.studentConditionVisible =
+          await page.locator("[data-yk-preview-condition-input]").isVisible() &&
+          (await page.locator("[data-yk-preview-item-options]").textContent())
+            .includes("生徒証明書の番号");
+        await page.locator("[data-yk-preview-add-cart]").click();
+        result.studentConditionBlocksEmpty =
+          await page.locator("#yk-preview-item-dialog").isVisible() &&
+          (await page.locator("[data-yk-preview-item-status]").textContent())
+            .includes("必須項目");
+        await page.locator("[data-yk-preview-condition-input]").fill("1234");
+        await page.locator("[data-yk-preview-add-cart]").click();
+        result.studentConditionAdded =
+          await page.locator("#yk-preview-cart-dialog").isVisible() &&
+          (await page.locator("[data-yk-preview-cart-list]").textContent()).includes("1234");
+        await page.locator("[data-yk-preview-cart-close]").click();
+
+        await page.evaluate(() => ykOpenPreviewItem(ykFindProduct("114897908"), document.body));
+        const optionSelect = page.locator("[data-yk-preview-option-select]").first();
+        result.pricedOptionVisible = await optionSelect.isVisible();
+        if (result.pricedOptionVisible) {
+          const optionCount = await optionSelect.locator("option").count();
+          await optionSelect.selectOption({ index: optionCount - 1 });
+          await optionSelect.evaluate((select) => {
+            select.dispatchEvent(new Event("change", { bubbles: true }));
+          });
+          result.pricedOptionAdjusted =
+            (await page.locator("[data-yk-preview-item-price]").textContent()).includes("サイズ調整");
+        } else {
+          result.pricedOptionAdjusted = false;
+        }
+        await page.locator("[data-yk-preview-item-close]").click();
+
+        await page.screenshot({
+          path: resolve(outputDir, `staging-search-options-${width}.png`),
+          fullPage: true,
+        });
+      }
+
+      results.push({ width, ...result });
+      await page.close();
+    }
+  } finally {
+    await browser.close();
+  }
+
+  const failed = results.some((result) => {
+    if (result.scrollWidth > result.clientWidth || result.overflowing.length) return true;
+    if (result.browserErrors.length) return true;
+    if (!result.heroSearchAbovePriceDown) return true;
+    if (result.priceDownCountText !== "82商品" || result.priceDownCards !== 82) return true;
+    if (result.defaultProductTotal !== 789) return true;
+    if (!result.renewalBadgePresent || !result.freeShippingPresent) return true;
+    if (result.width === 390 || result.width === 1440) {
+      return result.synonymSearch.total < 1 || result.synonymSearch.sort !== "relevance" ||
+        result.multiWordSearch.total < 1 || result.multiWordSearch.sort !== "relevance" ||
+        result.typoSearch.total < 1 || result.typoSearch.sort !== "relevance" ||
+        !result.studentConditionVisible || !result.studentConditionBlocksEmpty ||
+        !result.studentConditionAdded || !result.pricedOptionVisible ||
+        !result.pricedOptionAdjusted;
+    }
+    return false;
+  });
+
+  const report = {
+    checkedAt: new Date().toISOString(),
+    url,
+    widths,
+    failed,
+    results,
+  };
+  await writeFile(
+    resolve(outputDir, "staging-search-options-verification-20260731.json"),
+    `${JSON.stringify(report, null, 2)}\n`,
+  );
+  return report;
+}

@@ -52,6 +52,11 @@
     .yk-search { display: grid; grid-template-columns: 1fr auto; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #f8faf9; box-shadow: 0 8px 20px rgba(26,45,52,.06); overflow: hidden; }
     .yk-search input { min-width: 0; height: 46px; border: 0; background: transparent; padding: 0 16px; font: inherit; outline: 0; }
     .yk-search button, .yk-button { min-height: 46px; border: 0; border-radius: var(--yk-radius); background: var(--yk-main); color: #fff; padding: 0 18px; font: inherit; font-weight: 900; cursor: pointer; box-shadow: var(--yk-press); }
+    .yk-hero-search { display: grid; gap: 7px; margin-top: 26px; }
+    .yk-hero-search .yk-search { border-color: rgba(47,125,91,.42); background: rgba(255,255,255,.96); box-shadow: 0 14px 34px rgba(26,45,52,.15); }
+    .yk-hero-search .yk-search input { height: 54px; font-size: 16px; }
+    .yk-hero-search .yk-search button { min-height: 54px; padding-right: 24px; padding-left: 24px; }
+    .yk-hero-search__help { margin: 0!important; color: #52626a!important; font-size: 12px; font-weight: 800!important; line-height: 1.55; }
     .yk-nav { display: flex; gap: 14px; align-items: center; color: var(--yk-muted); font-size: 14px; font-weight: 800; white-space: nowrap; }
     .yk-nav a:hover { color: var(--yk-main); }
     .yk-cart-count { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; margin-left: 5px; padding: 0 5px; border-radius: 999px; background: var(--yk-accent); color: #fff; font-size: 11px; line-height: 1; }
@@ -328,7 +333,10 @@
     .yk-preview-purchase h3 { margin: 0; font-size: 20px; line-height: 1.4; }
     .yk-preview-purchase__options { display: grid; gap: 12px; }
     .yk-preview-purchase label { display: grid; gap: 7px; font-size: 14px; font-weight: 900; }
-    .yk-preview-purchase select { width: 100%; min-height: 52px; border: 1px solid #cbd5d9; border-radius: var(--yk-radius); background: #fff; padding: 0 42px 0 14px; color: var(--yk-ink); font: inherit; font-size: 16px; font-weight: 800; }
+    .yk-preview-purchase select, .yk-preview-purchase input[type="text"] { width: 100%; min-height: 52px; border: 1px solid #cbd5d9; border-radius: var(--yk-radius); background: #fff; padding: 0 42px 0 14px; color: var(--yk-ink); font: inherit; font-size: 16px; font-weight: 800; }
+    .yk-preview-purchase input[type="text"] { padding-right: 14px; }
+    .yk-preview-condition__required { display: inline-flex; margin-left: 5px; padding: 2px 7px; border-radius: 999px; background: #b42318; color: #fff; font-size: 10px; line-height: 1.4; vertical-align: middle; }
+    .yk-preview-condition__caption { color: var(--yk-muted); font-size: 11px; font-weight: 700; line-height: 1.55; white-space: pre-line; }
     .yk-preview-purchase__add { min-height: 58px; border: 0; border-radius: var(--yk-radius); background: var(--yk-main); color: #fff; padding: 10px 16px; font: inherit; font-size: 16px; font-weight: 900; cursor: pointer; box-shadow: var(--yk-shadow); }
     .yk-preview-purchase__status { min-height: 1.6em; margin: 0; color: var(--yk-main); font-size: 12px; font-weight: 900; }
     .yk-preview-item-dialog__guide { display: grid; gap: 8px; margin: 4px 0 0; padding: 0; list-style: none; }
@@ -679,7 +687,7 @@
       </a>
 
       <form class="yk-search" action="#yk-results" method="get" id="yk-site-search">
-        <input id="yk-header-query" type="search" name="q" placeholder="学校名・商品名で探す" value="">
+        <input id="yk-header-query" type="search" name="q" placeholder="学校名・商品名・品番で検索" value="" data-yk-query>
         <button type="submit">検索</button>
       </form>
 
@@ -702,6 +710,13 @@
           <p class="yk-eyebrow">豊田市の学生服・学校用品店</p>
           <h1><span class="phrase">必要な商品を、</span><span class="phrase">すぐに探せます。</span></h1>
           <p><span class="phrase">お買い得品、よく使う学用品、</span><span class="phrase">学校指定品から、</span><span class="phrase">目的に合わせてお選びいただけます。</span></p>
+          <div class="yk-hero-search">
+            <form class="yk-search" action="#yk-results" method="get" data-yk-search-form>
+              <input id="yk-hero-query" type="search" name="q" placeholder="例：青木小 体操着、上ぐつ 24cm" autocomplete="off" enterkeyhint="search" data-yk-query>
+              <button type="submit">商品検索</button>
+            </form>
+            <p class="yk-hero-search__help">学校名・商品名・サイズ・品番をまとめて検索できます。全角半角・ひらがな／カタカナ・表記ゆれ・小さな入力違いにも対応します。</p>
+          </div>
           <div class="yk-hero__actions">
             <a class="yk-hero__button yk-hero__button--sub" href="#yk-price-down">プライスダウン</a>
             <a class="yk-hero__button yk-hero__button--sub" href="#yk-school-goods">学用品</a>
@@ -906,6 +921,7 @@
           <label class="yk-sort-control">並び替え
             <select id="yk-result-sort">
               <option value="school">学校順</option>
+              <option value="relevance">関連度順</option>
               <option value="recommended">おすすめ順</option>
               <option value="new">新着順</option>
               <option value="price-low">価格の安い順</option>
@@ -1219,6 +1235,16 @@
     </div>
   </dialog>
   <!-- YK_PREVIEW_COMMERCE_END -->
+  <script src="assets/base-production-catalog.js?v=20260731-search-options"></script>
+  <script>
+    window.ykCurrentCatalog = {
+      schoolAvailability: window.ykSchoolAvailability,
+      searchCatalog: window.ykSearchCatalog,
+      allProducts: window.ykAllProducts,
+      specialCatalog: window.ykSpecialCatalog,
+      productConditions: window.ykProductConditions
+    };
+  </script>
   <script src="assets/preview-product-options.js"></script>
   <script>
     var ykSchoolAvailability = {"青木幼稚園":{"total":10,"items":{}},"上鷹見こども園":{"total":9,"items":{}},"浄光こども園":{"total":0,"items":{}},"根川こども園":{"total":4,"items":{}},"野見こども園":{"total":7,"items":{}},"杜のひかりこども園":{"total":0,"items":{}},"宮口こども園":{"total":7,"items":{}},"みよし保育園":{"total":0,"items":{}},"青木小学校":{"total":10,"items":{}},"朝日小学校":{"total":8,"items":{}},"市木小学校":{"total":8,"items":{}},"五ケ丘小学校":{"total":9,"items":{}},"五ケ丘東小学校":{"total":8,"items":{}},"井上小学校":{"total":8,"items":{}},"伊保小学校":{"total":8,"items":{}},"梅坪小学校":{"total":8,"items":{}},"大畑小学校":{"total":9,"items":{}},"大林小学校":{"total":10,"items":{}},"加納小学校":{"total":8,"items":{}},"上鷹見小学校":{"total":13,"items":{}},"幸海小学校":{"total":10,"items":{}},"小清水小学校":{"total":10,"items":{}},"古瀬間小学校":{"total":8,"items":{}},"挙母小学校":{"total":8,"items":{}},"衣丘小学校":{"total":9,"items":{}},"佐切小学校":{"total":7,"items":{}},"四郷小学校":{"total":10,"items":{}},"浄水小学校":{"total":11,"items":{}},"浄水北小学校":{"total":14,"items":{}},"寿恵野小学校":{"total":9,"items":{}},"土橋小学校":{"total":10,"items":{}},"寺部小学校":{"total":10,"items":{}},"童子山小学校":{"total":9,"items":{}},"中山小学校":{"total":11,"items":{}},"西広瀬小学校":{"total":9,"items":{}},"西保見小学校":{"total":10,"items":{}},"根川小学校":{"total":11,"items":{}},"野見小学校":{"total":9,"items":{}},"則定小学校":{"total":15,"items":{}},"東保見小学校":{"total":12,"items":{}},"東山小学校":{"total":10,"items":{}},"平井小学校":{"total":10,"items":{}},"広川台小学校":{"total":8,"items":{}},"平和小学校":{"total":8,"items":{}},"前山小学校":{"total":11,"items":{}},"美山小学校":{"total":13,"items":{}},"元城小学校":{"total":8,"items":{}},"矢並小学校":{"total":10,"items":{}},"山之手小学校":{"total":10,"items":{}},"逢妻中学校":{"total":9,"items":{}},"朝日丘中学校":{"total":10,"items":{}},"井郷中学校":{"total":12,"items":{}},"石野中学校":{"total":2,"items":{}},"梅坪台中学校":{"total":11,"items":{}},"上郷中学校":{"total":6,"items":{}},"猿投中学校":{"total":8,"items":{}},"猿投台中学校":{"total":9,"items":{}},"浄水中学校":{"total":9,"items":{}},"末野原中学校":{"total":8,"items":{}},"崇化館中学校":{"total":11,"items":{}},"高橋中学校":{"total":14,"items":{}},"藤岡中学校":{"total":7,"items":{}},"藤岡南中学校":{"total":7,"items":{}},"豊南中学校":{"total":8,"items":{}},"保見中学校":{"total":8,"items":{}},"益富中学校":{"total":7,"items":{}},"美里中学校":{"total":9,"items":{}},"竜神中学校":{"total":10,"items":{}},"衣台高校":{"total":10,"items":{}},"豊田大谷高校":{"total":6,"items":{}},"豊田東高校":{"total":10,"items":{}},"豊田工科高校":{"total":10,"items":{}},"豊田北高校":{"total":10,"items":{}},"豊田西高等学校・附属中学校":{"total":10,"items":{}},"豊田高校":{"total":9,"items":{}}};
@@ -1238,11 +1264,18 @@
     ].concat(ykAllProducts);
 
     var ykSchoolProductOrder = {};
+    var ykProductSchoolText = {};
+    var ykSearchScores = {};
     /* YK_PREVIEW_COMMERCE_START */
     var ykPreviewCartKey = "yuukichiya.theme-preview-cart.v1";
     var ykPreviewCartMemory = [];
     /* YK_PREVIEW_COMMERCE_END */
     var ykInitialCategory = "";
+    ykSchoolAvailability = window.ykCurrentCatalog.schoolAvailability || ykSchoolAvailability;
+    ykSearchCatalog = window.ykCurrentCatalog.searchCatalog || ykSearchCatalog;
+    ykAllProducts = window.ykCurrentCatalog.allProducts || ykAllProducts;
+    ykSpecialCatalog = window.ykCurrentCatalog.specialCatalog || ykSpecialCatalog;
+    var ykProductConditions = window.ykCurrentCatalog.productConditions || {};
 
 
     function ykSchoolTypeLabel(type) {
@@ -1411,31 +1444,131 @@
       });
     }
 
+    function ykNormalizeSearch(value) {
+      var text = String(value || "");
+      try { text = text.normalize("NFKC"); } catch (error) {}
+      return text.toLowerCase()
+        .replace(/[\u30a1-\u30f6]/g, function (char) { return String.fromCharCode(char.charCodeAt(0) - 0x60); })
+        .replace(/[‐‑‒–—―ーｰ]/g, "-")
+        .replace(/[^\w\u3040-\u30ff\u3400-\u9fff\u3005\u3006\u30fc]+/g, " ")
+        .trim()
+        .replace(/\s+/g, " ");
+    }
+
+    function ykCompactSearch(value) {
+      return ykNormalizeSearch(value).replace(/[\s-]+/g, "");
+    }
+
+    function ykEditDistance(left, right) {
+      if (left === right) return 0;
+      if (!left.length) return right.length;
+      if (!right.length) return left.length;
+      var previous = Array.from({ length: right.length + 1 }, function (_, index) { return index; });
+      for (var i = 1; i <= left.length; i += 1) {
+        var current = [i];
+        for (var j = 1; j <= right.length; j += 1) {
+          current[j] = Math.min(current[j - 1] + 1, previous[j] + 1, previous[j - 1] + (left[i - 1] === right[j - 1] ? 0 : 1));
+        }
+        previous = current;
+      }
+      return previous[right.length];
+    }
+
+    function ykFuzzyContains(text, token) {
+      if (text.indexOf(token) !== -1) return true;
+      if (token.length < 3) return false;
+      var limit = token.length >= 7 ? 2 : 1;
+      var compact = String(text || "").replace(/\s+/g, "");
+      var minLength = Math.max(2, token.length - limit);
+      var maxLength = Math.min(compact.length, token.length + limit);
+      for (var length = minLength; length <= maxLength; length += 1) {
+        for (var start = 0; start + length <= compact.length; start += 1) {
+          if (ykEditDistance(token, compact.slice(start, start + length)) <= limit) return true;
+        }
+      }
+      return false;
+    }
+
+    var ykSynonymGroups = [
+      ["体操服", "体操着", "体育着"],
+      ["上履き", "上靴", "上ぐつ", "うわぐつ", "体育館しゅーず"],
+      ["しゅーず", "靴", "くつ"],
+      ["かっぱ", "雨合羽", "れいんうぇあ"],
+      ["鞄", "かばん", "ばっぐ", "りゅっく"],
+      ["半ずぼん", "はーふぱんつ"],
+      ["長ずぼん", "ろんぐぱんつ"],
+      ["制服", "学生服"],
+      ["赤白帽", "赤白ぼうし", "紅白帽"],
+      ["じゃーじ", "とれーにんぐうぇあ"]
+    ].map(function (group) { return group.map(ykCompactSearch); });
+
+    function ykTokenAlternatives(token) {
+      var compact = ykCompactSearch(token);
+      var values = [compact];
+      ykSynonymGroups.forEach(function (group) {
+        if (group.indexOf(compact) !== -1) values = values.concat(group);
+      });
+      return values.filter(function (value, index) { return value && values.indexOf(value) === index; });
+    }
+
+    function ykSearchScore(product, query) {
+      var title = ykCompactSearch(product.t);
+      var variants = ykCompactSearch([product.v].concat(product.vs || []).join(" "));
+      var schools = ykCompactSearch(ykProductSchoolText[String(product.id)] || "");
+      var id = ykCompactSearch(product.id);
+      var combined = [title, variants, schools, id].join(" ");
+      var tokens = ykNormalizeSearch(query).split(" ").filter(Boolean);
+      var score = 0;
+      for (var index = 0; index < tokens.length; index += 1) {
+        var alternatives = ykTokenAlternatives(tokens[index]);
+        var tokenMatched = false;
+        var tokenScore = 0;
+        alternatives.forEach(function (alternative) {
+          if (title === alternative) tokenScore = Math.max(tokenScore, 160);
+          else if (title.indexOf(alternative) === 0) tokenScore = Math.max(tokenScore, 110);
+          else if (title.indexOf(alternative) !== -1) tokenScore = Math.max(tokenScore, 80);
+          else if (schools.indexOf(alternative) !== -1) tokenScore = Math.max(tokenScore, 65);
+          else if (variants.indexOf(alternative) !== -1) tokenScore = Math.max(tokenScore, 50);
+          else if (id.indexOf(alternative) !== -1) tokenScore = Math.max(tokenScore, 45);
+          else if (ykFuzzyContains(combined, alternative)) tokenScore = Math.max(tokenScore, 18);
+          if (tokenScore) tokenMatched = true;
+        });
+        if (!tokenMatched) return -1;
+        score += tokenScore;
+      }
+      if (title.indexOf(ykCompactSearch(query)) !== -1) score += 100;
+      return score;
+    }
+
     function ykGetProducts() {
       var products = ykState.school ? (ykSearchCatalog[ykState.school] || []) : ykProductsForSchoolType(ykState.schoolType);
       if (ykState.specialCategory) {
         products = (ykSpecialCatalog[ykState.specialCategory] || []).slice();
       }
       if (ykState.query) {
-        var query = ykState.query.toLowerCase();
         products = products.filter(function (product) {
-          return [product.t, product.v].join(" ").toLowerCase().indexOf(query) !== -1;
+          var score = ykSearchScore(product, ykState.query);
+          ykSearchScores[String(product.id)] = score;
+          return score >= 0;
         });
-	      }
-	      return products.slice().sort(function (a, b) {
-	        if (ykState.sort === "price-low") {
-	          var priceA = ykPriceNumber(a.p) || Number.MAX_SAFE_INTEGER;
-	          var priceB = ykPriceNumber(b.p) || Number.MAX_SAFE_INTEGER;
-	          return priceA - priceB ||
-	            (ykSchoolProductOrder[String(a.id)] || 0) - (ykSchoolProductOrder[String(b.id)] || 0);
-	        }
-	        if (ykState.sort === "new") return (b.n || 0) - (a.n || 0);
-	        if (ykState.sort === "school") {
-	          if (ykState.school) return (a.r || 0) - (b.r || 0) || (b.n || 0) - (a.n || 0);
-	          return (ykSchoolProductOrder[String(a.id)] || 0) - (ykSchoolProductOrder[String(b.id)] || 0);
-	        }
-	        return (a.r || 0) - (b.r || 0) || (b.n || 0) - (a.n || 0);
-	      });
+      }
+      return products.slice().sort(function (a, b) {
+        if (ykState.query && ykState.sort === "relevance") {
+          return (ykSearchScores[String(b.id)] || 0) - (ykSearchScores[String(a.id)] || 0) || (b.n || 0) - (a.n || 0);
+        }
+        if (ykState.sort === "price-low") {
+          var priceA = ykPriceNumber(a.p) || Number.MAX_SAFE_INTEGER;
+          var priceB = ykPriceNumber(b.p) || Number.MAX_SAFE_INTEGER;
+          return priceA - priceB ||
+            (ykSchoolProductOrder[String(a.id)] || 0) - (ykSchoolProductOrder[String(b.id)] || 0);
+        }
+        if (ykState.sort === "new") return (b.n || 0) - (a.n || 0);
+        if (ykState.sort === "school") {
+          if (ykState.school) return (a.r || 0) - (b.r || 0) || (b.n || 0) - (a.n || 0);
+          return (ykSchoolProductOrder[String(a.id)] || 0) - (ykSchoolProductOrder[String(b.id)] || 0);
+        }
+        return (a.r || 0) - (b.r || 0) || (b.n || 0) - (a.n || 0);
+      });
     }
 
     function ykProductUrl(product) {
@@ -1892,15 +2025,45 @@
 
     function ykPreviewOptionGroups(product) {
       var options = window.ykProductOptions || {};
-      var groups = product ? options[String(product.id)] : null;
-      return Array.isArray(groups) ? groups : [];
+      var groups = product && Array.isArray(options[String(product.id)])
+        ? options[String(product.id)].slice()
+        : [];
+      var knownNames = groups.reduce(function (names, group) {
+        names[String(group.name || "")] = true;
+        return names;
+      }, {});
+      var audited = product && ykProductConditions[String(product.id)]
+        ? ykProductConditions[String(product.id)].options || []
+        : [];
+      audited.filter(function (condition) {
+        return condition.type === "select" && !knownNames[String(condition.label || "")];
+      }).forEach(function (condition) {
+        groups.push({
+          name: condition.label,
+          required: condition.required,
+          values: (condition.values || []).map(function (label) {
+            var priceMatch = String(label).match(/[¥￥]\s*([+-]?)\s*([\d,]+)/);
+            return {
+              value: label,
+              label: label,
+              price: priceMatch ? (priceMatch[1] === "-" ? -1 : 1) * Number(priceMatch[2].replace(/,/g, "")) : 0
+            };
+          })
+        });
+      });
+      return groups;
     }
 
     function ykRenderPreviewOptions(product, container) {
       if (!container) return;
       var optionGroups = ykPreviewOptionGroups(product);
+      var audited = ykProductConditions[String(product.id)]
+        ? ykProductConditions[String(product.id)].options || []
+        : [];
+      var textConditions = audited.filter(function (condition) { return condition.type === "text"; });
+      var controls = [];
       if (optionGroups.length) {
-        container.innerHTML = optionGroups.map(function (group, groupIndex) {
+        controls = optionGroups.map(function (group, groupIndex) {
           var placeholder = group.required
             ? '<option value="" selected disabled hidden>選択する（必須）</option>'
             : '<option value="">選択なし</option>';
@@ -1913,26 +2076,36 @@
             '" data-option-required="' + (group.required ? "true" : "false") +
             '" aria-label="' + ykEscapeHtml(group.name || "種類・サイズ") + '" data-option-index="' + groupIndex + '">' +
             placeholder + choices + "</select></label>";
-        }).join("");
-        return;
+        });
+      } else {
+        var variants = (ykProductVariants[product.id] || product.vs || []).slice();
+        if (!variants.length && product.v) variants.push(product.v);
+        if (!variants.length) variants.push("種類・サイズは店舗でご確認ください");
+        variants = variants.filter(function (item, index) { return item && variants.indexOf(item) === index; });
+        controls.push('<label>種類・サイズ<select data-yk-preview-item-variant aria-label="種類・サイズ">' +
+          variants.map(function (item) {
+            return '<option value="' + ykEscapeHtml(item) + '">' + ykEscapeHtml(item) + "</option>";
+          }).join("") + "</select></label>");
       }
-
-      var variants = (ykProductVariants[product.id] || product.vs || []).slice();
-      if (!variants.length && product.v) variants.push(product.v);
-      if (!variants.length) variants.push("種類・サイズは店舗でご確認ください");
-      variants = variants.filter(function (item, index) { return item && variants.indexOf(item) === index; });
-      container.innerHTML = '<label>種類・サイズ<select data-yk-preview-item-variant aria-label="種類・サイズ">' +
-        variants.map(function (item) {
-          return '<option value="' + ykEscapeHtml(item) + '">' + ykEscapeHtml(item) + "</option>";
-        }).join("") + "</select></label>";
+      textConditions.forEach(function (condition, conditionIndex) {
+        controls.push('<label>' + ykEscapeHtml(condition.label || "入力項目") +
+          (condition.required ? '<span class="yk-preview-condition__required">必須</span>' : "") +
+          '<input type="text" maxlength="' + (Number(condition.maxLength) || 20) +
+          '" placeholder="入力してください" data-yk-preview-condition-input data-yk-condition-input data-condition-name="' +
+          ykEscapeHtml(condition.label || "入力項目") + '" data-condition-required="' +
+          (condition.required ? "true" : "false") + '" data-condition-index="' + conditionIndex + '">' +
+          (condition.caption ? '<span class="yk-preview-condition__caption">' + ykEscapeHtml(condition.caption) + "</span>" : "") +
+          "</label>");
+      });
+      container.innerHTML = controls.join("");
     }
 
     function ykPreviewSelection(dialog, product) {
       var optionNodes = Array.prototype.slice.call(dialog.querySelectorAll("[data-yk-preview-option-select]"));
+      var labels = [];
+      var extraPrice = 0;
+      var invalidNode = null;
       if (optionNodes.length) {
-        var labels = [];
-        var extraPrice = 0;
-        var invalidNode = null;
         optionNodes.forEach(function (node) {
           if (!node.value && node.getAttribute("data-option-required") === "true" && !invalidNode) {
             invalidNode = node;
@@ -1943,16 +2116,18 @@
           labels.push((node.getAttribute("data-option-name") || "種類・サイズ") + "：" + (selected ? selected.textContent.trim() : node.value));
           extraPrice += Number(selected && selected.getAttribute("data-price-add")) || 0;
         });
-        return { valid: !invalidNode, invalidNode: invalidNode, label: labels.join(" / "), extraPrice: extraPrice };
+      } else {
+        var variantNode = dialog.querySelector("[data-yk-preview-item-variant]");
+        var variantValue = variantNode ? variantNode.value : (product.v || "");
+        if (!variantValue && !invalidNode) invalidNode = variantNode;
+        if (variantValue) labels.push("種類・サイズ：" + variantValue);
       }
-
-      var variantNode = dialog.querySelector("[data-yk-preview-item-variant]");
-      return {
-        valid: Boolean(variantNode ? variantNode.value : product.v),
-        invalidNode: null,
-        label: variantNode ? variantNode.value : (product.v || ""),
-        extraPrice: 0
-      };
+      Array.prototype.slice.call(dialog.querySelectorAll("[data-yk-preview-condition-input]")).forEach(function (node) {
+        var value = node.value.trim();
+        if (!value && node.getAttribute("data-condition-required") === "true" && !invalidNode) invalidNode = node;
+        if (value) labels.push((node.getAttribute("data-condition-name") || "入力項目") + "：" + value);
+      });
+      return { valid: !invalidNode, invalidNode: invalidNode, label: labels.join(" / "), extraPrice: extraPrice };
     }
 
     function ykRefreshPreviewPrice(dialog, product) {
@@ -2022,7 +2197,7 @@
       var status = dialog.querySelector("[data-yk-preview-item-status]");
       var selection = ykPreviewSelection(dialog, product);
       if (!selection.valid) {
-        if (status) status.textContent = "必須の種類・サイズを選択してください。";
+        if (status) status.textContent = "必須項目を入力・選択してください。";
         if (selection.invalidNode) selection.invalidNode.focus();
         return;
       }
@@ -2365,8 +2540,7 @@
         ykState.sort = "school";
         ykState.page = 1;
         ykSyncSchoolFilters();
-        var query = document.getElementById("yk-header-query");
-        if (query) query.value = "";
+        document.querySelectorAll("[data-yk-query]").forEach(function (query) { query.value = ""; });
         var sort = document.getElementById("yk-result-sort");
         if (sort) sort.value = "school";
         ykRenderProducts();
@@ -2382,25 +2556,37 @@
       });
     }
 
-    var ykSearchForm = document.getElementById("yk-site-search");
-    if (ykSearchForm) {
+    document.querySelectorAll("#yk-site-search,[data-yk-search-form]").forEach(function (ykSearchForm) {
       ykSearchForm.addEventListener("submit", function (event) {
         event.preventDefault();
-        var query = document.getElementById("yk-header-query");
+        var query = ykSearchForm.querySelector("[data-yk-query]");
         ykState.query = query ? query.value.trim() : "";
+        ykState.sort = ykState.query ? "relevance" : "school";
+        document.querySelectorAll("[data-yk-query]").forEach(function (input) { input.value = ykState.query; });
+        var searchSort = document.getElementById("yk-result-sort");
+        if (searchSort) searchSort.value = ykState.sort;
         ykState.page = 1;
         ykRenderProducts({ scroll: true });
       });
-    }
+    });
 
     try {
       var ykInitialQuery = new URLSearchParams(window.location.search).get("q") || "";
       if (ykInitialQuery) {
         ykState.query = ykInitialQuery.trim();
-        var ykInitialInput = document.getElementById("yk-header-query");
-        if (ykInitialInput) ykInitialInput.value = ykState.query;
+        ykState.sort = "relevance";
+        var ykInitialSort = document.getElementById("yk-result-sort");
+        if (ykInitialSort) ykInitialSort.value = ykState.sort;
+        document.querySelectorAll("[data-yk-query]").forEach(function (input) { input.value = ykState.query; });
       }
     } catch (error) {}
+
+    Object.keys(ykSearchCatalog).forEach(function (schoolName) {
+      (ykSearchCatalog[schoolName] || []).forEach(function (product) {
+        var id = String(product.id);
+        ykProductSchoolText[id] = [ykProductSchoolText[id] || "", schoolName].join(" ");
+      });
+    });
 
     if (!ykState.query && ykInitialCategory) {
       if (ykSearchCatalog[ykInitialCategory]) {
