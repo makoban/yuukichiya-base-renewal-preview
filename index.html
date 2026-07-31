@@ -687,7 +687,7 @@
       </a>
 
       <form class="yk-search" action="#yk-results" method="get" id="yk-site-search">
-        <input id="yk-header-query" type="search" name="q" placeholder="学校名・商品名・品番で検索" value="" data-yk-query>
+        <input id="yk-header-query" type="search" name="q" placeholder="学校名・商品名・用途を入力" value="" data-yk-query>
         <button type="submit">検索</button>
       </form>
 
@@ -712,10 +712,10 @@
           <p><span class="phrase">お買い得品、よく使う学用品、</span><span class="phrase">学校指定品から、</span><span class="phrase">目的に合わせてお選びいただけます。</span></p>
           <div class="yk-hero-search">
             <form class="yk-search" action="#yk-results" method="get" data-yk-search-form>
-              <input id="yk-hero-query" type="search" name="q" placeholder="例：青木小 体操着、上ぐつ 24cm" autocomplete="off" enterkeyhint="search" data-yk-query>
+              <input id="yk-hero-query" type="search" name="q" placeholder="例：体操着 / gym wear" autocomplete="off" enterkeyhint="search" data-yk-query>
               <button type="submit">商品検索</button>
             </form>
-            <p class="yk-hero-search__help">学校名・商品名・サイズ・品番をまとめて検索できます。全角半角・ひらがな／カタカナ・表記ゆれ・小さな入力違いにも対応します。</p>
+            <p class="yk-hero-search__help">学校名・商品名・用途・英語・サイズ・品番をまとめて検索できます。言い換えや小さな入力違いにも対応し、近い商品から表示します。</p>
           </div>
           <div class="yk-hero__actions">
             <a class="yk-hero__button yk-hero__button--sub" href="#yk-price-down">プライスダウン</a>
@@ -1236,6 +1236,7 @@
   </dialog>
   <!-- YK_PREVIEW_COMMERCE_END -->
   <script src="assets/base-production-catalog.js?v=20260731-search-options"></script>
+  <script src="assets/search-relevance.js?v=20260731-hybrid"></script>
   <script>
     window.ykCurrentCatalog = {
       schoolAvailability: window.ykSchoolAvailability,
@@ -1476,7 +1477,7 @@
 
     function ykFuzzyContains(text, token) {
       if (text.indexOf(token) !== -1) return true;
-      if (token.length < 3) return false;
+      if (token.length < 2) return false;
       var limit = token.length >= 7 ? 2 : 1;
       var compact = String(text || "").replace(/\s+/g, "");
       var minLength = Math.max(2, token.length - limit);
@@ -1494,55 +1495,301 @@
       return false;
     }
 
-    var ykSynonymGroups = [
-      ["体操服", "体操着", "体育着"],
-      ["ソックス", "靴下", "くつ下", "くつした", "スクールソックス"],
-      ["上履き", "上靴", "上ぐつ", "うわぐつ", "体育館しゅーず"],
-      ["しゅーず", "靴", "くつ"],
-      ["かっぱ", "雨合羽", "れいんうぇあ"],
-      ["鞄", "かばん", "ばっぐ", "りゅっく"],
-      ["半ずぼん", "はーふぱんつ"],
-      ["長ずぼん", "ろんぐぱんつ"],
-      ["制服", "学生服"],
-      ["赤白帽", "赤白ぼうし", "紅白帽"],
-      ["じゃーじ", "とれーにんぐうぇあ"]
-    ].map(function (group) { return group.map(ykCompactSearch); });
+    var ykSearchConfig = window.ykSearchRelevanceConfig || { concepts: [], stopWords: [] };
+    var ykSearchConcepts = (ykSearchConfig.concepts || []).map(function (concept) {
+      return {
+        id: concept.id,
+        related: concept.related || [],
+        aliases: (concept.aliases || []).map(function (alias) {
+          return {
+            normalized: ykNormalizeSearch(alias),
+            compact: ykCompactSearch(alias),
+            tokens: ykNormalizeSearch(alias).split(" ").map(ykCompactSearch).filter(Boolean)
+          };
+        }).filter(function (alias) { return alias.compact; })
+      };
+    });
+    var ykSearchStopWords = (ykSearchConfig.stopWords || []).map(ykCompactSearch).filter(Boolean);
+    var ykProductSearchDocCache = {};
+    var ykSchoolSearchEntries = null;
+    var ykParsedQueryCacheKey = "";
+    var ykParsedQueryCacheValue = null;
 
-    function ykTokenAlternatives(token) {
-      var compact = ykCompactSearch(token);
-      var values = [compact];
-      ykSynonymGroups.forEach(function (group) {
-        if (group.indexOf(compact) !== -1) values = values.concat(group);
+    function ykUniqueSearchValues(values) {
+      return values.filter(function (value, index) {
+        return value && values.indexOf(value) === index;
       });
-      return values.filter(function (value, index) { return value && values.indexOf(value) === index; });
+    }
+
+    function ykGetSchoolSearchEntries() {
+      if (ykSchoolSearchEntries) return ykSchoolSearchEntries;
+      ykSchoolSearchEntries = Object.keys(ykSearchCatalog).map(function (schoolName) {
+        var aliases = [
+          schoolName,
+          schoolName.replace(/高等学校/g, "高校"),
+          schoolName.replace(/小学校/g, "小"),
+          schoolName.replace(/中学校/g, "中"),
+          schoolName.replace(/高等学校/g, "高").replace(/高校/g, "高"),
+          schoolName.replace(/幼稚園/g, "幼"),
+          schoolName.replace(/こども園/g, "こども園"),
+          schoolName.replace(/保育園/g, "保育園")
+        ].map(ykCompactSearch).filter(function (alias) { return alias.length >= 3; });
+        return {
+          name: schoolName,
+          compact: ykCompactSearch(schoolName),
+          aliases: ykUniqueSearchValues(aliases).sort(function (a, b) { return b.length - a.length; })
+        };
+      });
+      return ykSchoolSearchEntries;
+    }
+
+    function ykFindQuerySchools(queryCompact) {
+      return ykGetSchoolSearchEntries().filter(function (entry) {
+        return entry.aliases.some(function (alias) { return queryCompact.indexOf(alias) !== -1; });
+      });
+    }
+
+    function ykFindQueryConcepts(queryNormalized, queryCompact) {
+      var candidates = [];
+      ykSearchConcepts.forEach(function (concept) {
+        concept.aliases.forEach(function (alias) {
+          var hasAscii = /[a-z]/.test(alias.normalized);
+          var aliasMatched = hasAscii ?
+            (" " + queryNormalized + " ").indexOf(" " + alias.normalized + " ") !== -1 :
+            queryCompact.indexOf(alias.compact) !== -1;
+          if (aliasMatched) {
+            candidates.push({
+              concept: concept,
+              alias: alias,
+              phraseQuality: alias.normalized === queryNormalized ? 2 :
+                (alias.normalized.indexOf(" ") !== -1 && queryNormalized.indexOf(alias.normalized) !== -1 ? 1 : 0)
+            });
+          }
+        });
+      });
+      candidates.sort(function (a, b) {
+        return b.alias.compact.length - a.alias.compact.length || b.phraseQuality - a.phraseQuality;
+      });
+      var selected = [];
+      candidates.forEach(function (candidate) {
+        if (selected.some(function (item) { return item.concept.id === candidate.concept.id; })) return;
+        if (selected.some(function (item) {
+          return item.alias.compact.length > candidate.alias.compact.length &&
+            item.alias.compact.indexOf(candidate.alias.compact) !== -1;
+        })) return;
+        selected.push(candidate);
+      });
+      return selected;
+    }
+
+    function ykParseSearchQuery(query) {
+      var normalized = ykNormalizeSearch(query);
+      var compact = ykCompactSearch(query);
+      if (normalized === ykParsedQueryCacheKey && ykParsedQueryCacheValue) return ykParsedQueryCacheValue;
+      var conceptMatches = ykFindQueryConcepts(normalized, compact);
+      var schoolMatches = ykFindQuerySchools(compact);
+      var matchedAliasParts = [];
+      conceptMatches.forEach(function (match) {
+        matchedAliasParts.push(match.alias.compact);
+        matchedAliasParts = matchedAliasParts.concat(match.alias.tokens);
+      });
+      schoolMatches.forEach(function (school) {
+        matchedAliasParts = matchedAliasParts.concat(school.aliases.filter(function (alias) {
+          return compact.indexOf(alias) !== -1;
+        }));
+      });
+      matchedAliasParts = ykUniqueSearchValues(matchedAliasParts).sort(function (a, b) {
+        return b.length - a.length;
+      });
+
+      var tokens = [];
+      normalized.split(" ").forEach(function (token) {
+        var tokenCompact = ykCompactSearch(token);
+        if (!tokenCompact || ykSearchStopWords.indexOf(tokenCompact) !== -1) return;
+        var remaining = tokenCompact;
+        matchedAliasParts.forEach(function (part) {
+          if (remaining.indexOf(part) !== -1) remaining = remaining.split(part).join("");
+        });
+        ykSearchStopWords.filter(function (word) {
+          return word.length >= 2 || /[^\x00-\x7f]/.test(word);
+        })
+          .sort(function (a, b) { return b.length - a.length; }).forEach(function (word) {
+          if (remaining.indexOf(word) !== -1) remaining = remaining.split(word).join("");
+        });
+        if (ykSearchStopWords.indexOf(remaining) !== -1) remaining = "";
+        if ((conceptMatches.length || schoolMatches.length) && remaining.length <= 1) remaining = "";
+        if (remaining) tokens.push(remaining);
+      });
+
+      var measurementMatches = normalized.match(/\d+(?:\.\d+)?\s*(?:cm|mm|㎝|号)?/g) || [];
+      measurementMatches.map(ykCompactSearch).forEach(function (measurement) {
+        if (measurement && tokens.indexOf(measurement) === -1) tokens.push(measurement);
+      });
+      tokens = ykUniqueSearchValues(tokens);
+      ykParsedQueryCacheKey = normalized;
+      ykParsedQueryCacheValue = {
+        normalized: normalized,
+        compact: compact,
+        concepts: conceptMatches.map(function (match) { return match.concept; }),
+        schools: schoolMatches,
+        tokens: tokens
+      };
+      return ykParsedQueryCacheValue;
+    }
+
+    function ykGetProductSearchDoc(product) {
+      var id = String(product.id);
+      if (ykProductSearchDocCache[id]) return ykProductSearchDocCache[id];
+      var title = ykCompactSearch(product.t);
+      var variants = ykCompactSearch([product.v].concat(product.vs || []).join(" "));
+      var schools = ykCompactSearch(ykProductSchoolText[id] || "");
+      var combined = [title, variants, schools, id].join("");
+      var conceptTitle = title;
+      ykGetSchoolSearchEntries().forEach(function (school) {
+        if (schools.indexOf(school.compact) !== -1 && conceptTitle.indexOf(school.compact) !== -1) {
+          conceptTitle = conceptTitle.split(school.compact).join("");
+        }
+      });
+      var concepts = {};
+      ykSearchConcepts.forEach(function (concept) {
+        var conceptText = concept.id.indexOf("school_") === 0 ? combined : conceptTitle + variants;
+        if (concept.id === "bag" && title.indexOf("baginrain") !== -1) return;
+        if (concept.aliases.some(function (alias) {
+          return conceptText.indexOf(alias.compact) !== -1;
+        })) concepts[concept.id] = true;
+      });
+      ykProductSearchDocCache[id] = {
+        id: ykCompactSearch(id),
+        title: title,
+        variants: variants,
+        schools: schools,
+        combined: combined,
+        concepts: concepts
+      };
+      return ykProductSearchDocCache[id];
+    }
+
+    function ykSearchTokenScore(doc, token) {
+      if (doc.title === token) return 180;
+      if (doc.title.indexOf(token) === 0) return 125;
+      if (doc.title.indexOf(token) !== -1) return 95;
+      if (doc.schools.indexOf(token) !== -1) return 80;
+      if (doc.variants.indexOf(token) !== -1) return 65;
+      if (doc.id.indexOf(token) !== -1) return 55;
+      if (ykFuzzyContains(doc.combined, token)) return 20;
+      return -1;
+    }
+
+    function ykSearchConceptScore(doc, concept) {
+      if (doc.concepts[concept.id]) {
+        var titleMatch = concept.aliases.some(function (alias) {
+          return doc.title.indexOf(alias.compact) !== -1;
+        });
+        var variantMatch = concept.aliases.some(function (alias) {
+          return doc.variants.indexOf(alias.compact) !== -1;
+        });
+        if (titleMatch) return 155;
+        if (variantMatch) return 120;
+        return 135;
+      }
+      var relatedIndex = concept.related.findIndex(function (relatedId) {
+        return doc.concepts[relatedId];
+      });
+      return relatedIndex >= 0 ? Math.max(28, 48 - relatedIndex * 4) : -1;
+    }
+
+    function ykSearchConceptIsProductIntent(concept) {
+      return [
+        "socks", "footwear", "indoor_shoes", "gym_shoes", "sandals",
+        "gymwear", "jersey", "uniform", "shirt", "shorts", "pants", "skirt",
+        "outerwear", "headwear", "bag", "bag_cover", "rainwear",
+        "swimwear", "swim_accessory", "helmet", "school_commute", "school_start"
+      ].indexOf(concept.id) !== -1;
+    }
+
+    function ykSearchConceptModifierBoost(concept) {
+      if (/^(boys|girls|unisex)$/.test(concept.id)) return 90;
+      if (concept.id.indexOf("school_") === 0) return 75;
+      if (concept.id.indexOf("color_") === 0) return 60;
+      if (/^(short_sleeve|long_sleeve)$/.test(concept.id)) return 50;
+      if (/^(summer|winter)$/.test(concept.id)) return 70;
+      return 0;
+    }
+
+    function ykSearchConceptMissingPenalty(concept) {
+      if (/^(boys|girls|unisex)$/.test(concept.id)) return 180;
+      if (concept.id.indexOf("school_") === 0) return 160;
+      if (concept.id.indexOf("color_") === 0) return 125;
+      if (/^(short_sleeve|long_sleeve)$/.test(concept.id)) return 95;
+      if (/^(summer|winter)$/.test(concept.id)) return 105;
+      if (/^(sale|embroidery)$/.test(concept.id)) return 120;
+      return 24;
     }
 
     function ykSearchScore(product, query) {
-      var title = ykCompactSearch(product.t);
-      var variants = ykCompactSearch([product.v].concat(product.vs || []).join(" "));
-      var schools = ykCompactSearch(ykProductSchoolText[String(product.id)] || "");
-      var id = ykCompactSearch(product.id);
-      var combined = [title, variants, schools, id].join(" ");
-      var tokens = ykNormalizeSearch(query).split(" ").filter(Boolean);
+      var parsed = ykParseSearchQuery(query);
+      if (!parsed.compact) return -1;
+      var doc = ykGetProductSearchDoc(product);
       var score = 0;
-      for (var index = 0; index < tokens.length; index += 1) {
-        var alternatives = ykTokenAlternatives(tokens[index]);
-        var tokenMatched = false;
-        var tokenScore = 0;
-        alternatives.forEach(function (alternative) {
-          if (title === alternative) tokenScore = Math.max(tokenScore, 160);
-          else if (title.indexOf(alternative) === 0) tokenScore = Math.max(tokenScore, 110);
-          else if (title.indexOf(alternative) !== -1) tokenScore = Math.max(tokenScore, 80);
-          else if (schools.indexOf(alternative) !== -1) tokenScore = Math.max(tokenScore, 65);
-          else if (variants.indexOf(alternative) !== -1) tokenScore = Math.max(tokenScore, 50);
-          else if (id.indexOf(alternative) !== -1) tokenScore = Math.max(tokenScore, 45);
-          else if (ykFuzzyContains(combined, alternative)) tokenScore = Math.max(tokenScore, 18);
-          if (tokenScore) tokenMatched = true;
-        });
-        if (!tokenMatched) return -1;
-        score += tokenScore;
+      var matchedUnits = 0;
+      var softMatchedUnits = 0;
+      var strongMatches = 0;
+      var softUnits = parsed.concepts.length + parsed.tokens.length;
+      var productIntentUnits = 0;
+      var productIntentMatches = 0;
+
+      if (doc.title.indexOf(parsed.compact) !== -1) score += 280;
+      else if (doc.schools.indexOf(parsed.compact) !== -1) score += 210;
+      else if (doc.variants.indexOf(parsed.compact) !== -1) score += 130;
+      else if (doc.combined.indexOf(parsed.compact) !== -1) score += 115;
+
+      for (var schoolIndex = 0; schoolIndex < parsed.schools.length; schoolIndex += 1) {
+        if (doc.schools.indexOf(parsed.schools[schoolIndex].compact) === -1) return -1;
+        score += 190;
+        matchedUnits += 1;
       }
-      if (title.indexOf(ykCompactSearch(query)) !== -1) score += 100;
+
+      for (var conceptIndex = 0; conceptIndex < parsed.concepts.length; conceptIndex += 1) {
+        var parsedConcept = parsed.concepts[conceptIndex];
+        var conceptScore = ykSearchConceptScore(doc, parsedConcept);
+        var productIntent = ykSearchConceptIsProductIntent(parsedConcept);
+        if (productIntent) productIntentUnits += 1;
+        if (conceptScore >= 0) {
+          score += conceptScore + ykSearchConceptModifierBoost(parsedConcept);
+          matchedUnits += 1;
+          softMatchedUnits += 1;
+          if (productIntent) productIntentMatches += 1;
+          if (conceptScore >= 100) strongMatches += 1;
+        } else {
+          score -= ykSearchConceptMissingPenalty(parsedConcept);
+        }
+      }
+
+      for (var tokenIndex = 0; tokenIndex < parsed.tokens.length; tokenIndex += 1) {
+        var tokenScore = ykSearchTokenScore(doc, parsed.tokens[tokenIndex]);
+        if (tokenScore >= 0) {
+          score += tokenScore;
+          matchedUnits += 1;
+          softMatchedUnits += 1;
+          strongMatches += 1;
+        } else {
+          score -= 18;
+        }
+      }
+
+      if (softUnits) {
+        var minimumMatches = softUnits <= 2 ? 1 : Math.ceil(softUnits * 0.55);
+        if (softMatchedUnits < minimumMatches) return -1;
+        if (softUnits >= 2 && strongMatches < 1) return -1;
+        if (productIntentUnits && !productIntentMatches) return -1;
+        score += softMatchedUnits * 12 - (softUnits - softMatchedUnits) * 10;
+      }
+
+      if (!matchedUnits) {
+        var fallbackScore = ykSearchTokenScore(doc, parsed.compact);
+        if (fallbackScore < 0) return -1;
+        score += fallbackScore;
+      }
       return score;
     }
 
@@ -2562,17 +2809,39 @@
       });
     }
 
+    var ykSearchDebounceTimer = 0;
+
+    function ykApplySearchQuery(value, shouldScroll) {
+      ykState.query = String(value || "").trim();
+      ykState.sort = ykState.query ? "relevance" : "school";
+      document.querySelectorAll("[data-yk-query]").forEach(function (input) {
+        if (input.value !== ykState.query) input.value = ykState.query;
+      });
+      var searchSort = document.getElementById("yk-result-sort");
+      if (searchSort) searchSort.value = ykState.sort;
+      ykState.page = 1;
+      ykRenderProducts({ scroll: Boolean(shouldScroll) });
+    }
+
     document.querySelectorAll("#yk-site-search,[data-yk-search-form]").forEach(function (ykSearchForm) {
       ykSearchForm.addEventListener("submit", function (event) {
         event.preventDefault();
+        window.clearTimeout(ykSearchDebounceTimer);
         var query = ykSearchForm.querySelector("[data-yk-query]");
-        ykState.query = query ? query.value.trim() : "";
-        ykState.sort = ykState.query ? "relevance" : "school";
-        document.querySelectorAll("[data-yk-query]").forEach(function (input) { input.value = ykState.query; });
-        var searchSort = document.getElementById("yk-result-sort");
-        if (searchSort) searchSort.value = ykState.sort;
-        ykState.page = 1;
-        ykRenderProducts({ scroll: true });
+        ykApplySearchQuery(query ? query.value : "", true);
+      });
+    });
+
+    document.querySelectorAll("[data-yk-query]").forEach(function (queryInput) {
+      queryInput.addEventListener("input", function () {
+        var value = queryInput.value;
+        document.querySelectorAll("[data-yk-query]").forEach(function (input) {
+          if (input !== queryInput && input.value !== value) input.value = value;
+        });
+        window.clearTimeout(ykSearchDebounceTimer);
+        ykSearchDebounceTimer = window.setTimeout(function () {
+          ykApplySearchQuery(value, false);
+        }, 280);
       });
     });
 

@@ -90,6 +90,14 @@ export async function verifySearchOptionsStaging(
         await page.locator("[data-show-all]").click();
         result.socksSynonymSearch = await runSearch("靴下");
         await page.locator("[data-show-all]").click();
+        result.englishGymSearch = await runSearch("gym clothes");
+        await page.locator("[data-show-all]").click();
+        result.semanticRainSearch = await runSearch("雨の日");
+        await page.locator("[data-show-all]").click();
+        result.englishRainSearch = await runSearch("rain wear");
+        await page.locator("[data-show-all]").click();
+        result.englishBagSearch = await runSearch("school bag");
+        await page.locator("[data-show-all]").click();
         result.multiWordSearch = await runSearch("青木小 赤白ぼうし");
         await page.locator("[data-show-all]").click();
         result.typoSearch = await runSearch("ジャージ上依");
@@ -156,6 +164,12 @@ export async function verifySearchOptionsStaging(
         !result.socksSearch.firstTitle.includes("ソックス") ||
         result.socksSynonymSearch.total < 1 || result.socksSynonymSearch.sort !== "relevance" ||
         !result.socksSynonymSearch.firstTitle.includes("ソックス") ||
+        result.englishGymSearch.total < 1 || result.englishGymSearch.sort !== "relevance" ||
+        !result.englishGymSearch.firstTitle.includes("体操服") ||
+        result.semanticRainSearch.total < 1 || result.semanticRainSearch.sort !== "relevance" ||
+        result.englishRainSearch.firstTitle !== result.semanticRainSearch.firstTitle ||
+        result.englishBagSearch.total < 1 || result.englishBagSearch.sort !== "relevance" ||
+        result.englishBagSearch.firstTitle.includes("RAIN SUIT") ||
         result.multiWordSearch.total < 1 || result.multiWordSearch.sort !== "relevance" ||
         result.typoSearch.total < 1 || result.typoSearch.sort !== "relevance" ||
         !result.studentConditionVisible || !result.studentConditionBlocksEmpty ||
