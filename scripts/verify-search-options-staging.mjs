@@ -66,6 +66,18 @@ export async function verifySearchOptionsStaging(
           selectedHeroImage: document.querySelector(".yk-hero__mobile-visual")
             ? getComputedStyle(document.querySelector(".yk-hero__mobile-visual")).backgroundImage
             : "",
+          productImageFit: getComputedStyle(
+            document.querySelector(".yk-product__photo img"),
+          ).objectFit,
+          shelfImageFit: getComputedStyle(
+            document.querySelector(".yk-shelf-card__image img"),
+          ).objectFit,
+          shelfTitleClamp: getComputedStyle(
+            document.querySelector(".yk-shelf-card__title"),
+          ).webkitLineClamp,
+          shelfTitleWhiteSpace: getComputedStyle(
+            document.querySelector(".yk-shelf-card__title"),
+          ).whiteSpace,
         };
       });
       result.browserErrors = browserErrors;
@@ -167,6 +179,23 @@ export async function verifySearchOptionsStaging(
         }));
         await page.locator("[data-yk-preview-item-close]").click();
 
+        await page.evaluate(() => {
+          localStorage.removeItem("yuukichiya.theme-preview-cart.v1");
+          ykOpenPreviewItem(ykFindProduct("96296013"), document.body);
+        });
+        await page.locator("[data-yk-preview-item-variant]").selectOption("サイズ S");
+        await page.locator("[data-yk-preview-item-quantity]").selectOption("2");
+        await page.locator("[data-yk-preview-item-variant]").selectOption("サイズ M");
+        result.variantStockReduced = await page.evaluate(() => ({
+          value: document.querySelector("[data-yk-preview-item-quantity]")?.value || "",
+          quantities: Array.from(
+            document.querySelectorAll("[data-yk-preview-item-quantity] option"),
+          ).map((option) => option.value),
+          stockText: document.querySelector("[data-yk-preview-stock-status]")?.textContent.trim() || "",
+          status: document.querySelector("[data-yk-preview-item-status]")?.textContent.trim() || "",
+        }));
+        await page.locator("[data-yk-preview-item-close]").click();
+
         await page.evaluate(() => ykOpenPreviewItem(ykFindProduct("84053344"), document.body));
         result.barbieNoVariant = await page.evaluate(() => ({
           optionsHidden: document.querySelector("[data-yk-preview-item-options]")?.hidden,
@@ -245,6 +274,8 @@ export async function verifySearchOptionsStaging(
     if (!result.heroSearchAbovePriceDown) return true;
     if (result.priceDownCountText !== "80商品" || result.priceDownCards !== 80) return true;
     if (result.defaultProductTotal !== 608) return true;
+    if (result.productImageFit !== "contain" || result.shelfImageFit !== "contain") return true;
+    if (result.shelfTitleClamp !== "2" || result.shelfTitleWhiteSpace !== "normal") return true;
     if (!result.renewalBadgePresent || !result.freeShippingPresent) return true;
     if (result.width === 390 || result.width === 1440) {
       return result.synonymSearch.total < 1 || result.synonymSearch.sort !== "relevance" ||
@@ -275,6 +306,10 @@ export async function verifySearchOptionsStaging(
         result.variantStockLimit.quantities.length !== 7 ||
         result.variantStockLimit.quantities.at(-1) !== "7" ||
         !result.variantStockLimit.stockText.includes("7点") ||
+        result.variantStockReduced.value !== "1" ||
+        result.variantStockReduced.quantities.join(",") !== "1" ||
+        !result.variantStockReduced.stockText.includes("1点") ||
+        !result.variantStockReduced.status.includes("数量を2から1へ変更") ||
         !result.barbieNoVariant.optionsHidden || result.barbieNoVariant.variantSelects !== 0 ||
         result.barbieNoVariant.title !== "数量を選ぶ" ||
         !result.barbieNoVariant.lead.includes("数量を選んで") ||

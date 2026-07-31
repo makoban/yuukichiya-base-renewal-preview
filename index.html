@@ -163,8 +163,8 @@
     .yk-product:hover { transform: translateY(-2px); border-color: rgba(47,125,91,.4); box-shadow: 0 10px 22px rgba(27,43,49,.12); }
     .yk-product__photo { position: relative; display: block; width: 100%; aspect-ratio: 1; overflow: hidden; border: 0; background: #f7f8f8; color: inherit; cursor: pointer; }
     button.yk-product__photo { padding: 0; }
-    .yk-product__photo img { width: 100%; height: 100%; object-fit: cover; transition: transform .24s ease; }
-    .yk-product:hover img { transform: scale(1.025); }
+    .yk-product__photo img { width: 100%; height: 100%; object-fit: contain; object-position: center; transition: transform .24s ease; }
+    .yk-product:hover img { transform: none; }
     .yk-product__body { display: grid; grid-template-rows: auto auto auto; gap: 7px; min-width: 0; padding: 9px; }
     .yk-product__title { display: -webkit-box; min-height: 2.8em; overflow: hidden; font-size: 12px; font-weight: 800; line-height: 1.4; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
     .yk-product__price { font-size: 17px; font-weight: 900; }
@@ -205,11 +205,11 @@
     .yk-shelf-viewport { min-width: 0; overflow: hidden; }
     .yk-shelf-track { display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - 60px) / 6); gap: 12px; padding: 2px 2px 14px; overflow-x: auto; overscroll-behavior-inline: contain; scroll-behavior: smooth; scroll-snap-type: inline mandatory; scrollbar-color: rgba(47,125,91,.42) transparent; scrollbar-width: thin; }
     .yk-shelf-card { min-width: 0; overflow: hidden; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; box-shadow: 0 6px 14px rgba(27,43,49,.07); scroll-snap-align: start; }
-    .yk-shelf-card__link { display: grid; grid-template-rows: auto 38px 44px; height: 100%; }
+    .yk-shelf-card__link { display: grid; grid-template-rows: auto 52px 44px; height: 100%; }
     .yk-shelf-card__image { position: relative; width: 100%; aspect-ratio: 1; overflow: hidden; background: #f7f8f8; }
-    .yk-shelf-card__image img { width: 100%; height: 100%; object-fit: cover; transition: transform .2s ease; }
-    .yk-shelf-card:hover .yk-shelf-card__image img { transform: scale(1.025); }
-    .yk-shelf-card__title { display: block; min-width: 0; padding: 9px; overflow: hidden; color: var(--yk-ink); font-size: 12px; font-weight: 800; line-height: 20px; text-overflow: ellipsis; white-space: nowrap; }
+    .yk-shelf-card__image img { width: 100%; height: 100%; object-fit: contain; object-position: center; transition: transform .2s ease; }
+    .yk-shelf-card:hover .yk-shelf-card__image img { transform: none; }
+    .yk-shelf-card__title { display: -webkit-box; min-width: 0; padding: 6px 9px; overflow: hidden; color: var(--yk-ink); font-size: 12px; font-weight: 800; line-height: 20px; white-space: normal; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
     .yk-shelf-card__pricing { display: flex; align-items: center; min-width: 0; padding: 0 9px 8px; }
     .yk-product-badges { position: absolute; z-index: 2; top: 8px; left: 8px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; pointer-events: none; }
     .yk-product-badge { position: static; display: inline-flex; align-items: center; justify-content: center; min-width: 48px; min-height: 26px; padding: 3px 9px; border-radius: 4px; color: #fff; font-size: 11px; font-weight: 900; line-height: 1; letter-spacing: 0; white-space: nowrap; }
@@ -261,7 +261,7 @@
     .yk-item__mainImage { display: grid; min-height: 440px; overflow: hidden; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; box-shadow: 0 12px 28px rgba(26,45,52,.09); place-items: center; }
     .yk-item__mainImage img { width: 100%; max-height: 680px; object-fit: contain; }
     .yk-item__thumbs { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; margin-top: 10px; }
-    .yk-item__thumbs img { width: 100%; border: 2px solid transparent; border-radius: 6px; aspect-ratio: 1; object-fit: cover; background: #fff; box-shadow: inset 0 0 0 1px var(--yk-line); }
+    .yk-item__thumbs img { width: 100%; border: 2px solid transparent; border-radius: 6px; aspect-ratio: 1; object-fit: contain; background: #fff; box-shadow: inset 0 0 0 1px var(--yk-line); }
     .yk-item__summary { min-width: 0; }
     .yk-item__label { margin: 0 0 8px; color: var(--yk-main); font-size: 12px; font-weight: 900; text-transform: uppercase; }
     .yk-item h1 { margin: 0 0 12px; font-size: 38px; line-height: 1.35; text-wrap: pretty; }
@@ -352,7 +352,7 @@
     .yk-preview-cart-empty { margin: 0; padding: 22px; border: 1px dashed var(--yk-line); border-radius: var(--yk-radius); background: #f8faf9; color: var(--yk-muted); font-weight: 800; text-align: center; }
     .yk-preview-cart-list { display: grid; gap: 10px; }
     .yk-preview-cart-item { display: grid; grid-template-columns: 76px minmax(0,1fr) auto; gap: 12px; align-items: center; padding: 12px; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); }
-    .yk-preview-cart-item img { width: 76px; aspect-ratio: 1; border-radius: 6px; object-fit: cover; background: #f7f8f8; }
+    .yk-preview-cart-item img { width: 76px; aspect-ratio: 1; border-radius: 6px; object-fit: contain; background: #f7f8f8; }
     .yk-preview-cart-item__body { min-width: 0; }
     .yk-preview-cart-item__body b { display: block; font-size: 14px; line-height: 1.45; }
     .yk-preview-cart-item__body span { display: block; color: var(--yk-muted); font-size: 12px; font-weight: 800; }
@@ -580,8 +580,8 @@
       .yk-shelf-heading p { font-size: 12px; }
       .yk-shelf-toolbar { justify-content: space-between; }
       .yk-shelf-track { grid-auto-columns: calc((100% - 16px) / 3); gap: 8px; padding-bottom: 10px; }
-      .yk-shelf-card__link { grid-template-rows: auto 32px 44px; }
-      .yk-shelf-card__title { padding: 6px; font-size: 10px; line-height: 20px; }
+      .yk-shelf-card__link { grid-template-rows: auto 48px 44px; }
+      .yk-shelf-card__title { padding: 4px 6px; font-size: 10px; line-height: 20px; }
       .yk-shelf-card__pricing { align-items: start; padding: 0 6px 5px; }
       .yk-shelf-card__pricing .yk-price-stack { display: grid; align-content: start; gap: 0; min-height: 0; }
       .yk-shelf-card__pricing .yk-price-stack del { font-size: 9px; }
@@ -1988,9 +1988,15 @@
     function ykProductCard(product) {
       var soldOut = product.s === false;
       var productUrl = ykProductUrl(product);
+      var image240 = ykShelfImageUrl(product.img, 240);
+      var image480 = ykShelfImageUrl(product.img, 480);
+      var imageMarkup = '<img src="' + ykEscapeHtml(image240) + '" srcset="' +
+        ykEscapeHtml(image240) + ' 240w, ' + ykEscapeHtml(image480) +
+        ' 480w" sizes="(max-width:560px) calc((100vw - 44px) / 3), calc((min(100vw,1800px) - 116px) / 6)" alt="' +
+        ykEscapeHtml(product.t) + '" loading="lazy" decoding="async">';
       var photo = soldOut
-        ? '<span class="yk-product__photo" aria-label="' + ykEscapeHtml(product.t) + 'は在庫なし">' + ykProductBadge(product) + '<img src="' + ykEscapeHtml(product.img) + '" alt="' + ykEscapeHtml(product.t) + '" loading="lazy" decoding="async"></span>'
-        : '<a class="yk-product__photo" href="' + ykEscapeHtml(productUrl) + '" data-product-page="' + ykEscapeHtml(product.id) + '" aria-label="' + ykEscapeHtml(product.t) + 'の種類・サイズを選ぶ">' + ykProductBadge(product) + '<img src="' + ykEscapeHtml(product.img) + '" alt="' + ykEscapeHtml(product.t) + '" loading="lazy" decoding="async"></a>';
+        ? '<span class="yk-product__photo" aria-label="' + ykEscapeHtml(product.t) + 'は在庫なし">' + ykProductBadge(product) + imageMarkup + '</span>'
+        : '<a class="yk-product__photo" href="' + ykEscapeHtml(productUrl) + '" data-product-page="' + ykEscapeHtml(product.id) + '" aria-label="' + ykEscapeHtml(product.t) + 'の種類・サイズを選ぶ">' + ykProductBadge(product) + imageMarkup + '</a>';
       var action = soldOut
         ? '<button class="yk-product__button yk-product__button--soldout" type="button" disabled>SOLD OUT</button>'
         : '<a class="yk-product__button" href="' + ykEscapeHtml(productUrl) + '" data-product-page="' + ykEscapeHtml(product.id) + '">サイズを選ぶ</a>';
@@ -2498,12 +2504,13 @@
       var stock = ykPreviewStockState(product, selection);
       var optionLimit = soldOut ? 0 : stock.remaining === null ? 10 : Math.min(10, stock.remaining);
       var previousValue = Math.max(1, Number(quantity.value) || 1);
+      var adjustedValue = optionLimit > 0 ? Math.min(previousValue, optionLimit) : 0;
       if (optionLimit > 0) {
         quantity.innerHTML = Array.from({ length: optionLimit }, function (_, index) {
           var value = index + 1;
           return '<option value="' + value + '">' + value + "</option>";
         }).join("");
-        quantity.value = String(Math.min(previousValue, optionLimit));
+        quantity.value = String(adjustedValue);
       } else {
         quantity.innerHTML = '<option value="">在庫なし</option>';
       }
@@ -2516,15 +2523,24 @@
             "点・追加可能" + stock.remaining + "点";
         } else if (stock.limit > 10) stockNote.textContent = "在庫" + stock.limit + "点・1回10点まで";
         else stockNote.textContent = "購入可能数は" + stock.remaining + "点です。";
+        if (adjustedValue > 0 && adjustedValue < previousValue) {
+          stockNote.textContent = "在庫" + stock.remaining + "点のため、数量を" +
+            previousValue + "から" + adjustedValue + "へ変更しました。";
+        }
       }
       if (addButton) {
         addButton.disabled = optionLimit === 0;
         addButton.textContent = soldOut ? "SOLD OUT" : optionLimit === 0 ? "在庫上限です" : "カートに入れる";
       }
-      if (status && !soldOut && optionLimit === 0) {
-        status.textContent = stock.reserved > 0
-          ? "カート内の商品で在庫上限に達しています。"
-          : "選択した種類・サイズは在庫切れです。";
+      if (status && !soldOut) {
+        if (optionLimit === 0) {
+          status.textContent = stock.reserved > 0
+            ? "カート内の商品で在庫上限に達しています。"
+            : "選択した種類・サイズは在庫切れです。";
+        } else if (adjustedValue < previousValue) {
+          status.textContent = "選択した種類・サイズの在庫に合わせ、数量を" +
+            previousValue + "から" + adjustedValue + "へ変更しました。";
+        }
       }
     }
 
