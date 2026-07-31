@@ -78,10 +78,17 @@ export async function verifySearchOptionsStaging(
             sort: document.querySelector("#yk-result-sort")?.value || "",
             firstTitle:
               document.querySelector(".yk-product__title")?.textContent.replace(/\s+/g, " ").trim() || "",
+            visibleTitles: Array.from(document.querySelectorAll(".yk-product__title"))
+              .slice(0, 8)
+              .map((element) => element.textContent.replace(/\s+/g, " ").trim()),
           }));
         };
 
         result.synonymSearch = await runSearch("体操着");
+        await page.locator("[data-show-all]").click();
+        result.socksSearch = await runSearch("ソックス");
+        await page.locator("[data-show-all]").click();
+        result.socksSynonymSearch = await runSearch("靴下");
         await page.locator("[data-show-all]").click();
         result.multiWordSearch = await runSearch("青木小 赤白ぼうし");
         await page.locator("[data-show-all]").click();
@@ -145,6 +152,10 @@ export async function verifySearchOptionsStaging(
     if (!result.renewalBadgePresent || !result.freeShippingPresent) return true;
     if (result.width === 390 || result.width === 1440) {
       return result.synonymSearch.total < 1 || result.synonymSearch.sort !== "relevance" ||
+        result.socksSearch.total < 1 || result.socksSearch.sort !== "relevance" ||
+        !result.socksSearch.firstTitle.includes("ソックス") ||
+        result.socksSynonymSearch.total < 1 || result.socksSynonymSearch.sort !== "relevance" ||
+        !result.socksSynonymSearch.firstTitle.includes("ソックス") ||
         result.multiWordSearch.total < 1 || result.multiWordSearch.sort !== "relevance" ||
         result.typoSearch.total < 1 || result.typoSearch.sort !== "relevance" ||
         !result.studentConditionVisible || !result.studentConditionBlocksEmpty ||

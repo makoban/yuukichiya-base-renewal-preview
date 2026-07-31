@@ -1483,7 +1483,12 @@
       var maxLength = Math.min(compact.length, token.length + limit);
       for (var length = minLength; length <= maxLength; length += 1) {
         for (var start = 0; start + length <= compact.length; start += 1) {
-          if (ykEditDistance(token, compact.slice(start, start + length)) <= limit) return true;
+          var candidate = compact.slice(start, start + length);
+          if (
+            token.length <= 4 &&
+            candidate.charAt(0) !== token.charAt(0)
+          ) continue;
+          if (ykEditDistance(token, candidate) <= limit) return true;
         }
       }
       return false;
@@ -1491,6 +1496,7 @@
 
     var ykSynonymGroups = [
       ["体操服", "体操着", "体育着"],
+      ["ソックス", "靴下", "くつ下", "くつした", "スクールソックス"],
       ["上履き", "上靴", "上ぐつ", "うわぐつ", "体育館しゅーず"],
       ["しゅーず", "靴", "くつ"],
       ["かっぱ", "雨合羽", "れいんうぇあ"],
