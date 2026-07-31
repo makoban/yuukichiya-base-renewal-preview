@@ -2278,16 +2278,25 @@
 
     function ykPreviewOptionGroups(product) {
       var options = window.ykProductOptions || {};
+      var audited = product && ykProductConditions[String(product.id)]
+        ? ykProductConditions[String(product.id)].options || []
+        : [];
+      var textConditionNames = audited.filter(function (condition) {
+        return condition.type === "text";
+      }).reduce(function (names, condition) {
+        names[String(condition.label || "")] = true;
+        return names;
+      }, {});
       var groups = product && Array.isArray(options[String(product.id)])
         ? options[String(product.id)].slice()
         : [];
+      groups = groups.filter(function (group) {
+        return !textConditionNames[String(group.name || "")];
+      });
       var knownNames = groups.reduce(function (names, group) {
         names[String(group.name || "")] = true;
         return names;
       }, {});
-      var audited = product && ykProductConditions[String(product.id)]
-        ? ykProductConditions[String(product.id)].options || []
-        : [];
       audited.filter(function (condition) {
         return condition.type === "select" && !knownNames[String(condition.label || "")];
       }).forEach(function (condition) {
