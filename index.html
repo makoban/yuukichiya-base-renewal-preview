@@ -2397,6 +2397,10 @@
       return groups;
     }
 
+    function ykIsStudentNumberCondition(condition) {
+      return /生徒(?:証明書の)?番号/.test(String(condition && condition.label || ""));
+    }
+
     function ykRenderPreviewOptions(product, container) {
       if (!container) return { hasChoiceOptions: false, hasTextConditions: false };
       var optionGroups = ykPreviewOptionGroups(product);
@@ -2441,13 +2445,20 @@
         }
       }
       textConditions.forEach(function (condition, conditionIndex) {
+        var numericOnly = ykIsStudentNumberCondition(condition);
+        var caption = condition.caption || "";
+        if (numericOnly) {
+          caption = (caption ? caption + "\n" : "") + "数字のみで入力してください。";
+        }
         controls.push('<label>' + ykEscapeHtml(condition.label || "入力項目") +
           (condition.required ? '<span class="yk-preview-condition__required">必須</span>' : "") +
           '<input type="text" maxlength="' + (Number(condition.maxLength) || 20) +
-          '" placeholder="入力してください" data-yk-preview-condition-input data-yk-condition-input data-condition-name="' +
+          '"' + (numericOnly ? ' inputmode="numeric" pattern="[0-9]*" autocomplete="off" data-condition-numeric="true"' : "") +
+          ' placeholder="' + (numericOnly ? "数字のみで入力してください" : "入力してください") +
+          '" data-yk-preview-condition-input data-yk-condition-input data-condition-name="' +
           ykEscapeHtml(condition.label || "入力項目") + '" data-condition-required="' +
           (condition.required ? "true" : "false") + '" data-condition-index="' + conditionIndex + '">' +
-          (condition.caption ? '<span class="yk-preview-condition__caption">' + ykEscapeHtml(condition.caption) + "</span>" : "") +
+          (caption ? '<span class="yk-preview-condition__caption">' + ykEscapeHtml(caption) + "</span>" : "") +
           "</label>");
       });
       container.innerHTML = controls.join("");
@@ -2460,6 +2471,7 @@
       var labels = [];
       var extraPrice = 0;
       var invalidNode = null;
+      var invalidMessage = "";
       var inventoryVariant = "";
       if (optionNodes.length) {
         optionNodes.forEach(function (node) {
@@ -2481,12 +2493,20 @@
       }
       Array.prototype.slice.call(dialog.querySelectorAll("[data-yk-preview-condition-input]")).forEach(function (node) {
         var value = node.value.trim();
-        if (!value && node.getAttribute("data-condition-required") === "true" && !invalidNode) invalidNode = node;
+        if (!value && node.getAttribute("data-condition-required") === "true" && !invalidNode) {
+          invalidNode = node;
+          invalidMessage = "必須項目を入力・選択してください。";
+        }
+        if (value && node.getAttribute("data-condition-numeric") === "true" && !/^[0-9]+$/.test(value) && !invalidNode) {
+          invalidNode = node;
+          invalidMessage = "生徒番号は数字のみで入力してください。";
+        }
         if (value) labels.push((node.getAttribute("data-condition-name") || "入力項目") + "：" + value);
       });
       return {
         valid: !invalidNode,
         invalidNode: invalidNode,
+        invalidMessage: invalidMessage,
         label: labels.join(" / "),
         extraPrice: extraPrice,
         inventoryVariant: inventoryVariant
@@ -2633,7 +2653,7 @@
       }
       var selection = ykPreviewSelection(dialog, product);
       if (!selection.valid) {
-        if (status) status.textContent = "必須項目を入力・選択してください。";
+        if (status) status.textContent = selection.invalidMessage || "必須項目を入力・選択してください。";
         if (selection.invalidNode) selection.invalidNode.focus();
         return;
       }
@@ -2929,6 +2949,20 @@
           ykRefreshPreviewPrice(ykPreviewItemDialog, product);
         }
         ykRefreshPreviewQuantity(ykPreviewItemDialog, product);
+      });
+      ykPreviewItemDialog.addEventListener("input", function (event) {
+        if (!event.target.matches('[data-yk-preview-condition-input][data-condition-numeric="true"]')) return;
+        var originalValue = event.target.value;
+        var numericValue = originalValue.replace(/[０-９]/g, function (character) {
+          return String.fromCharCode(character.charCodeAt(0) - 65248);
+        }).replace(/[^0-9]/g, "");
+        var status = ykPreviewItemDialog.querySelector("[data-yk-preview-item-status]");
+        if (numericValue !== originalValue) {
+          event.target.value = numericValue;
+          if (status) status.textContent = "生徒番号は数字のみで入力してください。";
+        } else if (status) {
+          status.textContent = "";
+        }
       });
       ykPreviewItemDialog.addEventListener("close", function () {
         var image = ykPreviewItemDialog.querySelector("[data-yk-preview-item-image]");
