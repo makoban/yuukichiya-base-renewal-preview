@@ -1,7 +1,10 @@
-import { chromium } from "playwright";
+import { createRequire } from "node:module";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+
+const require = createRequire(import.meta.url);
+const { chromium } = require("playwright");
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const outputDir = resolve(root, "qa");
@@ -98,9 +101,57 @@ export async function verifySearchOptionsStaging(
         await page.locator("[data-show-all]").click();
         result.englishBagSearch = await runSearch("school bag");
         await page.locator("[data-show-all]").click();
+        result.kappaSearch = await runSearch("カッパ");
+        await page.locator("[data-show-all]").click();
         result.multiWordSearch = await runSearch("青木小 赤白ぼうし");
         await page.locator("[data-show-all]").click();
         result.typoSearch = await runSearch("ジャージ上依");
+
+        await page.locator('[data-school-type="elementary"]').first().click();
+        result.globalSearchFromSchoolFilter = await runSearch("Barbie");
+        result.globalSearchClearedSchoolFilter = await page.evaluate(() =>
+          !ykState.schoolType && !ykState.school && !ykState.specialCategory,
+        );
+        await page.locator('[data-school-type="elementary"]').first().click();
+        await page.locator('.yk-school-list[data-school-type="elementary"] a').first().click();
+        result.schoolActionClearedQuery = await page.evaluate(() => ({
+          query: ykState.query,
+          inputValues: Array.from(document.querySelectorAll("[data-yk-query]")).map((input) => input.value),
+          school: ykState.school,
+          total: Number(
+            (document.querySelector("#yk-result-count")?.textContent || "").match(/全(\d+)件/)?.[1] || 0,
+          ),
+        }));
+        await page.locator("[data-show-all]").click();
+
+        result.visibility = await page.evaluate(() => ({
+          total: ykAllProducts.length,
+          hiddenIdsPresent: ["95937631", "151900296", "151791830"]
+            .filter((id) => ykAllProducts.some((product) => String(product.id) === id)),
+        }));
+
+        await page.evaluate(() => ykOpenPreviewItem(ykFindProduct("84053344"), document.body));
+        result.barbieNoVariant = await page.evaluate(() => ({
+          optionsHidden: document.querySelector("[data-yk-preview-item-options]")?.hidden,
+          variantSelects: document.querySelectorAll(
+            "[data-yk-preview-item-variant],[data-yk-preview-option-select]",
+          ).length,
+          title: document.querySelector("[data-yk-preview-purchase-title]")?.textContent.trim() || "",
+          lead: document.querySelector("[data-yk-preview-item-lead]")?.textContent.trim() || "",
+          price: document.querySelector("[data-yk-preview-item-price]")?.textContent.replace(/\s+/g, " ").trim() || "",
+          badge: ykProductBadge(ykFindProduct("84053344")),
+        }));
+        await page.locator("[data-yk-preview-item-close]").click();
+
+        result.soldOutProduct = await page.evaluate(() => {
+          const product = ykFindProduct("84051406");
+          return {
+            exists: Boolean(product),
+            card: product ? ykProductCard(product) : "",
+            badge: product ? ykProductBadge(product) : "",
+            price: product ? ykProductPriceMarkup(product) : "",
+          };
+        });
 
         await page.evaluate(() => {
           localStorage.removeItem("yuukichiya.theme-preview-cart.v1");
@@ -155,23 +206,39 @@ export async function verifySearchOptionsStaging(
     if (result.scrollWidth > result.clientWidth || result.overflowing.length) return true;
     if (result.browserErrors.length) return true;
     if (!result.heroSearchAbovePriceDown) return true;
-    if (result.priceDownCountText !== "82商品" || result.priceDownCards !== 82) return true;
-    if (result.defaultProductTotal !== 789) return true;
+    if (result.priceDownCountText !== "80商品" || result.priceDownCards !== 80) return true;
+    if (result.defaultProductTotal !== 608) return true;
     if (!result.renewalBadgePresent || !result.freeShippingPresent) return true;
     if (result.width === 390 || result.width === 1440) {
       return result.synonymSearch.total < 1 || result.synonymSearch.sort !== "relevance" ||
         result.socksSearch.total < 1 || result.socksSearch.sort !== "relevance" ||
-        !result.socksSearch.firstTitle.includes("ソックス") ||
         result.socksSynonymSearch.total < 1 || result.socksSynonymSearch.sort !== "relevance" ||
-        !result.socksSynonymSearch.firstTitle.includes("ソックス") ||
         result.englishGymSearch.total < 1 || result.englishGymSearch.sort !== "relevance" ||
         !result.englishGymSearch.firstTitle.includes("体操服") ||
         result.semanticRainSearch.total < 1 || result.semanticRainSearch.sort !== "relevance" ||
         result.englishRainSearch.firstTitle !== result.semanticRainSearch.firstTitle ||
         result.englishBagSearch.total < 1 || result.englishBagSearch.sort !== "relevance" ||
         result.englishBagSearch.firstTitle.includes("RAIN SUIT") ||
+        result.kappaSearch.total !== 4 ||
+        result.kappaSearch.visibleTitles.some((title) => !/雨合羽|RAIN SUIT/i.test(title)) ||
         result.multiWordSearch.total < 1 || result.multiWordSearch.sort !== "relevance" ||
         result.typoSearch.total < 1 || result.typoSearch.sort !== "relevance" ||
+        result.globalSearchFromSchoolFilter.total < 1 ||
+        !result.globalSearchFromSchoolFilter.firstTitle.includes("Barbie") ||
+        !result.globalSearchClearedSchoolFilter ||
+        result.schoolActionClearedQuery.query !== "" ||
+        result.schoolActionClearedQuery.inputValues.some(Boolean) ||
+        !result.schoolActionClearedQuery.school || result.schoolActionClearedQuery.total < 1 ||
+        result.visibility.total !== 608 || result.visibility.hiddenIdsPresent.length ||
+        !result.barbieNoVariant.optionsHidden || result.barbieNoVariant.variantSelects !== 0 ||
+        result.barbieNoVariant.title !== "数量を選ぶ" ||
+        !result.barbieNoVariant.lead.includes("数量を選んで") ||
+        !result.barbieNoVariant.price.includes("¥7,150") || !result.barbieNoVariant.price.includes("¥3,575") ||
+        !result.barbieNoVariant.badge.includes("50%OFF") ||
+        !result.soldOutProduct.exists || !result.soldOutProduct.card.includes("disabled") ||
+        !result.soldOutProduct.card.includes("SOLD OUT") ||
+        !result.soldOutProduct.badge.includes("50%OFF") || !result.soldOutProduct.badge.includes("SOLD OUT") ||
+        !result.soldOutProduct.price.includes("¥11,880") || !result.soldOutProduct.price.includes("¥5,940") ||
         !result.studentConditionVisible || !result.studentConditionBlocksEmpty ||
         !result.studentConditionAdded || !result.pricedOptionVisible ||
         !result.pricedOptionAdjusted;

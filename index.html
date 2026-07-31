@@ -215,6 +215,7 @@
     .yk-product-badge { position: static; display: inline-flex; align-items: center; justify-content: center; min-width: 48px; min-height: 26px; padding: 3px 9px; border-radius: 4px; color: #fff; font-size: 11px; font-weight: 900; line-height: 1; letter-spacing: 0; white-space: nowrap; }
     .yk-sale-badge { background: #d94232; box-shadow: 0 3px 10px rgba(88,20,14,.25); }
     .yk-new-badge { background: #2474a8; box-shadow: 0 3px 10px rgba(16,62,92,.25); }
+    .yk-soldout-badge { background: #4f585d; box-shadow: 0 3px 10px rgba(25,32,35,.22); }
     .yk-shelf-count { margin: 8px 0 0; color: var(--yk-muted); font-size: 12px; font-weight: 800; }
     .yk-pickup { background: #f5fbf8; border-top: 1px solid var(--yk-line); border-bottom: 1px solid var(--yk-line); }
     .yk-pickup__image { display: flex; align-items: center; justify-content: center; max-width: var(--yk-content-max); margin: 0 auto; padding: 42px 28px; }
@@ -338,6 +339,7 @@
     .yk-preview-condition__required { display: inline-flex; margin-left: 5px; padding: 2px 7px; border-radius: 999px; background: #b42318; color: #fff; font-size: 10px; line-height: 1.4; vertical-align: middle; }
     .yk-preview-condition__caption { color: var(--yk-muted); font-size: 11px; font-weight: 700; line-height: 1.55; white-space: pre-line; }
     .yk-preview-purchase__add { min-height: 58px; border: 0; border-radius: var(--yk-radius); background: var(--yk-main); color: #fff; padding: 10px 16px; font: inherit; font-size: 16px; font-weight: 900; cursor: pointer; box-shadow: var(--yk-shadow); }
+    .yk-preview-purchase__add:disabled { background: #d9dee1; color: #697278; cursor: not-allowed; box-shadow: none; }
     .yk-preview-purchase__status { min-height: 1.6em; margin: 0; color: var(--yk-main); font-size: 12px; font-weight: 900; }
     .yk-preview-item-dialog__guide { display: grid; gap: 8px; margin: 4px 0 0; padding: 0; list-style: none; }
     .yk-preview-item-dialog__guide li { padding-left: 13px; border-left: 3px solid var(--yk-main); color: var(--yk-muted); font-size: 13px; font-weight: 800; }
@@ -1191,9 +1193,9 @@
         <p class="yk-preview-item-dialog__eyebrow">Item details</p>
         <h2 class="yk-preview-item-dialog__title" id="yk-preview-item-title" data-yk-preview-item-title></h2>
         <p class="yk-preview-item-dialog__price" data-yk-preview-item-price></p>
-        <p class="yk-preview-item-dialog__lead">商品の種類・サイズと数量を選んで、カートへ追加できます。</p>
+        <p class="yk-preview-item-dialog__lead" data-yk-preview-item-lead>商品の種類・サイズと数量を選んで、カートへ追加できます。</p>
         <div class="yk-preview-purchase">
-          <h3>種類・サイズを選ぶ</h3>
+          <h3 data-yk-preview-purchase-title>種類・サイズを選ぶ</h3>
           <div class="yk-preview-purchase__options" data-yk-preview-item-options>
             <label>種類・サイズ
               <select data-yk-preview-item-variant aria-label="種類・サイズ"></select>
@@ -1235,8 +1237,8 @@
     </div>
   </dialog>
   <!-- YK_PREVIEW_COMMERCE_END -->
-  <script src="assets/base-production-catalog.js?v=20260731-search-options"></script>
-  <script src="assets/search-relevance.js?v=20260731-hybrid"></script>
+  <script src="assets/base-production-catalog.js?v=20260731-ec-fixes"></script>
+  <script src="assets/search-relevance.js?v=20260731-search-strict"></script>
   <script>
     window.ykCurrentCatalog = {
       schoolAvailability: window.ykSchoolAvailability,
@@ -1402,9 +1404,18 @@
       }
     }
 
+    function ykClearSearchQuery() {
+      window.clearTimeout(ykSearchDebounceTimer);
+      ykState.query = "";
+      document.querySelectorAll("[data-yk-query]").forEach(function (input) {
+        input.value = "";
+      });
+    }
+
     ykTabs.forEach(function (button) {
       button.addEventListener("click", function () {
         if (button.hasAttribute("data-special-category")) return;
+        ykClearSearchQuery();
         var selectedType = button.getAttribute("data-school-type") || "";
         ykState.schoolType = selectedType && ykState.schoolType === selectedType ? "" : selectedType;
         ykState.school = "";
@@ -1420,6 +1431,7 @@
 
     document.querySelectorAll("[data-special-category]").forEach(function (button) {
       button.addEventListener("click", function () {
+        ykClearSearchQuery();
         var selectedCategory = button.getAttribute("data-special-category") || "";
         ykState.specialCategory = ykState.specialCategory === selectedCategory ? "" : selectedCategory;
         if (ykState.specialCategory) {
@@ -1751,6 +1763,8 @@
 
       for (var conceptIndex = 0; conceptIndex < parsed.concepts.length; conceptIndex += 1) {
         var parsedConcept = parsed.concepts[conceptIndex];
+        // 「カッパ」は雨合羽そのものだけを返し、関連カテゴリの上着やバッグカバーを混ぜない。
+        if (parsedConcept.id === "rainwear" && !doc.concepts.rainwear) return -1;
         var conceptScore = ykSearchConceptScore(doc, parsedConcept);
         var productIntent = ykSearchConceptIsProductIntent(parsedConcept);
         if (productIntent) productIntentUnits += 1;
@@ -1794,8 +1808,11 @@
     }
 
     function ykGetProducts() {
-      var products = ykState.school ? (ykSearchCatalog[ykState.school] || []) : ykProductsForSchoolType(ykState.schoolType);
-      if (ykState.specialCategory) {
+      // フリーワード検索は、選択中の学校やカテゴリに閉じず公開商品全件を対象にする。
+      var products = ykState.query
+        ? ykAllProducts
+        : (ykState.school ? (ykSearchCatalog[ykState.school] || []) : ykProductsForSchoolType(ykState.schoolType));
+      if (!ykState.query && ykState.specialCategory) {
         products = (ykSpecialCatalog[ykState.specialCategory] || []).slice();
       }
       if (ykState.query) {
@@ -1843,6 +1860,11 @@
 
     // BASEの商品ページで通常価格と販売価格の両方を確認できた商品だけを登録する。
     var ykProperPriceData = {
+      "84022735": { proper: "¥10,230", discount: "52%OFF" },
+      "84051406": { proper: "¥11,880", discount: "50%OFF" },
+      "84051745": { proper: "¥6,600", discount: "50%OFF" },
+      "84052877": { proper: "¥10,940", discount: "50%OFF" },
+      "84053344": { proper: "¥7,150", discount: "50%OFF" },
       "145086937": { proper: "¥8,300", discount: "50%OFF" },
       "145087529": { proper: "¥15,000", discount: "50%OFF" },
       "145087738": { proper: "¥4,400", discount: "50%OFF" },
@@ -1950,7 +1972,11 @@
         badges.push('<span class="yk-product-badge yk-new-badge">NEW</span>');
       }
       if (ykPriceDownIds[String(product.id)]) {
-        badges.push('<span class="yk-product-badge yk-sale-badge">SALE</span>');
+        var sale = ykProperPriceData[String(product.id)] || null;
+        badges.push('<span class="yk-product-badge yk-sale-badge">' + ykEscapeHtml(sale && sale.discount || "SALE") + '</span>');
+      }
+      if (product.s === false) {
+        badges.push('<span class="yk-product-badge yk-soldout-badge">SOLD OUT</span>');
       }
       return badges.length
         ? '<span class="yk-product-badges" aria-hidden="true">' + badges.join("") + '</span>'
@@ -1958,14 +1984,13 @@
     }
 
     function ykProductCard(product) {
-      var soldOut = product.s === false && ykIsDraftPreview() &&
-        window.location.hostname !== "admin.thebase.com" && window.location.hostname !== "developers.thebase.com";
+      var soldOut = product.s === false;
       var productUrl = ykProductUrl(product);
       var photo = soldOut
         ? '<span class="yk-product__photo" aria-label="' + ykEscapeHtml(product.t) + 'は在庫なし">' + ykProductBadge(product) + '<img src="' + ykEscapeHtml(product.img) + '" alt="' + ykEscapeHtml(product.t) + '" loading="lazy" decoding="async"></span>'
         : '<a class="yk-product__photo" href="' + ykEscapeHtml(productUrl) + '" data-product-page="' + ykEscapeHtml(product.id) + '" aria-label="' + ykEscapeHtml(product.t) + 'の種類・サイズを選ぶ">' + ykProductBadge(product) + '<img src="' + ykEscapeHtml(product.img) + '" alt="' + ykEscapeHtml(product.t) + '" loading="lazy" decoding="async"></a>';
       var action = soldOut
-        ? '<button class="yk-product__button yk-product__button--soldout" type="button" disabled>在庫なし</button>'
+        ? '<button class="yk-product__button yk-product__button--soldout" type="button" disabled>SOLD OUT</button>'
         : '<a class="yk-product__button" href="' + ykEscapeHtml(productUrl) + '" data-product-page="' + ykEscapeHtml(product.id) + '">サイズを選ぶ</a>';
       return [
         '<article class="yk-product" data-sold-out="' + soldOut + '">',
@@ -2006,7 +2031,7 @@
       var image240 = ykShelfImageUrl(product.img, 240);
       var image480 = ykShelfImageUrl(product.img, 480);
       return [
-        '<article class="yk-shelf-card">',
+        '<article class="yk-shelf-card" data-sold-out="' + (product.s === false) + '">',
         '<a class="yk-shelf-card__link" href="' + ykEscapeHtml(productUrl) + '" data-product-page="' + ykEscapeHtml(product.id) + '" aria-label="' + ykEscapeHtml(product.t) + 'の詳細を見る">',
         '<span class="yk-shelf-card__image">' + ykProductBadge(product) + '<img src="' + ykEscapeHtml(image240) + '" srcset="' + ykEscapeHtml(image240) + ' 240w, ' + ykEscapeHtml(image480) + ' 480w" sizes="(max-width:560px) calc((100vw - 44px) / 3), calc((min(100vw,1800px) - 116px) / 6)" alt="' + ykEscapeHtml(product.t) + '" loading="lazy" decoding="async"></span>',
         '<span class="yk-shelf-card__title">' + ykEscapeHtml(product.t) + '</span>',
@@ -2317,14 +2342,16 @@
     }
 
     function ykRenderPreviewOptions(product, container) {
-      if (!container) return;
+      if (!container) return { hasChoiceOptions: false, hasTextConditions: false };
       var optionGroups = ykPreviewOptionGroups(product);
       var audited = ykProductConditions[String(product.id)]
         ? ykProductConditions[String(product.id)].options || []
         : [];
       var textConditions = audited.filter(function (condition) { return condition.type === "text"; });
       var controls = [];
+      var hasChoiceOptions = false;
       if (optionGroups.length) {
+        hasChoiceOptions = true;
         controls = optionGroups.map(function (group, groupIndex) {
           var placeholder = group.required
             ? '<option value="" selected disabled hidden>選択する（必須）</option>'
@@ -2341,13 +2368,14 @@
         });
       } else {
         var variants = (ykProductVariants[product.id] || product.vs || []).slice();
-        if (!variants.length && product.v) variants.push(product.v);
-        if (!variants.length) variants.push("種類・サイズは店舗でご確認ください");
         variants = variants.filter(function (item, index) { return item && variants.indexOf(item) === index; });
-        controls.push('<label>種類・サイズ<select data-yk-preview-item-variant aria-label="種類・サイズ">' +
-          variants.map(function (item) {
-            return '<option value="' + ykEscapeHtml(item) + '">' + ykEscapeHtml(item) + "</option>";
-          }).join("") + "</select></label>");
+        if (variants.length) {
+          hasChoiceOptions = true;
+          controls.push('<label>種類・サイズ<select data-yk-preview-item-variant aria-label="種類・サイズ">' +
+            variants.map(function (item) {
+              return '<option value="' + ykEscapeHtml(item) + '">' + ykEscapeHtml(item) + "</option>";
+            }).join("") + "</select></label>");
+        }
       }
       textConditions.forEach(function (condition, conditionIndex) {
         controls.push('<label>' + ykEscapeHtml(condition.label || "入力項目") +
@@ -2360,6 +2388,8 @@
           "</label>");
       });
       container.innerHTML = controls.join("");
+      container.hidden = controls.length === 0;
+      return { hasChoiceOptions: hasChoiceOptions, hasTextConditions: textConditions.length > 0 };
     }
 
     function ykPreviewSelection(dialog, product) {
@@ -2380,8 +2410,8 @@
         });
       } else {
         var variantNode = dialog.querySelector("[data-yk-preview-item-variant]");
-        var variantValue = variantNode ? variantNode.value : (product.v || "");
-        if (!variantValue && !invalidNode) invalidNode = variantNode;
+        var variantValue = variantNode ? variantNode.value : "";
+        if (variantNode && !variantValue && !invalidNode) invalidNode = variantNode;
         if (variantValue) labels.push("種類・サイズ：" + variantValue);
       }
       Array.prototype.slice.call(dialog.querySelectorAll("[data-yk-preview-condition-input]")).forEach(function (node) {
@@ -2418,15 +2448,34 @@
       var image = dialog.querySelector("[data-yk-preview-item-image]");
       var title = dialog.querySelector("[data-yk-preview-item-title]");
       var price = dialog.querySelector("[data-yk-preview-item-price]");
+      var lead = dialog.querySelector("[data-yk-preview-item-lead]");
+      var purchaseTitle = dialog.querySelector("[data-yk-preview-purchase-title]");
       var optionContainer = dialog.querySelector("[data-yk-preview-item-options]");
       var quantity = dialog.querySelector("[data-yk-preview-item-quantity]");
+      var addButton = dialog.querySelector("[data-yk-preview-add-cart]");
       var status = dialog.querySelector("[data-yk-preview-item-status]");
       if (image) { image.src = product.img || ""; image.alt = product.t || "商品画像"; }
       if (title) title.textContent = product.t || "商品";
       if (price) price.innerHTML = ykProductPriceMarkup(product);
-      ykRenderPreviewOptions(product, optionContainer);
-      if (quantity) quantity.value = "1";
-      if (status) status.textContent = "";
+      var optionSummary = ykRenderPreviewOptions(product, optionContainer);
+      var soldOut = product.s === false;
+      if (lead) {
+        lead.textContent = soldOut
+          ? "この商品は現在SOLD OUTです。"
+          : optionSummary.hasChoiceOptions
+            ? "商品の種類・サイズと数量を選んで、カートへ追加できます。"
+            : optionSummary.hasTextConditions
+              ? "必要事項と数量を入力して、カートへ追加できます。"
+              : "数量を選んで、カートへ追加できます。";
+      }
+      if (purchaseTitle) {
+        purchaseTitle.textContent = optionSummary.hasChoiceOptions
+          ? "種類・サイズを選ぶ"
+          : optionSummary.hasTextConditions ? "必要事項を入力する" : "数量を選ぶ";
+      }
+      if (quantity) { quantity.value = "1"; quantity.disabled = soldOut; }
+      if (addButton) { addButton.disabled = soldOut; addButton.textContent = soldOut ? "SOLD OUT" : "カートに入れる"; }
+      if (status) status.textContent = soldOut ? "この商品は在庫切れのため購入できません。" : "";
       dialog.dataset.productId = product.id;
       dialog.ykPreviousFocus = trigger || document.activeElement;
       dialog.ykPreviousHash = options && options.fromHash ? "" : window.location.hash;
@@ -2457,6 +2506,10 @@
       if (!product) return;
       var quantityNode = dialog.querySelector("[data-yk-preview-item-quantity]");
       var status = dialog.querySelector("[data-yk-preview-item-status]");
+      if (product.s === false) {
+        if (status) status.textContent = "この商品は在庫切れのため購入できません。";
+        return;
+      }
       var selection = ykPreviewSelection(dialog, product);
       if (!selection.valid) {
         if (status) status.textContent = "必須項目を入力・選択してください。";
@@ -2774,6 +2827,7 @@
     document.querySelectorAll(".yk-school-list a").forEach(function (link) {
       link.addEventListener("click", function (event) {
         event.preventDefault();
+        ykClearSearchQuery();
         var selectedSchool = (link.textContent || "").trim();
         var shouldClear = ykState.school === selectedSchool;
         if (shouldClear) {
@@ -2822,6 +2876,12 @@
 
     function ykApplySearchQuery(value, shouldScroll) {
       ykState.query = String(value || "").trim();
+      if (ykState.query) {
+        ykState.schoolType = "";
+        ykState.school = "";
+        ykState.specialCategory = "";
+        ykSyncSchoolFilters();
+      }
       ykState.sort = ykState.query ? "relevance" : "school";
       document.querySelectorAll("[data-yk-query]").forEach(function (input) {
         if (input.value !== ykState.query) input.value = ykState.query;
