@@ -364,13 +364,13 @@
     .yk-gallery-button { display: grid; gap: 7px; min-width: 0; padding: 0 0 8px; overflow: hidden; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; color: var(--yk-ink); font: inherit; font-size: 12px; font-weight: 900; line-height: 1.35; cursor: zoom-in; box-shadow: 0 8px 18px rgba(28,45,52,.08); }
     .yk-gallery-button img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
     .yk-gallery-button span { padding: 0 8px; word-break: keep-all; }
-    .yk-lightbox { position: fixed; inset: 0; width: 100vw; max-width: none; height: 100dvh; max-height: none; margin: 0; padding: 0; overflow: hidden; overscroll-behavior: contain; border: 0; border-radius: 0; background: #0e1214; color: #fff; box-shadow: none; touch-action: none; }
+    .yk-lightbox { position: fixed; inset: 0; width: min(94vw,1120px); max-width: 1120px; height: min(92dvh,900px); max-height: 92dvh; margin: auto; padding: 0; overflow: hidden; overscroll-behavior: contain; border: 0; border-radius: 14px; background: #0e1214; color: #fff; box-shadow: 0 28px 80px rgba(12,29,34,.42); touch-action: none; }
     .yk-lightbox[open] { display: block; }
-    .yk-lightbox::backdrop { background: #0e1214; backdrop-filter: none; }
+    .yk-lightbox::backdrop { background: rgba(10,15,17,.78); backdrop-filter: blur(4px); }
     .yk-lightbox__inner { position: relative; width: 100%; height: 100%; overflow: hidden; }
     .yk-lightbox__stage { position: absolute; inset: 0; display: grid; overflow: hidden; cursor: zoom-out; touch-action: none; place-items: center; }
     .yk-lightbox__stage[data-yk-dragging="true"] { cursor: grabbing; }
-    .yk-lightbox__image { display: block; width: auto; max-width: calc(100vw - 24px); height: auto; max-height: calc(100dvh - 24px); object-fit: contain; transform: translate3d(0,0,0) scale(1); transform-origin: center; user-select: none; -webkit-user-drag: none; will-change: transform; }
+    .yk-lightbox__image { display: block; width: auto; max-width: calc(100% - 24px); height: auto; max-height: calc(100% - 24px); object-fit: contain; transform: translate3d(0,0,0) scale(1); transform-origin: center; user-select: none; -webkit-user-drag: none; will-change: transform; }
     .yk-lightbox__controls { position: absolute; z-index: 2; top: max(12px,env(safe-area-inset-top)); right: max(12px,env(safe-area-inset-right)); display: flex; gap: 8px; }
     .yk-lightbox__control { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 1px solid rgba(255,255,255,.3); border-radius: 50%; background: rgba(17,24,27,.82); color: #fff; font: inherit; font-size: 24px; font-weight: 800; line-height: 1; cursor: pointer; backdrop-filter: blur(8px); }
     .yk-lightbox__control:disabled { opacity: .38; cursor: default; }
@@ -441,7 +441,8 @@
       .yk-header__inner,.yk-hero__inner,.yk-section,.yk-page-hero__inner,.yk-page-section,.yk-footer__inner { padding-right: clamp(14px,4.5vw,18px); padding-left: clamp(14px,4.5vw,18px); }
       .yk-header__inner { grid-template-columns: minmax(0,1fr); gap: 10px; }
       .yk-logo .logoText { font-size: 20px; white-space: nowrap; }
-      .yk-nav { grid-template-columns: .7fr 1.15fr 1.25fr .75fr; gap: 4px; font-size: 11px; }
+      .yk-nav { grid-template-columns: .7fr 1.25fr 1fr .75fr; gap: 4px; font-size: 11px; }
+      .yk-nav__stores { display: none!important; }
       .yk-nav > [data-yk-preview-cart-open] { gap: 3px; padding-right: 2px; padding-left: 2px; }
       .yk-nav .yk-cart-count { flex: 0 0 auto; min-width: 17px; height: 17px; margin-left: 0; padding: 0 4px; font-size: 10px; }
       .yk-nav #baseMenu { min-width: 0; overflow: hidden; }
@@ -465,7 +466,8 @@
       .yk-has-mobile-gallery > .yk-card > img,.yk-has-mobile-gallery > .yk-store-card > img { display: none; }
       .yk-store-card dl { grid-template-columns: minmax(72px,auto) minmax(0,1fr); }
       .yk-result-toolbar { justify-content: flex-start; }
-      .yk-lightbox__image { max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); }
+      .yk-lightbox { width: calc(100vw - 16px); height: min(86dvh,720px); max-height: calc(100dvh - 16px); border-radius: 10px; }
+      .yk-lightbox__image { max-width: calc(100% - 16px); max-height: calc(100% - 16px); }
       .yk-lightbox__controls { top: max(8px,env(safe-area-inset-top)); right: max(8px,env(safe-area-inset-right)); gap: 6px; }
       .yk-lightbox__control { width: 42px; height: 42px; font-size: 22px; }
       body.yk-item-route .yk-header__inner { grid-template-columns: auto minmax(0,1fr); gap: 8px; min-height: 58px; padding-top: 0; padding-bottom: 0; }
@@ -545,9 +547,10 @@
       </form>
 
       <nav class="yk-nav">
-        <a href="index.html#top">TOP</a>
-        <a href="index.html#yk-stores">店舗について</a>
-        <a href="contact.html">お問い合わせ</a>
+        <a class="yk-nav__top" href="index.html#top">TOP</a>
+        <a class="yk-nav__stores" href="index.html#yk-stores">店舗について</a>
+        <a class="yk-nav__contact" href="contact.html">お問い合わせ</a>
+        <a class="yk-nav__history" href="https://yuukichiya-purchase-history-prototype.onrender.com/">購入履歴</a>
         <a href="cart.html" data-yk-preview-cart-open>カート<span class="yk-cart-count" data-cart-count hidden>0</span></a>
       </nav>
     </div>
@@ -605,6 +608,7 @@
         <ul>
           <li><a href="index.html#yk-stores">店舗について</a></li>
           <li><a href="contact.html">お問い合わせ</a></li>
+          <li><a href="https://yuukichiya-purchase-history-prototype.onrender.com/">購入履歴</a></li>
           <li><a href="privacy.html">個人情報の取扱い</a></li>
           <li><a href="https://yuukichiya.base.shop/law" target="_blank" rel="noopener noreferrer">特定商取引法に基づく表記</a></li>
         </ul>
