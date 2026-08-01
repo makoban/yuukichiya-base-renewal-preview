@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const indexPath = resolve(root, "index.html");
 const index = await readFile(indexPath, "utf8");
+const previewActions = await readFile(resolve(root, "assets/preview-actions.js"), "utf8");
 
 const checks = [
   ["HP logo image", /assets\/yuukichiya-logo\.(?:png|webp|svg)/i],
@@ -27,6 +28,13 @@ for (const [label, test] of checks) {
   if (!passed) failures.push(label);
 }
 
+if (!/この画面ではご注文を確定できません。商品ページから購入手続きへお進みください。/.test(previewActions)) {
+  failures.push("customer-facing checkout guidance");
+}
+if (/下書き確認中/.test(previewActions)) {
+  failures.push("no internal draft wording in checkout guidance");
+}
+
 const requiredAssets = [
   "assets/search-relevance.js",
   "assets/base-production-catalog.js",
@@ -47,5 +55,5 @@ if (failures.length) {
   failures.forEach((failure) => console.error(`- ${failure}`));
   process.exitCode = 1;
 } else {
-  console.log(`Yuukichiya EC regression contract: OK (${checks.length + requiredAssets.length} checks)`);
+  console.log(`Yuukichiya EC regression contract: OK (${checks.length + requiredAssets.length + 2} checks)`);
 }
