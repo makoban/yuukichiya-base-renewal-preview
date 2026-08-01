@@ -20,6 +20,8 @@ const checks = [
   ["desktop image viewer bound", /width:\s*min\(94vw,1120px\)/],
   ["mobile image viewer bound", /width:\s*calc\(100vw - 16px\)/],
   ["numeric-only student number", /inputmode=["']numeric["']/],
+  ["multiple-image product gallery", (text) => /data-yk-preview-gallery-next/.test(text) && /ykRenderPreviewGallery/.test(text)],
+  ["product description display", (text) => /data-yk-preview-description/.test(text) && /ykRenderPreviewDescription/.test(text)],
 ];
 
 const failures = [];
@@ -40,6 +42,7 @@ const requiredAssets = [
   "assets/base-production-catalog.js",
   "assets/preview-product-inventory.js",
   "assets/preview-product-options.js",
+  "assets/preview-product-details.js",
 ];
 
 for (const asset of requiredAssets) {

@@ -152,6 +152,16 @@ export async function verifySearchOptionsStaging(
           ).map((option) => option.value),
           stockText: document.querySelector("[data-yk-preview-stock-status]")?.textContent.trim() || "",
           addDisabled: document.querySelector("[data-yk-preview-add-cart]")?.disabled,
+          galleryCount: document.querySelector("[data-yk-preview-gallery-count]")?.textContent.trim() || "",
+          galleryThumbs: document.querySelectorAll("[data-yk-preview-gallery-thumb]").length,
+          description: document.querySelector("[data-yk-preview-description]")?.textContent.trim() || "",
+          responsiveImage: document.querySelector("[data-yk-preview-item-image]")?.getAttribute("srcset") || "",
+        }));
+        await page.locator("[data-yk-preview-gallery-next]").click();
+        result.galleryNext = await page.evaluate(() => ({
+          count: document.querySelector("[data-yk-preview-gallery-count]")?.textContent.trim() || "",
+          currentThumb: document.querySelector('[data-yk-preview-gallery-thumb][aria-current="true"]')?.getAttribute("data-yk-preview-gallery-thumb") || "",
+          alt: document.querySelector("[data-yk-preview-item-image]")?.alt || "",
         }));
         await page.locator("[data-yk-preview-add-cart]").click();
         await page.locator("[data-yk-preview-cart-close]").click();
@@ -263,6 +273,17 @@ export async function verifySearchOptionsStaging(
         }
         await page.locator("[data-yk-preview-item-close]").click();
 
+        await page.evaluate(() => ykOpenPreviewItem(ykFindProduct("84022735"), document.body));
+        await page.waitForFunction(() => {
+          const image = document.querySelector("[data-yk-preview-item-image]");
+          return image?.complete && image.naturalWidth > 0;
+        }, { timeout: 5000 }).catch(() => {});
+        await page.screenshot({
+          path: resolve(outputDir, `staging-product-gallery-${width}.png`),
+          fullPage: false,
+        });
+        await page.locator("[data-yk-preview-item-close]").click();
+
         await page.screenshot({
           path: resolve(outputDir, `staging-search-options-${width}.png`),
           fullPage: true,
@@ -308,6 +329,11 @@ export async function verifySearchOptionsStaging(
         result.visibility.total !== 608 || result.visibility.hiddenIdsPresent.length ||
         result.stockOneProduct.quantities.join(",") !== "1" ||
         !result.stockOneProduct.stockText.includes("1点") || result.stockOneProduct.addDisabled ||
+        result.stockOneProduct.galleryCount !== "1 / 5" || result.stockOneProduct.galleryThumbs !== 5 ||
+        !result.stockOneProduct.description.includes("学生の声を集めた通学専用バッグ") ||
+        !result.stockOneProduct.responsiveImage.includes("480w") ||
+        result.galleryNext.count !== "2 / 5" || result.galleryNext.currentThumb !== "1" ||
+        !result.galleryNext.alt.includes("2 / 5") ||
         result.stockOneAfterCart.quantities.some(Boolean) || !result.stockOneAfterCart.addDisabled ||
         !result.stockOneAfterCart.stockText.includes("追加可能0点") ||
         !result.stockOneAfterCart.status.includes("在庫上限") ||

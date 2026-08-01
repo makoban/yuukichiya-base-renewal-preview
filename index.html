@@ -319,7 +319,17 @@
     .yk-dialog__close { position: absolute; z-index: 4; top: 12px; right: 12px; display: grid; width: 44px; height: 44px; padding: 0; border: 1px solid var(--yk-line); border-radius: 50%; background: rgba(255,255,255,.96); color: var(--yk-ink); font: inherit; font-size: 26px; cursor: pointer; place-items: center; }
     .yk-preview-item-dialog__layout { display: grid; grid-template-columns: minmax(0,1.08fr) minmax(380px,.92fr); min-height: 620px; }
     .yk-preview-item-dialog__visual { position: relative; display: grid; min-width: 0; padding: 34px; background: #f4f7f5; place-items: center; }
-    .yk-preview-item-dialog__image { width: 100%; max-height: 640px; object-fit: contain; }
+    .yk-preview-gallery { display: grid; width: 100%; min-width: 0; gap: 14px; }
+    .yk-preview-gallery__stage { position: relative; display: grid; min-height: 500px; overflow: hidden; border-radius: var(--yk-radius); background: #fff; place-items: center; touch-action: pan-y; }
+    .yk-preview-item-dialog__image { width: 100%; max-height: 640px; object-fit: contain; cursor: zoom-in; }
+    .yk-preview-gallery__control { position: absolute; z-index: 2; top: 50%; display: grid; width: 48px; height: 48px; padding: 0; transform: translateY(-50%); border: 1px solid rgba(47,125,91,.22); border-radius: 50%; background: rgba(255,255,255,.95); color: var(--yk-main); font: inherit; font-size: 26px; font-weight: 900; cursor: pointer; box-shadow: 0 8px 22px rgba(26,45,52,.16); place-items: center; }
+    .yk-preview-gallery__control--prev { left: 12px; }
+    .yk-preview-gallery__control--next { right: 12px; }
+    .yk-preview-gallery__count { position: absolute; right: 12px; bottom: 12px; z-index: 2; min-width: 54px; padding: 6px 10px; border-radius: 999px; background: rgba(16,31,36,.78); color: #fff; font-size: 12px; font-weight: 900; text-align: center; }
+    .yk-preview-gallery__thumbs { display: flex; max-width: 100%; gap: 8px; overflow-x: auto; padding: 2px 2px 8px; overscroll-behavior-x: contain; scrollbar-width: thin; }
+    .yk-preview-gallery__thumb { flex: 0 0 76px; width: 76px; height: 76px; padding: 3px; overflow: hidden; border: 2px solid transparent; border-radius: 8px; background: #fff; cursor: pointer; }
+    .yk-preview-gallery__thumb[aria-current="true"] { border-color: var(--yk-main); box-shadow: 0 0 0 2px rgba(47,125,91,.15); }
+    .yk-preview-gallery__thumb img { width: 100%; height: 100%; border-radius: 5px; object-fit: contain; }
     .yk-preview-badge { position: absolute; top: 16px; left: 16px; display: inline-flex; align-items: center; min-height: 30px; padding: 0 10px; border-radius: 999px; background: #fff; color: var(--yk-main); font-size: 11px; font-weight: 900; box-shadow: 0 6px 16px rgba(26,45,52,.12); }
     .yk-preview-item-dialog__body { display: grid; align-content: start; gap: 12px; min-width: 0; padding: 48px 36px 34px; }
     .yk-preview-item-dialog__eyebrow { margin: 0; color: var(--yk-main); font-size: 12px; font-weight: 900; }
@@ -330,6 +340,9 @@
     .yk-preview-item-dialog__price .yk-price-stack strong { font-size: 28px; }
     .yk-preview-item-dialog__price small { display: block; margin-top: 3px; color: var(--yk-muted); font-size: 12px; font-weight: 800; }
     .yk-preview-item-dialog__lead { margin: 0; color: var(--yk-muted); font-size: 13px; font-weight: 800; }
+    .yk-preview-description { display: grid; gap: 8px; margin-top: 4px; padding: 18px; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #f8faf9; }
+    .yk-preview-description h3 { margin: 0; font-size: 17px; line-height: 1.4; }
+    .yk-preview-description p { margin: 0; color: var(--yk-ink); font-size: 14px; line-height: 1.8; white-space: pre-line; overflow-wrap: anywhere; }
     .yk-preview-purchase { display: grid; gap: 14px; margin-top: 8px; padding: 20px; border: 1px solid rgba(47,125,91,.22); border-radius: var(--yk-radius); background: #fff; box-shadow: var(--yk-shadow); }
     .yk-preview-purchase h3 { margin: 0; font-size: 20px; line-height: 1.4; }
     .yk-preview-purchase__options { display: grid; gap: 12px; }
@@ -433,7 +446,13 @@
       .yk-preview-item-dialog { width: calc(100% - 16px); max-height: calc(100dvh - 16px); }
       .yk-preview-item-dialog__layout { grid-template-columns: 1fr; min-height: 0; }
       .yk-preview-item-dialog__visual { min-height: 280px; padding: 22px; }
+      .yk-preview-gallery__stage { min-height: 280px; }
       .yk-preview-item-dialog__image { max-height: 42dvh; }
+      .yk-preview-gallery__control { width: 44px; height: 44px; font-size: 23px; }
+      .yk-preview-gallery__control--prev { left: 8px; }
+      .yk-preview-gallery__control--next { right: 8px; }
+      .yk-preview-gallery__count { right: 8px; bottom: 8px; }
+      .yk-preview-gallery__thumb { flex-basis: 64px; width: 64px; height: 64px; }
       .yk-preview-item-dialog__body { padding: 24px 18px 22px; }
       .yk-preview-item-dialog__title { font-size: 23px; }
       .yk-preview-item-dialog__price { font-size: 24px; }
@@ -640,9 +659,13 @@
       .yk-item-info-dialog__head { padding: 22px 62px 16px 18px; }
       .yk-item-info-dialog__head h2 { font-size: 22px; }
       .yk-item-info-dialog__body { padding: 18px; }
-      .yk-preview-item-dialog { width: calc(100% - 12px); height: min(500px,calc(100dvh - 12px)); max-height: calc(100dvh - 12px); }
-      .yk-preview-item-dialog__layout { grid-template-rows: minmax(112px,22dvh) minmax(0,1fr); height: 100%; }
+      .yk-preview-item-dialog { width: calc(100% - 12px); height: min(760px,calc(100dvh - 12px)); max-height: calc(100dvh - 12px); }
+      .yk-preview-item-dialog__layout { grid-template-rows: minmax(300px,46dvh) minmax(0,1fr); height: 100%; }
       .yk-preview-item-dialog__visual { min-height: 0; padding: 12px; }
+      .yk-preview-gallery { grid-template-rows: minmax(0,1fr) 58px; height: 100%; gap: 8px; }
+      .yk-preview-gallery__stage { min-height: 0; }
+      .yk-preview-gallery__thumbs { height: 58px; padding: 0; }
+      .yk-preview-gallery__thumb { flex-basis: 56px; width: 56px; height: 56px; }
       .yk-preview-item-dialog__image { position: absolute; inset: 12px; width: calc(100% - 24px); height: calc(100% - 24px); max-height: none; object-fit: contain; }
       .yk-preview-badge { top: 8px; left: 8px; min-height: 24px; padding: 0 7px; font-size: 9px; }
       .yk-preview-item-dialog__body { gap: 6px; padding: 12px 14px 10px; }
@@ -1192,13 +1215,25 @@
     <div class="yk-preview-item-dialog__layout">
       <div class="yk-preview-item-dialog__visual">
         <span class="yk-preview-badge">商品詳細</span>
-        <img class="yk-preview-item-dialog__image" src="" alt="" data-yk-preview-item-image>
+        <div class="yk-preview-gallery" data-yk-preview-gallery>
+          <div class="yk-preview-gallery__stage" data-yk-preview-gallery-stage>
+            <img class="yk-preview-item-dialog__image" src="" alt="" sizes="(max-width: 560px) calc(100vw - 60px), 52vw" data-yk-preview-item-image>
+            <button class="yk-preview-gallery__control yk-preview-gallery__control--prev" type="button" aria-label="前の商品画像" data-yk-preview-gallery-prev>&lsaquo;</button>
+            <button class="yk-preview-gallery__control yk-preview-gallery__control--next" type="button" aria-label="次の商品画像" data-yk-preview-gallery-next>&rsaquo;</button>
+            <span class="yk-preview-gallery__count" aria-live="polite" data-yk-preview-gallery-count></span>
+          </div>
+          <div class="yk-preview-gallery__thumbs" role="list" aria-label="商品画像一覧" data-yk-preview-gallery-thumbs></div>
+        </div>
       </div>
       <div class="yk-preview-item-dialog__body">
         <p class="yk-preview-item-dialog__eyebrow">Item details</p>
         <h2 class="yk-preview-item-dialog__title" id="yk-preview-item-title" data-yk-preview-item-title></h2>
         <p class="yk-preview-item-dialog__price" data-yk-preview-item-price></p>
         <p class="yk-preview-item-dialog__lead" data-yk-preview-item-lead>商品の種類・サイズと数量を選んで、カートへ追加できます。</p>
+        <section class="yk-preview-description" data-yk-preview-description-section hidden>
+          <h3>商品説明</h3>
+          <p data-yk-preview-description></p>
+        </section>
         <div class="yk-preview-purchase">
           <h3 data-yk-preview-purchase-title>種類・サイズを選ぶ</h3>
           <div class="yk-preview-purchase__options" data-yk-preview-item-options>
@@ -1243,6 +1278,7 @@
   </dialog>
   <!-- YK_PREVIEW_COMMERCE_END -->
   <script src="assets/base-production-catalog.js?v=20260731-ec-fixes"></script>
+  <script src="assets/preview-product-details.js?v=20260802-gallery-description"></script>
   <script src="assets/preview-product-inventory.js?v=20260731-stock-limit"></script>
   <script src="assets/search-relevance.js?v=20260731-search-strict"></script>
   <script>
@@ -2587,11 +2623,109 @@
         "</strong>" + adjustmentNote + "</span>";
     }
 
+    function ykPreviewImageUrl(source, width) {
+      if (!source) return "";
+      try {
+        var url = new URL(source, window.location.href);
+        if (url.hostname.indexOf("baseec-img-mng.akamaized.net") !== -1) {
+          url.searchParams.set("imformat", "generic");
+          url.searchParams.set("q", "90");
+          url.searchParams.set("im", "Resize,width=" + width + ",type=normal");
+        }
+        return url.toString();
+      } catch (error) {
+        return source;
+      }
+    }
+
+    function ykPreviewImageKey(source) {
+      try {
+        var url = new URL(source, window.location.href);
+        url.searchParams.delete("q");
+        url.searchParams.delete("im");
+        return url.toString();
+      } catch (error) {
+        return String(source || "").replace(/[?&](?:q|im)=[^&]*/g, "").replace(/[?&]$/, "");
+      }
+    }
+
+    function ykShowPreviewImage(dialog, requestedIndex) {
+      var images = dialog.ykPreviewImages || [];
+      if (!images.length) return;
+      var index = (requestedIndex + images.length) % images.length;
+      var image = dialog.querySelector("[data-yk-preview-item-image]");
+      var title = dialog.querySelector("[data-yk-preview-item-title]");
+      var count = dialog.querySelector("[data-yk-preview-gallery-count]");
+      if (image) {
+        image.src = ykPreviewImageUrl(images[index], 720);
+        image.srcset = [480, 720, 960, 1200].map(function (width) {
+          return ykPreviewImageUrl(images[index], width) + " " + width + "w";
+        }).join(", ");
+        image.alt = (title ? title.textContent : "商品") + "の商品画像 " + (index + 1) + " / " + images.length;
+      }
+      if (count) count.textContent = (index + 1) + " / " + images.length;
+      dialog.querySelectorAll("[data-yk-preview-gallery-thumb]").forEach(function (thumb) {
+        var current = Number(thumb.getAttribute("data-yk-preview-gallery-thumb")) === index;
+        thumb.setAttribute("aria-current", current ? "true" : "false");
+        if (current && thumb.scrollIntoView) thumb.scrollIntoView({ block: "nearest", inline: "nearest" });
+      });
+      dialog.ykPreviewImageIndex = index;
+    }
+
+    function ykRenderPreviewGallery(dialog, product) {
+      var detail = (window.ykProductDetails || {})[String(product.id)] || {};
+      var images = [product.img].concat(Array.isArray(detail.images) ? detail.images : []);
+      var imageKeys = {};
+      images = images.filter(function (source) {
+        var key = ykPreviewImageKey(source);
+        if (!source || imageKeys[key]) return false;
+        imageKeys[key] = true;
+        return true;
+      });
+      dialog.ykPreviewImages = images;
+      var multiple = images.length > 1;
+      var previous = dialog.querySelector("[data-yk-preview-gallery-prev]");
+      var next = dialog.querySelector("[data-yk-preview-gallery-next]");
+      var count = dialog.querySelector("[data-yk-preview-gallery-count]");
+      var thumbs = dialog.querySelector("[data-yk-preview-gallery-thumbs]");
+      if (previous) previous.hidden = !multiple;
+      if (next) next.hidden = !multiple;
+      if (count) count.hidden = !multiple;
+      if (thumbs) {
+        thumbs.hidden = !multiple;
+        thumbs.replaceChildren();
+        images.forEach(function (source, index) {
+          var button = document.createElement("button");
+          button.className = "yk-preview-gallery__thumb";
+          button.type = "button";
+          button.setAttribute("role", "listitem");
+          button.setAttribute("data-yk-preview-gallery-thumb", String(index));
+          button.setAttribute("aria-label", "商品画像 " + (index + 1) + " を表示");
+          var thumbImage = document.createElement("img");
+          thumbImage.src = ykPreviewImageUrl(source, 180);
+          thumbImage.alt = "";
+          thumbImage.loading = "lazy";
+          thumbImage.decoding = "async";
+          button.appendChild(thumbImage);
+          thumbs.appendChild(button);
+        });
+      }
+      ykShowPreviewImage(dialog, 0);
+    }
+
+    function ykRenderPreviewDescription(dialog, product) {
+      var detail = (window.ykProductDetails || {})[String(product.id)] || {};
+      var section = dialog.querySelector("[data-yk-preview-description-section]");
+      var description = dialog.querySelector("[data-yk-preview-description]");
+      var text = String(detail.description || "").trim() || "商品説明は現在登録されていません。";
+      if (description) description.textContent = text;
+      if (section) section.hidden = false;
+    }
+
     function ykOpenPreviewItem(product, trigger, options) {
       if (!ykUsesPreviewCommerce() || !product) return false;
       var dialog = document.getElementById("yk-preview-item-dialog");
       if (!dialog) return false;
-      var image = dialog.querySelector("[data-yk-preview-item-image]");
       var title = dialog.querySelector("[data-yk-preview-item-title]");
       var price = dialog.querySelector("[data-yk-preview-item-price]");
       var lead = dialog.querySelector("[data-yk-preview-item-lead]");
@@ -2600,8 +2734,9 @@
       var quantity = dialog.querySelector("[data-yk-preview-item-quantity]");
       var addButton = dialog.querySelector("[data-yk-preview-add-cart]");
       var status = dialog.querySelector("[data-yk-preview-item-status]");
-      if (image) { image.src = product.img || ""; image.alt = product.t || "商品画像"; }
       if (title) title.textContent = product.t || "商品";
+      ykRenderPreviewGallery(dialog, product);
+      ykRenderPreviewDescription(dialog, product);
       if (price) price.innerHTML = ykProductPriceMarkup(product);
       var optionSummary = ykRenderPreviewOptions(product, optionContainer);
       var soldOut = product.s === false;
@@ -2889,6 +3024,26 @@
         ykClosePreviewItem();
         return;
       }
+      var previewGalleryPrevious = event.target.closest ? event.target.closest("[data-yk-preview-gallery-prev]") : null;
+      if (previewGalleryPrevious) {
+        event.preventDefault();
+        var previousDialog = previewGalleryPrevious.closest("dialog");
+        ykShowPreviewImage(previousDialog, (previousDialog.ykPreviewImageIndex || 0) - 1);
+        return;
+      }
+      var previewGalleryNext = event.target.closest ? event.target.closest("[data-yk-preview-gallery-next]") : null;
+      if (previewGalleryNext) {
+        event.preventDefault();
+        var nextDialog = previewGalleryNext.closest("dialog");
+        ykShowPreviewImage(nextDialog, (nextDialog.ykPreviewImageIndex || 0) + 1);
+        return;
+      }
+      var previewGalleryThumb = event.target.closest ? event.target.closest("[data-yk-preview-gallery-thumb]") : null;
+      if (previewGalleryThumb) {
+        event.preventDefault();
+        ykShowPreviewImage(previewGalleryThumb.closest("dialog"), Number(previewGalleryThumb.getAttribute("data-yk-preview-gallery-thumb")));
+        return;
+      }
       var previewAdd = event.target.closest ? event.target.closest("[data-yk-preview-add-cart]") : null;
       if (previewAdd) {
         event.preventDefault();
@@ -2941,6 +3096,22 @@
     /* YK_PREVIEW_COMMERCE_START */
     var ykPreviewItemDialog = document.getElementById("yk-preview-item-dialog");
     if (ykPreviewItemDialog) {
+      var ykPreviewSwipeStartX = null;
+      var ykPreviewSwipeStartY = null;
+      ykPreviewItemDialog.addEventListener("touchstart", function (event) {
+        if (!event.target.closest("[data-yk-preview-gallery-stage]") || event.touches.length !== 1) return;
+        ykPreviewSwipeStartX = event.touches[0].clientX;
+        ykPreviewSwipeStartY = event.touches[0].clientY;
+      }, { passive: true });
+      ykPreviewItemDialog.addEventListener("touchend", function (event) {
+        if (ykPreviewSwipeStartX === null || !event.changedTouches.length) return;
+        var deltaX = event.changedTouches[0].clientX - ykPreviewSwipeStartX;
+        var deltaY = event.changedTouches[0].clientY - ykPreviewSwipeStartY;
+        ykPreviewSwipeStartX = null;
+        ykPreviewSwipeStartY = null;
+        if (Math.abs(deltaX) < 50 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+        ykShowPreviewImage(ykPreviewItemDialog, (ykPreviewItemDialog.ykPreviewImageIndex || 0) + (deltaX < 0 ? 1 : -1));
+      }, { passive: true });
       ykPreviewItemDialog.addEventListener("click", function (event) {
         if (event.target === ykPreviewItemDialog) ykClosePreviewItem();
       });
@@ -2970,7 +3141,10 @@
       });
       ykPreviewItemDialog.addEventListener("close", function () {
         var image = ykPreviewItemDialog.querySelector("[data-yk-preview-item-image]");
-        if (image) image.removeAttribute("src");
+        if (image) {
+          image.removeAttribute("src");
+          image.removeAttribute("srcset");
+        }
         if (window.location.hash.indexOf("#yk-item-") === 0) {
           ykReplacePreviewHash(ykPreviewItemDialog.ykPreviousHash || "");
         }
