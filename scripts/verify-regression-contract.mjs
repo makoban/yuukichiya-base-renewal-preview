@@ -30,6 +30,7 @@ const checks = [
   ["five-review pagination", (text) => /ykReviewPageSize\s*=\s*5/.test(text) && /data-yk-review-prev/.test(text) && /data-yk-review-next/.test(text)],
   ["review sorting", (text) => /value="newest"/.test(text) && /value="oldest"/.test(text) && /value="high"/.test(text) && /value="low"/.test(text) && /value="comment"/.test(text)],
   ["BASE review labels preserved", (text) => /良い/.test(text) && /普通/.test(text) && /悪い/.test(text) && !/評価[：:]\s*[1-5]/.test(text)],
+  ["desktop product close stays viewport-fixed", (text) => /@media\s*\(min-width:\s*561px\)[\s\S]*?\.yk-preview-item-dialog\s*>\s*\.yk-dialog__close\s*\{[\s\S]*?position:\s*fixed/.test(text) && /100dvh/.test(text) && /100vw/.test(text)],
   ["mobile size and quantity controls stack vertically", /\.yk-preview-purchase\s*\{\s*grid-template-columns:\s*minmax\(0,1fr\)/],
 ];
 

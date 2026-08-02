@@ -316,7 +316,7 @@
     .yk-contact-native .control-panel input[type="submit"]:hover { background: #24694c; }
     .yk-preview-item-dialog { width: min(1080px,calc(100% - 28px)); max-height: calc(100dvh - 28px); padding: 0; overflow: auto; border: 0; border-radius: var(--yk-radius); background: #fff; color: var(--yk-ink); box-shadow: 0 28px 80px rgba(12,29,34,.36); }
     .yk-preview-item-dialog::backdrop, .yk-preview-cart-dialog::backdrop { background: rgba(16,31,36,.72); backdrop-filter: blur(4px); }
-    .yk-dialog__close { position: absolute; z-index: 4; top: 12px; right: 12px; display: grid; width: 44px; height: 44px; padding: 0; border: 1px solid var(--yk-line); border-radius: 50%; background: rgba(255,255,255,.96); color: var(--yk-ink); font: inherit; font-size: 26px; cursor: pointer; place-items: center; }
+    .yk-dialog__close { position: absolute; z-index: 100; top: 12px; right: 12px; display: grid; width: 44px; height: 44px; padding: 0; border: 1px solid var(--yk-line); border-radius: 50%; background: rgba(255,255,255,.98); color: var(--yk-ink); font: inherit; font-size: 26px; cursor: pointer; box-shadow: 0 8px 22px rgba(26,45,52,.16); pointer-events: auto; touch-action: manipulation; place-items: center; }
     .yk-preview-item-dialog__layout { display: grid; grid-template-columns: minmax(0,1.08fr) minmax(380px,.92fr); min-height: 620px; }
     .yk-preview-item-dialog__visual { position: relative; display: grid; min-width: 0; padding: 34px; background: #f4f7f5; place-items: center; }
     .yk-preview-gallery { display: grid; width: 100%; min-width: 0; gap: 14px; }
@@ -589,6 +589,14 @@
     .yk-preview-purchase__add { min-height: 50px; }
     .yk-preview-item-dialog__guide { gap: 5px; }
     .yk-preview-item-dialog__guide li { font-size: 11px; }
+    @media (min-width: 561px) {
+      .yk-preview-item-dialog > .yk-dialog__close {
+        position: fixed;
+        top: calc((100dvh - min(720px,calc(100dvh - 16px))) / 2 + 12px);
+        right: calc((100vw - min(1080px,calc(100vw - 28px))) / 2 + 12px);
+      }
+      .yk-preview-item-dialog__title { padding-right: 58px; }
+    }
     @media (max-width: 560px) {
       :where(.yk-section[id],.yk-store-band[id],.yk-pickup[id]) { scroll-margin-top: 116px; }
       .yk-hero { position: relative; background: #f5f8f6; }
