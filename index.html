@@ -343,9 +343,12 @@
     .yk-preview-description { display: grid; gap: 8px; margin-top: 4px; padding: 18px; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #f8faf9; }
     .yk-preview-description h3 { margin: 0; font-size: 17px; line-height: 1.4; }
     .yk-preview-description p { margin: 0; color: var(--yk-ink); font-size: 14px; line-height: 1.8; white-space: pre-line; overflow-wrap: anywhere; }
+    .yk-reviews-band { border-top: 1px solid var(--yk-line); border-bottom: 1px solid var(--yk-line); background: #f4f7f5; }
+    .yk-reviews-band[hidden] { display: none; }
     .yk-shop-reviews { display: grid; min-width: 0; gap: 14px; margin-top: 4px; padding: 18px; border: 1px solid rgba(47,125,91,.24); border-radius: var(--yk-radius); background: #fffdf8; }
+    .yk-shop-reviews--home { max-width: 1120px; margin: 0 auto; padding: 28px; box-shadow: 0 12px 28px rgba(28,45,52,.08); }
     .yk-shop-reviews__head { display: flex; min-width: 0; align-items: flex-start; justify-content: space-between; gap: 12px; }
-    .yk-shop-reviews h3 { margin: 0; font-size: 19px; line-height: 1.4; }
+    .yk-shop-reviews :where(h2,h3) { margin: 0; font-size: 28px; line-height: 1.4; }
     .yk-shop-reviews__summary { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); border-top: 1px solid var(--yk-line); border-bottom: 1px solid var(--yk-line); }
     .yk-review-score { appearance: none; display: grid; min-width: 0; min-height: 62px; gap: 3px; justify-items: center; align-content: center; padding: 7px 4px 5px; border: 0; border-bottom: 3px solid transparent; background: transparent; color: var(--yk-ink); font: inherit; font-size: 11px; font-weight: 900; text-align: center; cursor: pointer; }
     .yk-review-score[aria-pressed="true"] { border-bottom-color: #48bca7; }
@@ -357,6 +360,7 @@
     .yk-shop-reviews__toolbar label { display: flex; align-items: center; gap: 8px; color: var(--yk-muted); font-size: 12px; font-weight: 900; }
     .yk-shop-reviews__toolbar select { min-height: 42px; max-width: 210px; border: 1px solid #cbd5d9; border-radius: 8px; background: #fff; padding: 0 36px 0 12px; color: var(--yk-ink); font: inherit; font-size: 13px; font-weight: 800; }
     .yk-shop-reviews__list { display: grid; min-width: 0; gap: 10px; }
+    .yk-shop-reviews--home .yk-shop-reviews__list { grid-template-columns: repeat(2,minmax(0,1fr)); align-items: start; }
     .yk-shop-review { display: grid; min-width: 0; gap: 10px; padding: 14px; border: 1px solid var(--yk-line); border-radius: 10px; background: #fff; }
     .yk-shop-review__head { display: grid; grid-template-columns: 48px minmax(0,1fr) auto; gap: 10px; align-items: center; min-width: 0; }
     .yk-shop-review__image { width: 48px; height: 48px; border-radius: 8px; background: #f4f7f5; object-fit: contain; }
@@ -508,7 +512,7 @@
     img,video,iframe,input,select,textarea,button { max-width: 100%; }
     :where(.yk-header__inner,.yk-hero__inner,.yk-section,.yk-page-hero__inner,.yk-page-section,.yk-footer__inner) { width: 100%; }
     :where(.yk-header__inner,.yk-school-panel,.yk-school-list,.yk-feature-grid,.yk-products,.yk-store-grid,.yk-store-head,.yk-guide-strip,.yk-grid-2,.yk-grid-3,.yk-footer__inner) > * { min-width: 0; }
-    :where(.yk-section[id],.yk-store-band[id],.yk-pickup[id]) { scroll-margin-top: 96px; }
+    :where(.yk-section[id],.yk-store-band[id],.yk-pickup[id],.yk-reviews-band[id]) { scroll-margin-top: 96px; }
     .yk-pickup__image,.yk-payment-image { width: 100%; margin-right: auto; margin-left: auto; }
     .yk-pickup__image img,.yk-payment-image img { width: 100%; height: auto; object-fit: contain; }
     .yk-zoomable { cursor: zoom-in; touch-action: manipulation; }
@@ -595,7 +599,7 @@
       .yk-preview-item-dialog__title { padding-right: 58px; }
     }
     @media (max-width: 560px) {
-      :where(.yk-section[id],.yk-store-band[id],.yk-pickup[id]) { scroll-margin-top: 116px; }
+      :where(.yk-section[id],.yk-store-band[id],.yk-pickup[id],.yk-reviews-band[id]) { scroll-margin-top: 116px; }
       .yk-hero { position: relative; background: #f5f8f6; }
       .yk-hero::before { display: none; }
       .yk-hero__inner { position: relative; z-index: 1; }
@@ -729,7 +733,8 @@
       .yk-preview-purchase__status { min-height: 1.2em; font-size: 10px; }
       .yk-shop-reviews { gap: 10px; padding: 12px; }
       .yk-shop-reviews__head { align-items: center; }
-      .yk-shop-reviews h3 { font-size: 16px; }
+      .yk-shop-reviews :where(h2,h3) { font-size: 22px; }
+      .yk-shop-reviews--home .yk-shop-reviews__list { grid-template-columns: 1fr; }
       .yk-review-score { min-height: 56px; padding: 6px 2px 4px; font-size: 9px; }
       .yk-review-score svg { width: 24px; height: 24px; }
       .yk-shop-reviews__toolbar { justify-content: stretch; }
@@ -1118,6 +1123,50 @@
       <p class="yk-empty-result" id="yk-empty-result" hidden>該当する商品が見つかりません。条件を変更するか、店舗へご相談ください。</p>
     </section>
 
+    <section class="yk-reviews-band" id="yk-shop-reviews" aria-labelledby="yk-shop-reviews-title" data-yk-shop-reviews hidden>
+      <div class="yk-section">
+        <div class="yk-shop-reviews yk-shop-reviews--home">
+          <div class="yk-shop-reviews__head">
+            <h2 id="yk-shop-reviews-title">ショップの評価</h2>
+          </div>
+          <div class="yk-shop-reviews__summary" aria-label="ショップの評価を絞り込む">
+            <button class="yk-review-score" type="button" data-score="all" data-yk-review-filter="all" aria-label="すべての評価" aria-pressed="true">
+              <span>すべて</span>
+            </button>
+            <button class="yk-review-score" type="button" data-score="good" data-yk-review-filter="good" aria-label="良い評価" aria-pressed="false">
+              <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="11.5" cy="13" r="1.5" fill="currentColor"/><circle cx="20.5" cy="13" r="1.5" fill="currentColor"/><path d="M10.5 18.2c1.4 2.2 3.2 3.3 5.5 3.3s4.1-1.1 5.5-3.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <b data-yk-review-count="good">0</b>
+            </button>
+            <button class="yk-review-score" type="button" data-score="normal" data-yk-review-filter="normal" aria-label="普通の評価" aria-pressed="false">
+              <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="11.5" cy="13" r="1.5" fill="currentColor"/><circle cx="20.5" cy="13" r="1.5" fill="currentColor"/><path d="M11 20h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <b data-yk-review-count="normal">0</b>
+            </button>
+            <button class="yk-review-score" type="button" data-score="bad" data-yk-review-filter="bad" aria-label="悪い評価" aria-pressed="false">
+              <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="11.5" cy="13" r="1.5" fill="currentColor"/><circle cx="20.5" cy="13" r="1.5" fill="currentColor"/><path d="M10.5 21c1.4-2.2 3.2-3.3 5.5-3.3s4.1 1.1 5.5 3.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <b data-yk-review-count="bad">0</b>
+            </button>
+          </div>
+          <div class="yk-shop-reviews__toolbar">
+            <label>並び替え
+              <select data-yk-review-sort aria-label="評価の並び替え">
+                <option value="newest">新しい順</option>
+                <option value="oldest">古い順</option>
+                <option value="high">評価の高い順</option>
+                <option value="low">評価の低い順</option>
+                <option value="comment">口コミあり優先</option>
+              </select>
+            </label>
+          </div>
+          <div class="yk-shop-reviews__list" role="list" data-yk-review-list></div>
+          <nav class="yk-shop-reviews__pagination" aria-label="評価のページ切り替え">
+            <button type="button" data-yk-review-prev>前の5件</button>
+            <p class="yk-shop-reviews__page" aria-live="polite" data-yk-review-page></p>
+            <button type="button" data-yk-review-next>次の5件</button>
+          </nav>
+        </div>
+      </div>
+    </section>
+
 
 
     <div class="yk-feature-band" id="yk-feature-image">
@@ -1305,45 +1354,6 @@
         <section class="yk-preview-description" data-yk-preview-description-section hidden>
           <h3>商品説明</h3>
           <p data-yk-preview-description></p>
-        </section>
-        <section class="yk-shop-reviews" data-yk-shop-reviews hidden>
-          <div class="yk-shop-reviews__head">
-            <h3>ショップの評価</h3>
-          </div>
-          <div class="yk-shop-reviews__summary" aria-label="ショップの評価を絞り込む">
-            <button class="yk-review-score" type="button" data-score="all" data-yk-review-filter="all" aria-label="すべての評価" aria-pressed="true">
-              <span>すべて</span>
-            </button>
-            <button class="yk-review-score" type="button" data-score="good" data-yk-review-filter="good" aria-label="良い評価" aria-pressed="false">
-              <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="11.5" cy="13" r="1.5" fill="currentColor"/><circle cx="20.5" cy="13" r="1.5" fill="currentColor"/><path d="M10.5 18.2c1.4 2.2 3.2 3.3 5.5 3.3s4.1-1.1 5.5-3.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-              <b data-yk-review-count="good">0</b>
-            </button>
-            <button class="yk-review-score" type="button" data-score="normal" data-yk-review-filter="normal" aria-label="普通の評価" aria-pressed="false">
-              <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="11.5" cy="13" r="1.5" fill="currentColor"/><circle cx="20.5" cy="13" r="1.5" fill="currentColor"/><path d="M11 20h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-              <b data-yk-review-count="normal">0</b>
-            </button>
-            <button class="yk-review-score" type="button" data-score="bad" data-yk-review-filter="bad" aria-label="悪い評価" aria-pressed="false">
-              <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="11.5" cy="13" r="1.5" fill="currentColor"/><circle cx="20.5" cy="13" r="1.5" fill="currentColor"/><path d="M10.5 21c1.4-2.2 3.2-3.3 5.5-3.3s4.1 1.1 5.5 3.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-              <b data-yk-review-count="bad">0</b>
-            </button>
-          </div>
-          <div class="yk-shop-reviews__toolbar">
-            <label>並び替え
-              <select data-yk-review-sort aria-label="評価の並び替え">
-                <option value="newest">新しい順</option>
-                <option value="oldest">古い順</option>
-                <option value="high">評価の高い順</option>
-                <option value="low">評価の低い順</option>
-                <option value="comment">口コミあり優先</option>
-              </select>
-            </label>
-          </div>
-          <div class="yk-shop-reviews__list" role="list" data-yk-review-list></div>
-          <nav class="yk-shop-reviews__pagination" aria-label="評価のページ切り替え">
-            <button type="button" data-yk-review-prev>前の5件</button>
-            <p class="yk-shop-reviews__page" aria-live="polite" data-yk-review-page></p>
-            <button type="button" data-yk-review-next>次の5件</button>
-          </nav>
         </section>
         <ul class="yk-preview-item-dialog__guide">
           <li>学校名・種類・サイズにお間違いがないかご確認ください。</li>
@@ -2947,21 +2957,20 @@
       return card;
     }
 
-    function ykRenderPreviewReviews(dialog, resetPage) {
-      var section = dialog.querySelector("[data-yk-shop-reviews]");
+    function ykRenderShopReviews(section, resetPage) {
       if (!section) return;
       var data = window.ykShopReviews || {};
       var summary = data.summary || {};
       var items = Array.isArray(data.items) ? data.items : [];
       section.hidden = items.length === 0;
       if (!items.length) return;
-      if (!dialog.ykReviewSort) dialog.ykReviewSort = "newest";
-      if (!dialog.ykReviewFilter) dialog.ykReviewFilter = "all";
-      if (resetPage || !dialog.ykReviewPage) dialog.ykReviewPage = 1;
-      var sorted = ykSortedShopReviews(dialog.ykReviewSort, dialog.ykReviewFilter);
+      if (!section.ykReviewSort) section.ykReviewSort = "newest";
+      if (!section.ykReviewFilter) section.ykReviewFilter = "all";
+      if (resetPage || !section.ykReviewPage) section.ykReviewPage = 1;
+      var sorted = ykSortedShopReviews(section.ykReviewSort, section.ykReviewFilter);
       var pageCount = Math.max(1, Math.ceil(sorted.length / ykReviewPageSize));
-      dialog.ykReviewPage = Math.max(1, Math.min(pageCount, dialog.ykReviewPage));
-      var start = (dialog.ykReviewPage - 1) * ykReviewPageSize;
+      section.ykReviewPage = Math.max(1, Math.min(pageCount, section.ykReviewPage));
+      var start = (section.ykReviewPage - 1) * ykReviewPageSize;
       var pageItems = sorted.slice(start, start + ykReviewPageSize);
       ["good", "normal", "bad"].forEach(function (score) {
         var count = section.querySelector('[data-yk-review-count="' + score + '"]');
@@ -2969,7 +2978,7 @@
       });
       var filters = section.querySelectorAll("[data-yk-review-filter]");
       filters.forEach(function (filter) {
-        filter.setAttribute("aria-pressed", String(filter.dataset.ykReviewFilter === dialog.ykReviewFilter));
+        filter.setAttribute("aria-pressed", String(filter.dataset.ykReviewFilter === section.ykReviewFilter));
       });
       var list = section.querySelector("[data-yk-review-list]");
       if (list) {
@@ -2984,37 +2993,37 @@
         }
       }
       var sort = section.querySelector("[data-yk-review-sort]");
-      if (sort) sort.value = dialog.ykReviewSort;
+      if (sort) sort.value = section.ykReviewSort;
       var previous = section.querySelector("[data-yk-review-prev]");
       var next = section.querySelector("[data-yk-review-next]");
-      if (previous) previous.disabled = dialog.ykReviewPage <= 1;
-      if (next) next.disabled = dialog.ykReviewPage >= pageCount;
+      if (previous) previous.disabled = section.ykReviewPage <= 1;
+      if (next) next.disabled = section.ykReviewPage >= pageCount;
       var page = section.querySelector("[data-yk-review-page]");
       if (page) page.textContent = pageItems.length
-        ? dialog.ykReviewPage + " / " + pageCount + "ページ（" + (start + 1) + "～" + (start + pageItems.length) + "件）"
+        ? section.ykReviewPage + " / " + pageCount + "ページ（" + (start + 1) + "～" + (start + pageItems.length) + "件）"
         : "0件";
       if (section.dataset.ykReviewBound !== "true") {
         section.dataset.ykReviewBound = "true";
         filters.forEach(function (filter) {
           filter.addEventListener("click", function () {
-            dialog.ykReviewFilter = filter.dataset.ykReviewFilter || "all";
-            dialog.ykReviewPage = 1;
-            ykRenderPreviewReviews(dialog, false);
+            section.ykReviewFilter = filter.dataset.ykReviewFilter || "all";
+            section.ykReviewPage = 1;
+            ykRenderShopReviews(section, false);
           });
         });
         if (sort) sort.addEventListener("change", function () {
-          dialog.ykReviewSort = sort.value;
-          dialog.ykReviewPage = 1;
-          ykRenderPreviewReviews(dialog, false);
+          section.ykReviewSort = sort.value;
+          section.ykReviewPage = 1;
+          ykRenderShopReviews(section, false);
         });
         if (previous) previous.addEventListener("click", function () {
-          dialog.ykReviewPage -= 1;
-          ykRenderPreviewReviews(dialog, false);
+          section.ykReviewPage -= 1;
+          ykRenderShopReviews(section, false);
           section.scrollIntoView({ block: "nearest" });
         });
         if (next) next.addEventListener("click", function () {
-          dialog.ykReviewPage += 1;
-          ykRenderPreviewReviews(dialog, false);
+          section.ykReviewPage += 1;
+          ykRenderShopReviews(section, false);
           section.scrollIntoView({ block: "nearest" });
         });
       }
@@ -3035,7 +3044,6 @@
       if (title) title.textContent = product.t || "商品";
       ykRenderPreviewGallery(dialog, product);
       ykRenderPreviewDescription(dialog, product);
-      ykRenderPreviewReviews(dialog, true);
       if (price) price.innerHTML = ykProductPriceMarkup(product);
       var optionSummary = ykRenderPreviewOptions(product, optionContainer);
       var soldOut = product.s === false;
@@ -3641,8 +3649,7 @@
       document.documentElement.dataset.ykCatalogSource = "base-live";
       document.documentElement.dataset.ykCatalogHash = String(payload.meta.hash || "").slice(0, 12);
       document.documentElement.dataset.ykReviewCount = String(payload.meta.reviewCount || window.ykShopReviews?.summary?.total || 0);
-      var openItemDialog = document.getElementById("yk-preview-item-dialog");
-      if (openItemDialog && openItemDialog.open) ykRenderPreviewReviews(openItemDialog, false);
+      ykRenderShopReviews(document.querySelector("[data-yk-shop-reviews]"), false);
       ykBindSchoolLinks();
       ykRebuildCatalogIndexes();
       ykSyncSchoolFilters();
@@ -3657,6 +3664,7 @@
 
     ykInitShelves();
     ykInitMajorClosureNotice();
+    ykRenderShopReviews(document.querySelector("[data-yk-shop-reviews]"), true);
     ykSyncItemViewport();
     ykSyncSchoolFilters();
     if (ykAllProducts.length) ykRenderProducts();

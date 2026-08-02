@@ -26,13 +26,20 @@ const checks = [
   ["multiple-image product gallery", (text) => /data-yk-preview-gallery-next/.test(text) && /ykRenderPreviewGallery/.test(text)],
   ["product description display", (text) => /data-yk-preview-description/.test(text) && /ykRenderPreviewDescription/.test(text)],
   ["product description whitespace normalization", (text) => /function ykNormalizePreviewDescription/.test(text) && /\.filter\(Boolean\)\s*\.join\("\\n"\)/.test(text)],
-  ["BASE shop reviews", (text) => /data-yk-shop-reviews/.test(text) && /function ykRenderPreviewReviews/.test(text)],
-  ["BASE original review heading and filters", (text) => /<h3>ショップの評価<\/h3>/.test(text) && ["all", "good", "normal", "bad"].every((score) => text.includes(`data-yk-review-filter="${score}"`))],
-  ["BASE original review placement", (text) => {
-    const purchase = text.indexOf('data-yk-preview-purchase-title');
-    const description = text.indexOf('data-yk-preview-description-section');
+  ["BASE shop reviews", (text) => /data-yk-shop-reviews/.test(text) && /function ykRenderShopReviews/.test(text)],
+  ["BASE review heading and filters", (text) => /<h2[^>]*>ショップの評価<\/h2>/.test(text) && ["all", "good", "normal", "bad"].every((score) => text.includes(`data-yk-review-filter="${score}"`))],
+  ["homepage shop-wide review placement", (text) => {
+    const main = text.indexOf('<main class="yk-main"');
     const reviews = text.indexOf('data-yk-shop-reviews');
-    return purchase !== -1 && purchase < description && description < reviews;
+    const feature = text.indexOf('id="yk-feature-image"');
+    const mainEnd = text.indexOf('</main>');
+    const itemDialog = text.indexOf('id="yk-preview-item-dialog"');
+    return main !== -1 && main < reviews && reviews < feature && feature < mainEnd && mainEnd < itemDialog;
+  }],
+  ["product detail excludes shop-wide reviews", (text) => {
+    const dialogStart = text.indexOf('id="yk-preview-item-dialog"');
+    const dialogEnd = text.indexOf('</dialog>', dialogStart);
+    return dialogStart !== -1 && dialogEnd > dialogStart && !/data-yk-shop-reviews/.test(text.slice(dialogStart, dialogEnd));
   }],
   ["BASE original review card fields", (text) => /review\.productName/.test(text) && /review\.variation/.test(text) && /review\.date/.test(text) && /review\.comment/.test(text) && /review\.reply/.test(text) && !/評価のみ（口コミ本文はありません）/.test(text) && !/勇吉屋からの返信/.test(text)],
   ["five-review pagination", (text) => /ykReviewPageSize\s*=\s*5/.test(text) && /data-yk-review-prev/.test(text) && /data-yk-review-next/.test(text)],
