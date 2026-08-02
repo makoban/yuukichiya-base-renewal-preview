@@ -343,6 +343,41 @@
     .yk-preview-description { display: grid; gap: 8px; margin-top: 4px; padding: 18px; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #f8faf9; }
     .yk-preview-description h3 { margin: 0; font-size: 17px; line-height: 1.4; }
     .yk-preview-description p { margin: 0; color: var(--yk-ink); font-size: 14px; line-height: 1.8; white-space: pre-line; overflow-wrap: anywhere; }
+    .yk-shop-reviews { display: grid; min-width: 0; gap: 14px; margin-top: 4px; padding: 18px; border: 1px solid rgba(47,125,91,.24); border-radius: var(--yk-radius); background: #fffdf8; }
+    .yk-shop-reviews__head { display: flex; min-width: 0; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .yk-shop-reviews__eyebrow { margin: 0 0 3px; color: var(--yk-main); font-size: 11px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+    .yk-shop-reviews h3 { margin: 0; font-size: 19px; line-height: 1.4; }
+    .yk-shop-reviews__source { flex: 0 0 auto; margin: 2px 0 0; padding: 4px 8px; border-radius: 999px; background: #edf6f1; color: var(--yk-main); font-size: 10px; font-weight: 900; white-space: nowrap; }
+    .yk-shop-reviews__lead { margin: 0; color: var(--yk-muted); font-size: 12px; font-weight: 700; line-height: 1.7; }
+    .yk-shop-reviews__summary { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
+    .yk-review-score { display: grid; min-width: 0; gap: 5px; justify-items: center; padding: 10px 6px; border: 1px solid currentColor; border-radius: 10px; background: #fff; font-size: 11px; font-weight: 900; text-align: center; }
+    .yk-review-score[data-score="good"] { color: #237a52; background: #f0faf5; }
+    .yk-review-score[data-score="normal"] { color: #9a6700; background: #fff9e8; }
+    .yk-review-score[data-score="bad"] { color: #b42318; background: #fff3f2; }
+    .yk-review-score svg { width: 30px; height: 30px; }
+    .yk-shop-reviews__toolbar { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+    .yk-shop-reviews__toolbar label { display: flex; align-items: center; gap: 8px; color: var(--yk-muted); font-size: 12px; font-weight: 900; }
+    .yk-shop-reviews__toolbar select { min-height: 42px; max-width: 210px; border: 1px solid #cbd5d9; border-radius: 8px; background: #fff; padding: 0 36px 0 12px; color: var(--yk-ink); font: inherit; font-size: 13px; font-weight: 800; }
+    .yk-shop-reviews__list { display: grid; min-width: 0; gap: 10px; }
+    .yk-shop-review { display: grid; min-width: 0; gap: 10px; padding: 14px; border: 1px solid var(--yk-line); border-radius: 10px; background: #fff; }
+    .yk-shop-review__head { display: grid; grid-template-columns: 48px minmax(0,1fr) auto; gap: 10px; align-items: center; min-width: 0; }
+    .yk-shop-review__image { width: 48px; height: 48px; border-radius: 8px; background: #f4f7f5; object-fit: contain; }
+    .yk-shop-review__product { min-width: 0; }
+    .yk-shop-review__product b { display: block; font-size: 12px; line-height: 1.5; }
+    .yk-shop-review__product span { display: block; color: var(--yk-muted); font-size: 10px; font-weight: 800; line-height: 1.45; }
+    .yk-shop-review__rating { display: inline-flex; align-items: center; gap: 4px; align-self: start; padding: 4px 7px; border-radius: 999px; font-size: 10px; font-weight: 900; white-space: nowrap; }
+    .yk-shop-review__rating[data-score="good"] { background: #e5f6ed; color: #237a52; }
+    .yk-shop-review__rating[data-score="normal"] { background: #fff3c4; color: #8a5b00; }
+    .yk-shop-review__rating[data-score="bad"] { background: #fee4e2; color: #b42318; }
+    .yk-shop-review__rating svg { width: 16px; height: 16px; }
+    .yk-shop-review__comment { margin: 0; color: var(--yk-ink); font-size: 13px; line-height: 1.75; white-space: pre-line; }
+    .yk-shop-review__comment[data-empty="true"] { color: var(--yk-muted); font-size: 11px; font-weight: 800; }
+    .yk-shop-review__reply { display: grid; gap: 5px; margin: 0; padding: 10px 12px; border-left: 3px solid var(--yk-main); border-radius: 0 8px 8px 0; background: #f3f8f5; color: var(--yk-ink); font-size: 12px; line-height: 1.7; white-space: pre-line; }
+    .yk-shop-review__reply b { color: var(--yk-main); font-size: 10px; }
+    .yk-shop-reviews__pagination { display: grid; grid-template-columns: auto minmax(0,1fr) auto; gap: 8px; align-items: center; }
+    .yk-shop-reviews__pagination button { min-width: 76px; min-height: 42px; border: 1px solid var(--yk-line); border-radius: 8px; background: #fff; color: var(--yk-main); font: inherit; font-size: 12px; font-weight: 900; cursor: pointer; }
+    .yk-shop-reviews__pagination button:disabled { color: #9ba4a8; cursor: not-allowed; }
+    .yk-shop-reviews__page { margin: 0; color: var(--yk-muted); font-size: 11px; font-weight: 900; text-align: center; }
     .yk-preview-purchase { display: grid; gap: 14px; margin-top: 8px; padding: 20px; border: 1px solid rgba(47,125,91,.22); border-radius: var(--yk-radius); background: #fff; box-shadow: var(--yk-shadow); }
     .yk-preview-purchase h3 { margin: 0; font-size: 20px; line-height: 1.4; }
     .yk-preview-purchase__options { display: grid; gap: 12px; }
@@ -458,6 +493,7 @@
       .yk-preview-item-dialog__price { font-size: 24px; }
       .yk-preview-item-dialog__price .yk-price-stack strong { font-size: 24px; }
       .yk-preview-purchase { padding: 17px; }
+      .yk-shop-reviews { padding: 14px; }
       .yk-preview-cart-dialog__head { padding: 28px 64px 20px 20px; }
       .yk-preview-cart-dialog__head h2 { font-size: 25px; }
       .yk-preview-cart-dialog__body { padding: 20px; }
@@ -686,6 +722,21 @@
       .yk-preview-purchase select { min-height: 42px; padding-right: 28px; padding-left: 9px; font-size: 14px; }
       .yk-preview-purchase__add { min-height: 46px; font-size: 15px; }
       .yk-preview-purchase__status { min-height: 1.2em; font-size: 10px; }
+      .yk-shop-reviews { gap: 10px; padding: 12px; }
+      .yk-shop-reviews__head { align-items: center; }
+      .yk-shop-reviews h3 { font-size: 16px; }
+      .yk-shop-reviews__source { font-size: 9px; }
+      .yk-shop-reviews__summary { gap: 5px; }
+      .yk-review-score { padding: 7px 3px; font-size: 9px; }
+      .yk-review-score svg { width: 24px; height: 24px; }
+      .yk-shop-reviews__toolbar { justify-content: stretch; }
+      .yk-shop-reviews__toolbar label { display: grid; grid-template-columns: auto minmax(0,1fr); width: 100%; }
+      .yk-shop-reviews__toolbar select { width: 100%; max-width: none; }
+      .yk-shop-review { padding: 11px; }
+      .yk-shop-review__head { grid-template-columns: 42px minmax(0,1fr); }
+      .yk-shop-review__image { width: 42px; height: 42px; }
+      .yk-shop-review__rating { grid-column: 1 / -1; justify-self: start; }
+      .yk-shop-reviews__pagination button { min-width: 68px; }
       .yk-preview-item-dialog__guide { display: none; }
     }
     @media (max-width: 360px) {
@@ -1252,6 +1303,47 @@
           <button class="yk-preview-purchase__add" type="button" data-yk-preview-add-cart>カートに入れる</button>
           <p class="yk-preview-purchase__status" data-yk-preview-item-status aria-live="polite"></p>
         </div>
+        <section class="yk-shop-reviews" data-yk-shop-reviews hidden>
+          <div class="yk-shop-reviews__head">
+            <div>
+              <p class="yk-shop-reviews__eyebrow">Customer reviews</p>
+              <h3>お客様の声・ショップ評価</h3>
+            </div>
+            <p class="yk-shop-reviews__source">BASEの公開データ</p>
+          </div>
+          <p class="yk-shop-reviews__lead" data-yk-review-lead></p>
+          <div class="yk-shop-reviews__summary" aria-label="BASEのショップ評価内訳">
+            <span class="yk-review-score" data-score="good">
+              <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="11.5" cy="13" r="1.5" fill="currentColor"/><circle cx="20.5" cy="13" r="1.5" fill="currentColor"/><path d="M10.5 18.2c1.4 2.2 3.2 3.3 5.5 3.3s4.1-1.1 5.5-3.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <span>良い <b data-yk-review-count="good">0</b>件</span>
+            </span>
+            <span class="yk-review-score" data-score="normal">
+              <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="11.5" cy="13" r="1.5" fill="currentColor"/><circle cx="20.5" cy="13" r="1.5" fill="currentColor"/><path d="M11 20h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <span>普通 <b data-yk-review-count="normal">0</b>件</span>
+            </span>
+            <span class="yk-review-score" data-score="bad">
+              <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="11.5" cy="13" r="1.5" fill="currentColor"/><circle cx="20.5" cy="13" r="1.5" fill="currentColor"/><path d="M10.5 21c1.4-2.2 3.2-3.3 5.5-3.3s4.1 1.1 5.5 3.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <span>悪い <b data-yk-review-count="bad">0</b>件</span>
+            </span>
+          </div>
+          <div class="yk-shop-reviews__toolbar">
+            <label>口コミを並び替え
+              <select data-yk-review-sort aria-label="口コミの並び替え">
+                <option value="newest">新しい順</option>
+                <option value="oldest">古い順</option>
+                <option value="high">評価の高い順</option>
+                <option value="low">評価の低い順</option>
+                <option value="comment">口コミあり優先</option>
+              </select>
+            </label>
+          </div>
+          <div class="yk-shop-reviews__list" role="list" data-yk-review-list></div>
+          <nav class="yk-shop-reviews__pagination" aria-label="口コミのページ切り替え">
+            <button type="button" data-yk-review-prev>前の5件</button>
+            <p class="yk-shop-reviews__page" aria-live="polite" data-yk-review-page></p>
+            <button type="button" data-yk-review-next>次の5件</button>
+          </nav>
+        </section>
         <ul class="yk-preview-item-dialog__guide">
           <li>学校名・種類・サイズにお間違いがないかご確認ください。</li>
           <li>在庫状況や価格は、ご注文時の表示をご確認ください。</li>
@@ -1281,6 +1373,7 @@
   <!-- YK_PREVIEW_COMMERCE_END -->
   <script src="assets/base-production-catalog.js?v=20260731-ec-fixes"></script>
   <script src="assets/preview-product-details.js?v=20260802-gallery-description"></script>
+  <script src="assets/preview-shop-reviews.js?v=20260802-base-reviews"></script>
   <script src="assets/preview-product-inventory.js?v=20260731-stock-limit"></script>
   <script src="assets/search-relevance.js?v=20260731-search-strict"></script>
   <script>
@@ -2754,6 +2847,159 @@
       if (section) section.hidden = false;
     }
 
+    var ykReviewPageSize = 5;
+    var ykReviewScoreValue = { good: 3, normal: 2, bad: 1 };
+
+    function ykReviewScoreLabel(score) {
+      return score === "good" ? "良い" : score === "bad" ? "悪い" : "普通";
+    }
+
+    function ykReviewIconMarkup(score) {
+      var mouth = score === "good"
+        ? '<path d="M5.5 10c.8 1.4 1.9 2 3.5 2s2.7-.6 3.5-2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>'
+        : score === "bad"
+          ? '<path d="M5.5 12c.8-1.4 1.9-2 3.5-2s2.7.6 3.5 2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>'
+          : '<path d="M5.5 11h7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>';
+      return '<svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7.5" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="6.4" cy="7" r=".8" fill="currentColor"/><circle cx="11.6" cy="7" r=".8" fill="currentColor"/>' + mouth + "</svg>";
+    }
+
+    function ykSortedShopReviews(sort) {
+      var source = window.ykShopReviews || {};
+      var items = Array.isArray(source.items) ? source.items.slice() : [];
+      var newest = function (left, right) {
+        return String(right.date || "").localeCompare(String(left.date || ""))
+          || String(left.id || "").localeCompare(String(right.id || ""));
+      };
+      items.sort(function (left, right) {
+        if (sort === "oldest") {
+          return String(left.date || "").localeCompare(String(right.date || ""))
+            || String(left.id || "").localeCompare(String(right.id || ""));
+        }
+        if (sort === "high" || sort === "low") {
+          var direction = sort === "high" ? -1 : 1;
+          var scoreDifference = ((ykReviewScoreValue[left.score] || 2) - (ykReviewScoreValue[right.score] || 2)) * direction;
+          return scoreDifference || newest(left, right);
+        }
+        if (sort === "comment") {
+          var commentDifference = Number(Boolean(right.comment)) - Number(Boolean(left.comment));
+          return commentDifference || newest(left, right);
+        }
+        return newest(left, right);
+      });
+      return items;
+    }
+
+    function ykBuildShopReview(review) {
+      var card = document.createElement("article");
+      card.className = "yk-shop-review";
+      card.setAttribute("role", "listitem");
+      var head = document.createElement("div");
+      head.className = "yk-shop-review__head";
+      if (review.image) {
+        var image = document.createElement("img");
+        image.className = "yk-shop-review__image";
+        image.src = review.image;
+        image.width = 146;
+        image.height = 146;
+        image.loading = "lazy";
+        image.decoding = "async";
+        image.alt = "";
+        head.appendChild(image);
+      } else {
+        var imagePlaceholder = document.createElement("span");
+        imagePlaceholder.className = "yk-shop-review__image";
+        imagePlaceholder.setAttribute("aria-hidden", "true");
+        head.appendChild(imagePlaceholder);
+      }
+      var product = document.createElement("div");
+      product.className = "yk-shop-review__product";
+      var productName = document.createElement("b");
+      productName.textContent = review.productName || "購入商品";
+      var productMeta = document.createElement("span");
+      productMeta.textContent = [review.variation || "", String(review.date || "").replace(/-/g, "/")].filter(Boolean).join(" ／ ");
+      product.appendChild(productName);
+      product.appendChild(productMeta);
+      head.appendChild(product);
+      var rating = document.createElement("span");
+      rating.className = "yk-shop-review__rating";
+      rating.setAttribute("data-score", review.score || "normal");
+      rating.setAttribute("aria-label", "評価：" + ykReviewScoreLabel(review.score));
+      rating.innerHTML = ykReviewIconMarkup(review.score) + "<span>" + ykReviewScoreLabel(review.score) + "</span>";
+      head.appendChild(rating);
+      card.appendChild(head);
+      var comment = document.createElement("p");
+      comment.className = "yk-shop-review__comment";
+      comment.textContent = review.comment || "評価のみ（口コミ本文はありません）";
+      comment.setAttribute("data-empty", review.comment ? "false" : "true");
+      card.appendChild(comment);
+      if (review.reply) {
+        var reply = document.createElement("p");
+        reply.className = "yk-shop-review__reply";
+        var replyLabel = document.createElement("b");
+        replyLabel.textContent = "勇吉屋からの返信";
+        var replyText = document.createElement("span");
+        replyText.textContent = review.reply;
+        reply.appendChild(replyLabel);
+        reply.appendChild(replyText);
+        card.appendChild(reply);
+      }
+      return card;
+    }
+
+    function ykRenderPreviewReviews(dialog, resetPage) {
+      var section = dialog.querySelector("[data-yk-shop-reviews]");
+      if (!section) return;
+      var data = window.ykShopReviews || {};
+      var summary = data.summary || {};
+      var items = Array.isArray(data.items) ? data.items : [];
+      section.hidden = items.length === 0;
+      if (!items.length) return;
+      if (!dialog.ykReviewSort) dialog.ykReviewSort = "newest";
+      if (resetPage || !dialog.ykReviewPage) dialog.ykReviewPage = 1;
+      var sorted = ykSortedShopReviews(dialog.ykReviewSort);
+      var pageCount = Math.max(1, Math.ceil(sorted.length / ykReviewPageSize));
+      dialog.ykReviewPage = Math.max(1, Math.min(pageCount, dialog.ykReviewPage));
+      var start = (dialog.ykReviewPage - 1) * ykReviewPageSize;
+      var pageItems = sorted.slice(start, start + ykReviewPageSize);
+      var lead = section.querySelector("[data-yk-review-lead]");
+      if (lead) lead.textContent = "BASEで公開されているショップ全体の評価 " + sorted.length + "件を表示しています。";
+      ["good", "normal", "bad"].forEach(function (score) {
+        var count = section.querySelector('[data-yk-review-count="' + score + '"]');
+        if (count) count.textContent = String(Number(summary[score] || 0));
+      });
+      var list = section.querySelector("[data-yk-review-list]");
+      if (list) {
+        list.replaceChildren();
+        pageItems.forEach(function (review) { list.appendChild(ykBuildShopReview(review)); });
+      }
+      var sort = section.querySelector("[data-yk-review-sort]");
+      if (sort) sort.value = dialog.ykReviewSort;
+      var previous = section.querySelector("[data-yk-review-prev]");
+      var next = section.querySelector("[data-yk-review-next]");
+      if (previous) previous.disabled = dialog.ykReviewPage <= 1;
+      if (next) next.disabled = dialog.ykReviewPage >= pageCount;
+      var page = section.querySelector("[data-yk-review-page]");
+      if (page) page.textContent = dialog.ykReviewPage + " / " + pageCount + "ページ（" + (start + 1) + "～" + (start + pageItems.length) + "件）";
+      if (section.dataset.ykReviewBound !== "true") {
+        section.dataset.ykReviewBound = "true";
+        if (sort) sort.addEventListener("change", function () {
+          dialog.ykReviewSort = sort.value;
+          dialog.ykReviewPage = 1;
+          ykRenderPreviewReviews(dialog, false);
+        });
+        if (previous) previous.addEventListener("click", function () {
+          dialog.ykReviewPage -= 1;
+          ykRenderPreviewReviews(dialog, false);
+          section.scrollIntoView({ block: "nearest" });
+        });
+        if (next) next.addEventListener("click", function () {
+          dialog.ykReviewPage += 1;
+          ykRenderPreviewReviews(dialog, false);
+          section.scrollIntoView({ block: "nearest" });
+        });
+      }
+    }
+
     function ykOpenPreviewItem(product, trigger, options) {
       if (!ykUsesPreviewCommerce() || !product) return false;
       var dialog = document.getElementById("yk-preview-item-dialog");
@@ -2769,6 +3015,7 @@
       if (title) title.textContent = product.t || "商品";
       ykRenderPreviewGallery(dialog, product);
       ykRenderPreviewDescription(dialog, product);
+      ykRenderPreviewReviews(dialog, true);
       if (price) price.innerHTML = ykProductPriceMarkup(product);
       var optionSummary = ykRenderPreviewOptions(product, optionContainer);
       var soldOut = product.s === false;
@@ -3350,6 +3597,12 @@
       window.ykProductDetails = payload.productDetails || {};
       window.ykProductInventory = payload.productInventory || {};
       window.ykProductOptions = payload.productOptions || {};
+      var liveShopReviews = payload.shopReviews;
+      if (liveShopReviews && Array.isArray(liveShopReviews.items) && liveShopReviews.items.length) {
+        window.ykShopReviews = liveShopReviews;
+      } else {
+        window.ykShopReviews = window.ykShopReviews || { summary: {}, items: [] };
+      }
       window.ykCurrentCatalog = {
         schoolAvailability: ykSchoolAvailability,
         searchCatalog: ykSearchCatalog,
@@ -3367,6 +3620,9 @@
       }
       document.documentElement.dataset.ykCatalogSource = "base-live";
       document.documentElement.dataset.ykCatalogHash = String(payload.meta.hash || "").slice(0, 12);
+      document.documentElement.dataset.ykReviewCount = String(payload.meta.reviewCount || window.ykShopReviews?.summary?.total || 0);
+      var openItemDialog = document.getElementById("yk-preview-item-dialog");
+      if (openItemDialog && openItemDialog.open) ykRenderPreviewReviews(openItemDialog, false);
       ykBindSchoolLinks();
       ykRebuildCatalogIndexes();
       ykSyncSchoolFilters();

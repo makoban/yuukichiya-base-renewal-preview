@@ -26,6 +26,10 @@ const checks = [
   ["multiple-image product gallery", (text) => /data-yk-preview-gallery-next/.test(text) && /ykRenderPreviewGallery/.test(text)],
   ["product description display", (text) => /data-yk-preview-description/.test(text) && /ykRenderPreviewDescription/.test(text)],
   ["product description whitespace normalization", (text) => /function ykNormalizePreviewDescription/.test(text) && /\.filter\(Boolean\)\s*\.join\("\\n"\)/.test(text)],
+  ["BASE shop reviews", (text) => /data-yk-shop-reviews/.test(text) && /function ykRenderPreviewReviews/.test(text)],
+  ["five-review pagination", (text) => /ykReviewPageSize\s*=\s*5/.test(text) && /data-yk-review-prev/.test(text) && /data-yk-review-next/.test(text)],
+  ["review sorting", (text) => /value="newest"/.test(text) && /value="oldest"/.test(text) && /value="high"/.test(text) && /value="low"/.test(text) && /value="comment"/.test(text)],
+  ["BASE review labels preserved", (text) => /良い/.test(text) && /普通/.test(text) && /悪い/.test(text) && !/評価[：:]\s*[1-5]/.test(text)],
   ["mobile size and quantity controls stack vertically", /\.yk-preview-purchase\s*\{\s*grid-template-columns:\s*minmax\(0,1fr\)/],
 ];
 
@@ -55,6 +59,7 @@ const requiredAssets = [
   "assets/preview-product-inventory.js",
   "assets/preview-product-options.js",
   "assets/preview-product-details.js",
+  "assets/preview-shop-reviews.js",
 ];
 
 for (const asset of requiredAssets) {
