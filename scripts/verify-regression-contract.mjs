@@ -15,6 +15,8 @@ const checks = [
   ["major closure 14-day lead", /ykMajorClosureLeadDays\s*=\s*14/],
   ["semantic search asset", /assets\/search-relevance\.js/],
   ["public catalog reset", (text) => /assets\/base-production-catalog\.js/.test(text) && /window\.ykCurrentCatalog/.test(text)],
+  ["BASE live catalog apply", (text) => /window\.ykApplyLiveCatalog/.test(text) && /dataset\.ykCatalogSource\s*=\s*["']base-live["']/.test(text)],
+  ["dynamic category rendering", (text) => /function ykRenderCategoryCatalog/.test(text) && /function ykBindSchoolLinks/.test(text)],
   ["sold-out handling", /SOLD OUT/],
   ["price-down and NEW labels", (text) => /yk-sale-badge/.test(text) && /yk-new-badge/.test(text)],
   ["privacy-policy link", /href=["']privacy\.html["']/],
@@ -49,6 +51,7 @@ if (!/action=["']https:\/\/yuukichi-ya\.com\/contact-submit\.php["']/.test(conta
 const requiredAssets = [
   "assets/search-relevance.js",
   "assets/base-production-catalog.js",
+  "assets/catalog-runtime.js",
   "assets/preview-product-inventory.js",
   "assets/preview-product-options.js",
   "assets/preview-product-details.js",
