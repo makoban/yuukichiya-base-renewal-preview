@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const indexPath = resolve(root, "index.html");
 const index = await readFile(indexPath, "utf8");
+const contact = await readFile(resolve(root, "contact.html"), "utf8");
 const previewActions = await readFile(resolve(root, "assets/preview-actions.js"), "utf8");
 
 const checks = [
@@ -38,6 +39,12 @@ if (!/この画面ではご注文を確定できません。商品ページか�
 if (/下書き確認中/.test(previewActions)) {
   failures.push("no internal draft wording in checkout guidance");
 }
+if (!/name=["']source["']\s+value=["']ec["']/.test(contact)) {
+  failures.push("EC inquiry source marker");
+}
+if (!/action=["']https:\/\/yuukichi-ya\.com\/contact-submit\.php["']/.test(contact)) {
+  failures.push("EC inquiry official endpoint");
+}
 
 const requiredAssets = [
   "assets/search-relevance.js",
@@ -60,5 +67,5 @@ if (failures.length) {
   failures.forEach((failure) => console.error(`- ${failure}`));
   process.exitCode = 1;
 } else {
-  console.log(`Yuukichiya EC regression contract: OK (${checks.length + requiredAssets.length + 2} checks)`);
+  console.log(`Yuukichiya EC regression contract: OK (${checks.length + requiredAssets.length + 4} checks)`);
 }
