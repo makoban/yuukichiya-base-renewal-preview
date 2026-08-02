@@ -513,7 +513,9 @@
       .yk-preview-item-dialog__title { padding-right: 34px; font-size: 19px; line-height: 1.25; }
       .yk-preview-item-dialog__price { font-size: 21px; line-height: 1.25; }
       .yk-preview-item-dialog__lead { font-size: 10px; line-height: 1.45; }
-      .yk-preview-purchase { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; margin: 0; padding: 9px; }
+      .yk-preview-purchase { grid-template-columns: minmax(0,1fr); gap: 7px; margin: 0; padding: 9px; }
+      .yk-preview-purchase__options,
+      .yk-preview-purchase > label { min-width: 0; }
       .yk-preview-purchase h3,
       .yk-preview-purchase__add,
       .yk-preview-purchase__status { grid-column: 1 / -1; }

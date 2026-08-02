@@ -22,6 +22,7 @@ const checks = [
   ["numeric-only student number", /inputmode=["']numeric["']/],
   ["multiple-image product gallery", (text) => /data-yk-preview-gallery-next/.test(text) && /ykRenderPreviewGallery/.test(text)],
   ["product description display", (text) => /data-yk-preview-description/.test(text) && /ykRenderPreviewDescription/.test(text)],
+  ["mobile size and quantity controls stack vertically", /\.yk-preview-purchase\s*\{\s*grid-template-columns:\s*minmax\(0,1fr\)/],
 ];
 
 const failures = [];
