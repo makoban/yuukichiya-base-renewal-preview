@@ -24,6 +24,7 @@ const checks = [
   ["mobile image viewer bound", /width:\s*calc\(100vw - 16px\)/],
   ["numeric-only student number", /inputmode=["']numeric["']/],
   ["multiple-image product gallery", (text) => /data-yk-preview-gallery-next/.test(text) && /ykRenderPreviewGallery/.test(text)],
+  ["BASE gallery removes cross-CDN duplicate lead image", (text) => /function ykPreviewImageKey/.test(text) && /\\\.akamaized\\\.net\$\/i\.test\(url\.hostname\)/.test(text) && /return ["']base-item:["'] \+ url\.pathname\.toLowerCase\(\)/.test(text)],
   ["product gallery stays inside a fixed frame", (text) => /\.yk-preview-gallery\s*\{[^}]*grid-template-rows:\s*minmax\(0,1fr\) auto[^}]*height:\s*100%[^}]*min-height:\s*0/.test(text) && /\.yk-preview-gallery__stage\s*\{[^}]*height:\s*100%[^}]*min-height:\s*0/.test(text) && (text.match(/\.yk-preview-item-dialog__image\s*\{[^}]*position:\s*absolute[^}]*inset:\s*12px[^}]*width:\s*calc\(100% - 24px\)[^}]*height:\s*calc\(100% - 24px\)[^}]*max-height:\s*none/g) || []).length >= 2 && !/\.yk-preview-item-dialog__image\s*\{[^}]*max-height:\s*calc\(100dvh - 84px\)/.test(text)],
   ["gallery switching scrolls thumbnails horizontally only", (text) => /function ykKeepPreviewThumbVisible/.test(text) && /thumbRail\.scrollLeft/.test(text) && !/current\s*&&\s*thumb\.scrollIntoView/.test(text)],
   ["product description display", (text) => /data-yk-preview-description/.test(text) && /ykRenderPreviewDescription/.test(text)],

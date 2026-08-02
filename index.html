@@ -2766,8 +2766,12 @@
     function ykPreviewImageKey(source) {
       try {
         var url = new URL(source, window.location.href);
+        if (/\.akamaized\.net$/i.test(url.hostname) && /^\/images\/item\/origin\//i.test(url.pathname)) {
+          return "base-item:" + url.pathname.toLowerCase();
+        }
         url.searchParams.delete("q");
         url.searchParams.delete("im");
+        url.hash = "";
         return url.toString();
       } catch (error) {
         return String(source || "").replace(/[?&](?:q|im)=[^&]*/g, "").replace(/[?&]$/, "");
