@@ -2715,11 +2715,22 @@
       ykShowPreviewImage(dialog, 0);
     }
 
+    function ykNormalizePreviewDescription(value) {
+      return String(value || "")
+        .replace(/\r\n?/g, "\n")
+        .split("\n")
+        .map(function (line) {
+          return line.trim().replace(/[ \t\u3000]+/g, "　");
+        })
+        .filter(Boolean)
+        .join("\n");
+    }
+
     function ykRenderPreviewDescription(dialog, product) {
       var detail = (window.ykProductDetails || {})[String(product.id)] || {};
       var section = dialog.querySelector("[data-yk-preview-description-section]");
       var description = dialog.querySelector("[data-yk-preview-description]");
-      var text = String(detail.description || "").trim() || "商品説明は現在登録されていません。";
+      var text = ykNormalizePreviewDescription(detail.description) || "商品説明は現在登録されていません。";
       if (description) description.textContent = text;
       if (section) section.hidden = false;
     }
