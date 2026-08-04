@@ -10,8 +10,8 @@
   <meta name="description" content="勇吉屋ネットの学生服・学校用品オンラインショップです。学校区分と学校名から必要な商品を探して注文できます。">
   <meta name="robots" content="noindex, nofollow">
   <meta name="BASE-Theme-Name" content="Yuukichiya School Finder">
-  <meta name="BASE-Theme-Version" content="1.3">
-  <meta name="YK-Theme-Contract" content="83984-search-precision-badges-v5">
+  <meta name="BASE-Theme-Version" content="1.4">
+  <meta name="YK-Theme-Contract" content="83984-amazon-intent-search-v6">
 
 
 
@@ -1392,7 +1392,8 @@
   <script src="assets/preview-product-details.js?v=20260802-gallery-description"></script>
   <script src="assets/preview-shop-reviews.js?v=20260802-base-reviews"></script>
   <script src="assets/preview-product-inventory.js?v=20260731-stock-limit"></script>
-  <script src="assets/search-relevance.js?v=20260804-search-precision"></script>
+  <script src="assets/search-relevance.js?v=20260804-search-v6"></script>
+  <script src="assets/catalog-search-engine.js?v=20260804-search-v6"></script>
   <script>
     window.ykCurrentCatalog = {
       schoolAvailability: window.ykSchoolAvailability,
@@ -1452,6 +1453,14 @@
     ykAllProducts = window.ykCurrentCatalog.allProducts || ykAllProducts;
     ykSpecialCatalog = window.ykCurrentCatalog.specialCatalog || ykSpecialCatalog;
     var ykProductConditions = window.ykCurrentCatalog.productConditions || {};
+    var ykSemanticSearchEngine = window.ykCatalogSearchEngine && window.ykCatalogSearchEngine.createSearchEngine
+      ? window.ykCatalogSearchEngine.createSearchEngine({
+          getSearchCatalog: function () { return ykSearchCatalog; },
+          getAllProducts: function () { return ykAllProducts; },
+          getProductSchoolText: function () { return ykProductSchoolText; },
+          getProductConditions: function () { return ykProductConditions; }
+        })
+      : null;
 
 
     function ykSchoolTypeLabel(type) {
@@ -1921,6 +1930,7 @@
     }
 
     function ykSearchScore(product, query) {
+      if (ykSemanticSearchEngine) return ykSemanticSearchEngine.score(product, query);
       var parsed = ykParseSearchQuery(query);
       if (!parsed.compact) return -1;
       var doc = ykGetProductSearchDoc(product);
@@ -3643,6 +3653,7 @@
       ykSchoolProductOrder = {};
       ykProductSearchDocCache = {};
       ykSchoolSearchEntries = null;
+      if (ykSemanticSearchEngine) ykSemanticSearchEngine.reset();
       Object.keys(ykSearchCatalog).forEach(function (schoolName) {
         (ykSearchCatalog[schoolName] || []).forEach(function (product) {
           var id = String(product.id);

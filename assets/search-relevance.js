@@ -2,7 +2,16 @@
   "use strict";
 
   window.ykSearchRelevanceConfig = {
-    version: "20260804.1",
+    version: "20260804.2",
+    schoolAliases: {
+      "青木小学校": ["あおき小学校", "あおき小"],
+      "浄水中学校": ["じょうすい中学校", "じょうすい中"],
+      "衣台高校": ["ころもだい高校", "ころもだい高"],
+      "豊田西高等学校・附属中学校": [
+        "豊田西高校・附属中学校", "豊田西高・附属中", "豊田西高校", "豊田西高",
+        "豊田西附属中学校", "豊田西附属中"
+      ]
+    },
     stopWords: [
       "a", "an", "and", "for", "of", "the", "to", "with",
       "item", "items", "product", "products", "school",
@@ -30,7 +39,7 @@
       {
         id: "indoor_shoes",
         aliases: [
-          "上履き", "上靴", "上ぐつ", "うわぐつ", "バレーシューズ",
+          "上履き", "上ばき", "上靴", "上ぐつ", "うわばき", "うわぐつ", "バレーシューズ",
           "school shoes", "indoor shoes", "uwabaki"
         ],
         related: ["footwear", "gym_shoes", "sandals"]
@@ -54,8 +63,9 @@
       {
         id: "gymwear",
         aliases: [
-          "体操服", "体操着", "体そう服", "たいそうふく", "体育着", "体育服", "運動着", "運動会", "体育祭", "部活",
-          "gym clothes", "gym wear", "gymwear", "sportswear", "sports wear",
+          "体操服", "体操着", "体操ふく", "体操ぎ", "体そう服", "たいそうふく", "たいそふく", "たいそーふく",
+          "たいそうぎ", "たいそう着", "たいそうぶく", "体育着", "体育服", "運動着", "運動会", "体育祭", "部活",
+          "gym clothes", "gymclothes", "gym wear", "gymwear", "sportswear", "sports wear",
           "PE uniform", "PE clothes", "exercise clothes", "sports day clothes"
         ],
         related: ["jersey", "shorts", "pants", "shirt"]
@@ -63,7 +73,8 @@
       {
         id: "jersey",
         aliases: [
-          "ジャージ", "トレーニングウェア", "トラックスーツ",
+          "ジャージ", "じゃーじ", "ジャジ", "じやーじ", "じぁーじ", "ジャージー", "ジャーヂ", "ジヤージ", "しゃーじ", "jya-ji",
+          "トレーニングウェア", "トラックスーツ",
           "tracksuit", "track suit", "track jacket", "track pants",
           "training wear", "jersey"
         ],
@@ -71,13 +82,15 @@
       },
       {
         id: "uniform",
-        allowRelatedResults: true,
         aliases: [
-          "制服", "学生服", "標準服", "セーラー服", "ブレザー", "通園服",
-          "uniform", "school uniform", "student uniform", "sailor uniform",
+          "制服", "せいふく", "学生服", "標準服", "セーラー服", "セーラー", "ブレザー", "通園服", "園内服",
+          "詰襟", "詰衿", "学ラン", "オーバーブラウス", "ブラウス", "ニットシャツ", "カッターシャツ",
+          "プリーツスカート", "夏スカート", "スラックス", "制服リボン", "ワンタッチリボン", "三角リボン",
+          "棒タイ", "ネクタイ", "衿カバー", "リボン",
+          "uniform", "school uniform", "schooluniform", "student uniform", "sailor uniform",
           "blazer", "ceremony clothes", "school ceremony"
         ],
-        related: ["shirt", "skirt", "pants", "outerwear"]
+        related: []
       },
       {
         id: "shirt",
@@ -230,12 +243,12 @@
       },
       {
         id: "short_sleeve",
-        aliases: ["半袖", "短袖", "short sleeve", "short sleeves", "short-sleeved"],
+        aliases: ["半袖", "半そで", "はんそで", "短袖", "short sleeve", "short sleeves", "short-sleeved"],
         related: []
       },
       {
         id: "long_sleeve",
-        aliases: ["長袖", "long sleeve", "long sleeves", "long-sleeved"],
+        aliases: ["長袖", "長そで", "ながそで", "long sleeve", "long sleeves", "long-sleeved"],
         related: []
       },
       {
@@ -255,12 +268,12 @@
       },
       {
         id: "school_primary",
-        aliases: ["小学校", "小学生", "elementary school", "primary school", "elementary"],
+        aliases: ["小学校", "小学", "小学生", "elementary school", "primary school", "elementary"],
         related: []
       },
       {
         id: "school_middle",
-        aliases: ["中学校", "中学生", "junior high school", "middle school", "junior high"],
+        aliases: ["中学校", "中学", "中学生", "junior high school", "middle school", "junior high"],
         related: []
       },
       {
