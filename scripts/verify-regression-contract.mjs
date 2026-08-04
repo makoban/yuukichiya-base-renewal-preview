@@ -10,6 +10,7 @@ const contact = await readFile(resolve(root, "contact.html"), "utf8");
 const previewActions = await readFile(resolve(root, "assets/preview-actions.js"), "utf8");
 
 const checks = [
+  ["theme release fingerprint", (text) => /BASE-Theme-Version" content="1\.3"/.test(text) && /YK-Theme-Contract" content="83984-search-precision-badges-v5"/.test(text)],
   ["HP logo image", /assets\/yuukichiya-logo\.(?:png|webp|svg)/i],
   ["purchase history links", (text) => (text.match(/yuukichiya-purchase-history-prototype\.onrender\.com/g) || []).length >= 2],
   ["5,000 yen free-shipping notice", /5,000円以上の[\s\S]{0,120}送料無料/],
@@ -29,6 +30,8 @@ const checks = [
   ["dynamic category rendering", (text) => /function ykRenderCategoryCatalog/.test(text) && /function ykBindSchoolLinks/.test(text)],
   ["sold-out handling", /SOLD OUT/],
   ["price-down and NEW labels", (text) => /yk-sale-badge/.test(text) && /yk-new-badge/.test(text)],
+  ["category selection clears free search", (text) => /function ykClearSearchQuery\(/.test(text) && (text.match(/ykClearSearchQuery\(\);/g) || []).length === 3],
+  ["badges use an image-free information strip", (text) => /\.yk-product-badges\s*\{[^}]*position:\s*static/.test(text) && /'<span class="yk-product__body">',\s*ykProductBadge\(product\),/.test(text) && /yk-shelf-card__image"><img/.test(text)],
   ["privacy-policy link", /href=["']privacy\.html["']/],
   ["desktop image viewer bound", /width:\s*min\(94vw,1120px\)/],
   ["mobile image viewer bound", /width:\s*calc\(100vw - 16px\)/],

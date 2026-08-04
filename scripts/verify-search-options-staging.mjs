@@ -8,7 +8,9 @@ const { chromium } = require("playwright");
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const outputDir = resolve(root, "qa");
-const widths = [320, 360, 375, 390, 393, 412, 430, 1440];
+const widths = process.env.YK_QA_WIDTHS
+  ? process.env.YK_QA_WIDTHS.split(",").map(Number).filter(Number.isFinite)
+  : [320, 360, 375, 390, 393, 412, 430, 1440];
 
 export async function verifySearchOptionsStaging(
   url = "http://127.0.0.1:8788/?draft-preview=1",
@@ -54,6 +56,17 @@ export async function verifySearchOptionsStaging(
             tag: element.tagName,
             className: String(element.className || ""),
           }));
+        const badgeIntersections = Array.from(document.querySelectorAll(".yk-product-badges"))
+          .map((badges) => {
+            const card = badges.closest(".yk-product,.yk-shelf-card");
+            const image = card?.querySelector(".yk-product__photo,.yk-shelf-card__image");
+            if (!image) return 0;
+            const badgeRect = badges.getBoundingClientRect();
+            const imageRect = image.getBoundingClientRect();
+            const width = Math.max(0, Math.min(badgeRect.right, imageRect.right) - Math.max(badgeRect.left, imageRect.left));
+            const height = Math.max(0, Math.min(badgeRect.bottom, imageRect.bottom) - Math.max(badgeRect.top, imageRect.top));
+            return width * height;
+          });
         return {
           clientWidth: rootElement.clientWidth,
           scrollWidth: rootElement.scrollWidth,
@@ -89,6 +102,14 @@ export async function verifySearchOptionsStaging(
           shelfTitleWhiteSpace: getComputedStyle(
             document.querySelector(".yk-shelf-card__title"),
           ).whiteSpace,
+          badgePosition: getComputedStyle(document.querySelector(".yk-product-badges")).position,
+          badgeImageIntersection: Math.max(0, ...badgeIntersections),
+          badgesInsideImages: document.querySelectorAll(
+            ".yk-product__photo .yk-product-badges,.yk-shelf-card__image .yk-product-badges",
+          ).length,
+          badgeHorizontalOverflow: Array.from(document.querySelectorAll(".yk-product-badges"))
+            .some((badges) => badges.scrollWidth > badges.clientWidth + 1),
+          doubledDiscountLabel: document.body.textContent.includes("%OFF%OFF"),
         };
       });
       result.browserErrors = browserErrors;
@@ -107,6 +128,9 @@ export async function verifySearchOptionsStaging(
             visibleTitles: Array.from(document.querySelectorAll(".yk-product__title"))
               .slice(0, 8)
               .map((element) => element.textContent.replace(/\s+/g, " ").trim()),
+            visibleIds: Array.from(document.querySelectorAll(".yk-product"))
+              .slice(0, 8)
+              .map((element) => element.querySelector("[data-product-page]")?.getAttribute("data-product-page") || ""),
           }));
         };
 
@@ -131,6 +155,12 @@ export async function verifySearchOptionsStaging(
         result.multiWordSearch = await runSearch("青木小 赤白ぼうし");
         await page.locator("[data-show-all]").click();
         result.typoSearch = await runSearch("ジャージ上依");
+        await page.locator("[data-show-all]").click();
+        result.chopsticksSearch = await runSearch("箸");
+        await page.locator("[data-show-all]").click();
+        result.schoolLunchSetSearch = await runSearch("給食セット");
+        await page.locator("[data-show-all]").click();
+        result.spoonSearch = await runSearch("スプーン");
 
         await page.locator('[data-school-type="elementary"]').first().click();
         result.globalSearchFromSchoolFilter = await runSearch("Barbie");
@@ -330,11 +360,15 @@ export async function verifySearchOptionsStaging(
     if (result.defaultProductTotal !== result.liveProductTotal) return true;
     if (result.productImageFit !== "contain" || result.shelfImageFit !== "contain") return true;
     if (result.shelfTitleClamp !== "2" || result.shelfTitleWhiteSpace !== "normal") return true;
+    if (
+      result.badgePosition === "absolute" || result.badgeImageIntersection > 0 ||
+      result.badgesInsideImages || result.badgeHorizontalOverflow || result.doubledDiscountLabel
+    ) return true;
     if (!result.renewalBadgePresent || !result.freeShippingPresent) return true;
     if (result.width === 390 || result.width === 1440) {
-      return result.synonymSearch.total < 1 || result.synonymSearch.sort !== "relevance" ||
-        result.socksSearch.total < 1 || result.socksSearch.sort !== "relevance" ||
-        result.socksSynonymSearch.total < 1 || result.socksSynonymSearch.sort !== "relevance" ||
+      return result.synonymSearch.total < 1 || result.synonymSearch.total >= 150 || result.synonymSearch.sort !== "relevance" ||
+        result.socksSearch.total !== 0 || result.socksSearch.sort !== "relevance" ||
+        result.socksSynonymSearch.total !== 0 || result.socksSynonymSearch.sort !== "relevance" ||
         result.englishGymSearch.total < 1 || result.englishGymSearch.sort !== "relevance" ||
         !result.englishGymSearch.firstTitle.includes("体操服") ||
         result.gymTypoSearch.total < 1 || result.gymTypoSearch.sort !== "relevance" ||
@@ -347,6 +381,11 @@ export async function verifySearchOptionsStaging(
         result.kappaSearch.visibleTitles.some((title) => !/雨合羽|RAIN SUIT/i.test(title)) ||
         result.multiWordSearch.total < 1 || result.multiWordSearch.sort !== "relevance" ||
         result.typoSearch.total < 1 || result.typoSearch.sort !== "relevance" ||
+        result.chopsticksSearch.total !== 3 || result.chopsticksSearch.visibleIds[0] !== "72180473" ||
+        result.chopsticksSearch.visibleIds.some((id) => !["72180473", "72180475", "72180477"].includes(id)) ||
+        result.schoolLunchSetSearch.total !== 1 || result.schoolLunchSetSearch.visibleIds[0] !== "72180473" ||
+        result.spoonSearch.total !== 2 ||
+        !["72180473", "72180476"].every((id) => result.spoonSearch.visibleIds.includes(id)) ||
         result.globalSearchFromSchoolFilter.total < 1 ||
         !result.globalSearchFromSchoolFilter.firstTitle.includes("Barbie") ||
         !result.globalSearchClearedSchoolFilter ||

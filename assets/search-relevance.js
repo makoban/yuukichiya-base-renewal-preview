@@ -2,7 +2,7 @@
   "use strict";
 
   window.ykSearchRelevanceConfig = {
-    version: "20260731.2",
+    version: "20260804.1",
     stopWords: [
       "a", "an", "and", "for", "of", "the", "to", "with",
       "item", "items", "product", "products", "school",
@@ -20,11 +20,12 @@
       },
       {
         id: "footwear",
+        allowRelatedResults: true,
         aliases: [
           "靴", "くつ", "シューズ", "運動靴", "通学靴",
           "shoe", "shoes", "sneaker", "sneakers", "footwear"
         ],
-        related: ["indoor_shoes", "gym_shoes", "sandals", "socks"]
+        related: ["indoor_shoes", "gym_shoes", "sandals"]
       },
       {
         id: "indoor_shoes",
@@ -70,6 +71,7 @@
       },
       {
         id: "uniform",
+        allowRelatedResults: true,
         aliases: [
           "制服", "学生服", "標準服", "セーラー服", "ブレザー", "通園服",
           "uniform", "school uniform", "student uniform", "sailor uniform",
@@ -172,7 +174,30 @@
         related: ["rainwear"]
       },
       {
+        id: "chopsticks",
+        aliases: [
+          "箸", "お箸", "はし", "おはし", "chopstick", "chopsticks"
+        ],
+        related: ["school_lunch_set", "cutlery"]
+      },
+      {
+        id: "school_lunch_set",
+        aliases: [
+          "給食", "給食セット", "給食用品", "はしセット", "箸セット",
+          "ランチセット", "カトラリーセット", "school lunch set", "lunch set"
+        ],
+        related: ["chopsticks", "cutlery"]
+      },
+      {
+        id: "cutlery",
+        aliases: [
+          "スプーン", "フォーク", "カトラリー", "食器", "spoon", "fork", "cutlery"
+        ],
+        related: ["school_lunch_set", "chopsticks"]
+      },
+      {
         id: "school_commute",
+        allowRelatedResults: true,
         aliases: [
           "通学", "登校", "学校へ行く", "school commute", "commuting to school"
         ],
@@ -180,6 +205,7 @@
       },
       {
         id: "school_start",
+        allowRelatedResults: true,
         aliases: [
           "入学準備", "新学期", "学校準備", "入園準備",
           "back to school", "school starter", "starting school", "school essentials"

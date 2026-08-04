@@ -9,7 +9,7 @@
         return String.fromCharCode(char.charCodeAt(0) - 0x60);
       })
       .replace(/(?:体そう|たいそう|体そー|たいそー)(?:服|ふく)/g, "体操服")
-      .replace(/[‐‑‒–—―ーｰ]/g, "-")
+      .replace(/[‐‑‒–—―]/g, "-")
       .replace(/[^\w\u3040-\u30ff\u3400-\u9fff\u3005\u3006\u30fc]+/g, " ")
       .trim()
       .replace(/\s+/g, " ");
@@ -44,9 +44,9 @@
     return previous[right.length];
   }
 
-  function fuzzyContains(text, token) {
+  function fuzzyContains(text, token, allowShortFuzzy) {
     if (text.indexOf(token) !== -1) return true;
-    if (token.length < 2) return false;
+    if (token.length < 3 && !allowShortFuzzy) return false;
     var limit = token.length >= 7 ? 2 : 1;
     var source = String(text || "").replace(/\s+/g, "");
     var minLength = Math.max(2, token.length - limit);
@@ -67,6 +67,7 @@
     var concepts = (config.concepts || []).map(function (concept) {
       return {
         id: concept.id,
+        allowRelatedResults: concept.allowRelatedResults === true,
         related: concept.related || [],
         aliases: (concept.aliases || []).map(function (alias) {
           return {
@@ -165,11 +166,6 @@
         matchedParts.forEach(function (part) {
           if (remaining.indexOf(part) !== -1) remaining = remaining.split(part).join("");
         });
-        stopWords.filter(function (word) {
-          return word.length >= 2 || /[^\x00-\x7f]/.test(word);
-        }).sort(function (a, b) { return b.length - a.length; }).forEach(function (word) {
-          if (remaining.indexOf(word) !== -1) remaining = remaining.split(word).join("");
-        });
         if (stopWords.indexOf(remaining) !== -1) remaining = "";
         if ((conceptMatches.length || schools.length) && remaining.length <= 1) remaining = "";
         if (remaining) tokens.push(remaining);
@@ -194,7 +190,8 @@
       var title = compact(product.t);
       var variants = compact([product.v].concat(product.vs || []).join(" "));
       var schools = compact(productSchoolText()[id] || "");
-      var combined = [title, variants, schools, id].join("");
+      var searchable = [title, variants, schools].join("");
+      var combined = [searchable, id].join("");
       var conceptTitle = title;
       getSchoolEntries().forEach(function (school) {
         if (schools.indexOf(school.compact) !== -1 && conceptTitle.indexOf(school.compact) !== -1) {
@@ -214,27 +211,32 @@
         title: title,
         variants: variants,
         schools: schools,
+        searchable: searchable,
         combined: combined,
         concepts: matchedConcepts
       };
       return productCache[id];
     }
 
-    function tokenScore(doc, token) {
+    function tokenScore(doc, token, allowShortFuzzy) {
       if (doc.title === token) return 180;
       if (doc.title.indexOf(token) === 0) return 125;
       if (doc.title.indexOf(token) !== -1) return 95;
       if (doc.schools.indexOf(token) !== -1) return 80;
       if (doc.variants.indexOf(token) !== -1) return 65;
       if (doc.id.indexOf(token) !== -1) return 55;
-      return fuzzyContains(doc.combined, token) ? 20 : -1;
+      return fuzzyContains(doc.searchable, token, allowShortFuzzy) ? 20 : -1;
     }
 
     function conceptScore(doc, concept) {
       if (doc.concepts[concept.id]) {
-        if (concept.aliases.some(function (alias) { return doc.title.indexOf(alias.compact) !== -1; })) return 155;
-        if (concept.aliases.some(function (alias) { return doc.variants.indexOf(alias.compact) !== -1; })) return 120;
-        return 135;
+        var relatedBoostIndex = concept.related.findIndex(function (relatedId) {
+          return doc.concepts[relatedId];
+        });
+        var relatedBoost = relatedBoostIndex >= 0 ? Math.max(8, 18 - relatedBoostIndex * 4) : 0;
+        if (concept.aliases.some(function (alias) { return doc.title.indexOf(alias.compact) !== -1; })) return 155 + relatedBoost;
+        if (concept.aliases.some(function (alias) { return doc.variants.indexOf(alias.compact) !== -1; })) return 120 + relatedBoost;
+        return 135 + relatedBoost;
       }
       var relatedIndex = concept.related.findIndex(function (relatedId) { return doc.concepts[relatedId]; });
       return relatedIndex >= 0 ? Math.max(28, 48 - relatedIndex * 4) : -1;
@@ -245,7 +247,7 @@
         "socks", "footwear", "indoor_shoes", "gym_shoes", "sandals", "gymwear",
         "jersey", "uniform", "shirt", "shorts", "pants", "skirt", "outerwear",
         "headwear", "bag", "bag_cover", "rainwear", "swimwear", "swim_accessory",
-        "helmet", "school_commute", "school_start"
+        "helmet", "chopsticks", "school_lunch_set", "cutlery", "school_commute", "school_start"
       ].indexOf(concept.id) !== -1;
     }
 
@@ -290,9 +292,9 @@
       }
       for (var conceptIndex = 0; conceptIndex < parsed.concepts.length; conceptIndex += 1) {
         var concept = parsed.concepts[conceptIndex];
-        if (concept.id === "rainwear" && !doc.concepts.rainwear) return -1;
-        var currentScore = conceptScore(doc, concept);
         var productIntent = isProductIntent(concept);
+        if (productIntent && !concept.allowRelatedResults && !doc.concepts[concept.id]) return -1;
+        var currentScore = conceptScore(doc, concept);
         if (productIntent) productIntentUnits += 1;
         if (currentScore >= 0) {
           result += currentScore + modifierBoost(concept);
@@ -305,7 +307,10 @@
         }
       }
       for (var tokenIndex = 0; tokenIndex < parsed.tokens.length; tokenIndex += 1) {
-        var currentTokenScore = tokenScore(doc, parsed.tokens[tokenIndex]);
+        var contextualShortFuzzy = parsed.concepts.some(function (concept) {
+          return doc.concepts[concept.id];
+        });
+        var currentTokenScore = tokenScore(doc, parsed.tokens[tokenIndex], contextualShortFuzzy);
         if (currentTokenScore >= 0) {
           result += currentTokenScore;
           matchedUnits += 1;
@@ -322,7 +327,7 @@
         result += softMatches * 12 - (softUnits - softMatches) * 10;
       }
       if (!matchedUnits) {
-        var fallback = tokenScore(doc, parsed.compact);
+        var fallback = tokenScore(doc, parsed.compact, false);
         if (fallback < 0) return -1;
         result += fallback;
       }
