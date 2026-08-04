@@ -53,7 +53,7 @@
       {
         id: "gymwear",
         aliases: [
-          "体操服", "体操着", "体育着", "体育服", "運動着", "運動会", "体育祭", "部活",
+          "体操服", "体操着", "体そう服", "たいそうふく", "体育着", "体育服", "運動着", "運動会", "体育祭", "部活",
           "gym clothes", "gym wear", "gymwear", "sportswear", "sports wear",
           "PE uniform", "PE clothes", "exercise clothes", "sports day clothes"
         ],

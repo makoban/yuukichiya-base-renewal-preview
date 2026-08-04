@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="assets/yuukichiya-logo.png">
   <meta name="robots" content="noindex, nofollow">
   <title>勇吉屋ネット｜学生服・学校用品を探す</title>
   <meta name="description" content="勇吉屋ネットの学生服・学校用品オンラインショップです。学校区分と学校名から必要な商品を探して注文できます。">
@@ -2467,12 +2468,33 @@
       return match ? match[1].trim() : "";
     }
 
+    function ykPreviewNormalizeInventoryVariant(value) {
+      var normalized = String(value || "");
+      try { normalized = normalized.normalize("NFKC"); } catch (error) {}
+      return normalized
+        .replace(/^(?:種類・サイズ|サイズ|size)\s*[:：]?\s*/i, "")
+        .replace(/\s+/g, "")
+        .toLowerCase();
+    }
+
+    function ykPreviewInventoryVariantKey(product, inventoryVariant) {
+      var inventory = ykPreviewInventory(product);
+      var variants = inventory && inventory.variants || {};
+      if (!inventoryVariant) return "";
+      if (Object.prototype.hasOwnProperty.call(variants, inventoryVariant)) return inventoryVariant;
+      var normalized = ykPreviewNormalizeInventoryVariant(inventoryVariant);
+      return Object.keys(variants).find(function (key) {
+        return ykPreviewNormalizeInventoryVariant(key) === normalized;
+      }) || inventoryVariant;
+    }
+
     function ykPreviewStockLimit(product, inventoryVariant) {
       var inventory = ykPreviewInventory(product);
       if (!inventory) return null;
       var variants = inventory.variants || {};
-      if (inventoryVariant && Object.prototype.hasOwnProperty.call(variants, inventoryVariant)) {
-        return Math.max(0, Number(variants[inventoryVariant]) || 0);
+      var variantKey = ykPreviewInventoryVariantKey(product, inventoryVariant);
+      if (variantKey && Object.prototype.hasOwnProperty.call(variants, variantKey)) {
+        return Math.max(0, Number(variants[variantKey]) || 0);
       }
       return inventory.stock === null || inventory.stock === undefined
         ? null
@@ -2482,12 +2504,15 @@
     function ykPreviewReservedQuantity(product, inventoryVariant) {
       var inventory = ykPreviewInventory(product);
       var variants = inventory && inventory.variants || {};
+      var variantKey = ykPreviewInventoryVariantKey(product, inventoryVariant);
       var variantScoped = Boolean(
-        inventoryVariant && Object.prototype.hasOwnProperty.call(variants, inventoryVariant)
+        variantKey && Object.prototype.hasOwnProperty.call(variants, variantKey)
       );
       return ykReadPreviewCart().reduce(function (total, item) {
         if (String(item.id) !== String(product.id)) return total;
-        if (variantScoped && ykPreviewCartInventoryVariant(item) !== inventoryVariant) return total;
+        if (variantScoped &&
+          ykPreviewNormalizeInventoryVariant(ykPreviewCartInventoryVariant(item)) !==
+            ykPreviewNormalizeInventoryVariant(variantKey)) return total;
         return total + Math.max(0, Number(item.quantity) || 0);
       }, 0);
     }
@@ -3672,6 +3697,8 @@
       ykRebuildCatalogIndexes();
       ykSyncSchoolFilters();
       ykRenderProducts();
+      ykRenderShelf("priceDown");
+      ykRenderShelf("commuting");
       window.dispatchEvent(new CustomEvent("yk:catalog-updated", { detail: payload.meta }));
     };
 

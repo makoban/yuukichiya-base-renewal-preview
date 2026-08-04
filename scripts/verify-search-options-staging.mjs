@@ -28,6 +28,11 @@ export async function verifySearchOptionsStaging(
       const browserErrors = [];
       page.on("pageerror", (error) => browserErrors.push(error.message));
       await page.goto(url, { waitUntil: "networkidle" });
+      await page.waitForFunction(
+        () => document.documentElement.dataset.ykCatalogSource === "base-live",
+        undefined,
+        { timeout: 15_000 },
+      );
 
       const result = await page.evaluate(() => {
         const rootElement = document.documentElement;
@@ -58,6 +63,12 @@ export async function verifySearchOptionsStaging(
           priceDownCountText:
             document.querySelector('[data-shelf-count="priceDown"]')?.textContent.trim() || "",
           priceDownCards: document.querySelectorAll("#yk-shelf-priceDown .yk-shelf-card").length,
+          commutingCountText:
+            document.querySelector('[data-shelf-count="commuting"]')?.textContent.trim() || "",
+          commutingCards: document.querySelectorAll("#yk-shelf-commuting .yk-shelf-card").length,
+          livePriceDownProducts: window.ykSpecialCatalog?.priceDown?.length || 0,
+          liveCommutingProducts: window.ykSpecialCatalog?.commuting?.length || 0,
+          liveProductTotal: window.ykAllProducts?.length || 0,
           defaultProductTotal: Number(
             (document.querySelector("#yk-result-count")?.textContent || "").match(/全(\d+)件/)?.[1] || 0,
           ),
@@ -107,6 +118,8 @@ export async function verifySearchOptionsStaging(
         await page.locator("[data-show-all]").click();
         result.englishGymSearch = await runSearch("gym clothes");
         await page.locator("[data-show-all]").click();
+        result.gymTypoSearch = await runSearch("体そう服");
+        await page.locator("[data-show-all]").click();
         result.semanticRainSearch = await runSearch("雨の日");
         await page.locator("[data-show-all]").click();
         result.englishRainSearch = await runSearch("rain wear");
@@ -138,7 +151,14 @@ export async function verifySearchOptionsStaging(
 
         result.visibility = await page.evaluate(() => ({
           total: ykAllProducts.length,
-          hiddenIdsPresent: ["95937631", "151900296", "151791830"]
+          duplicateIds: Array.from(
+            ykAllProducts.reduce((counts, product) => {
+              const id = String(product.id);
+              counts.set(id, (counts.get(id) || 0) + 1);
+              return counts;
+            }, new Map()),
+          ).filter(([, count]) => count > 1).map(([id]) => id),
+          excludedIdsPresent: ["95937631"]
             .filter((id) => ykAllProducts.some((product) => String(product.id) === id)),
         }));
 
@@ -301,8 +321,13 @@ export async function verifySearchOptionsStaging(
     if (result.scrollWidth > result.clientWidth || result.overflowing.length) return true;
     if (result.browserErrors.length) return true;
     if (!result.heroSearchAbovePriceDown) return true;
-    if (result.priceDownCountText !== "80商品" || result.priceDownCards !== 80) return true;
-    if (result.defaultProductTotal !== 608) return true;
+    if (
+      result.priceDownCountText !== `${result.livePriceDownProducts}商品` ||
+      result.priceDownCards !== result.livePriceDownProducts ||
+      result.commutingCountText !== `${result.liveCommutingProducts}商品` ||
+      result.commutingCards !== result.liveCommutingProducts
+    ) return true;
+    if (result.defaultProductTotal !== result.liveProductTotal) return true;
     if (result.productImageFit !== "contain" || result.shelfImageFit !== "contain") return true;
     if (result.shelfTitleClamp !== "2" || result.shelfTitleWhiteSpace !== "normal") return true;
     if (!result.renewalBadgePresent || !result.freeShippingPresent) return true;
@@ -312,6 +337,8 @@ export async function verifySearchOptionsStaging(
         result.socksSynonymSearch.total < 1 || result.socksSynonymSearch.sort !== "relevance" ||
         result.englishGymSearch.total < 1 || result.englishGymSearch.sort !== "relevance" ||
         !result.englishGymSearch.firstTitle.includes("体操服") ||
+        result.gymTypoSearch.total < 1 || result.gymTypoSearch.sort !== "relevance" ||
+        !result.gymTypoSearch.firstTitle.includes("体操服") ||
         result.semanticRainSearch.total < 1 || result.semanticRainSearch.sort !== "relevance" ||
         result.englishRainSearch.firstTitle !== result.semanticRainSearch.firstTitle ||
         result.englishBagSearch.total < 1 || result.englishBagSearch.sort !== "relevance" ||
@@ -326,7 +353,8 @@ export async function verifySearchOptionsStaging(
         result.schoolActionClearedQuery.query !== "" ||
         result.schoolActionClearedQuery.inputValues.some(Boolean) ||
         !result.schoolActionClearedQuery.school || result.schoolActionClearedQuery.total < 1 ||
-        result.visibility.total !== 608 || result.visibility.hiddenIdsPresent.length ||
+        result.visibility.total !== result.liveProductTotal || result.visibility.duplicateIds.length ||
+        result.visibility.excludedIdsPresent.length ||
         result.stockOneProduct.quantities.join(",") !== "1" ||
         !result.stockOneProduct.stockText.includes("1点") || result.stockOneProduct.addDisabled ||
         result.stockOneProduct.galleryCount !== "1 / 5" || result.stockOneProduct.galleryThumbs !== 5 ||

@@ -1,6 +1,7 @@
 import { readFile, stat } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { Script } from "node:vm";
 
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const indexPath = resolve(root, "index.html");
@@ -16,6 +17,15 @@ const checks = [
   ["semantic search asset", /assets\/search-relevance\.js/],
   ["public catalog reset", (text) => /assets\/base-production-catalog\.js/.test(text) && /window\.ykCurrentCatalog/.test(text)],
   ["BASE live catalog apply", (text) => /window\.ykApplyLiveCatalog/.test(text) && /dataset\.ykCatalogSource\s*=\s*["']base-live["']/.test(text)],
+  ["BASE live catalog rerenders both special shelves", (text) => {
+    const applyStart = text.indexOf("window.ykApplyLiveCatalog = function");
+    const applyEnd = text.indexOf("\n    };", applyStart);
+    const applyBody = applyStart >= 0 && applyEnd > applyStart ? text.slice(applyStart, applyEnd) : "";
+    const liveSpecialCatalog = applyBody.indexOf("ykSpecialCatalog = payload.specialCatalog");
+    const priceDownRender = applyBody.indexOf('ykRenderShelf("priceDown")');
+    const commutingRender = applyBody.indexOf('ykRenderShelf("commuting")');
+    return liveSpecialCatalog >= 0 && priceDownRender > liveSpecialCatalog && commutingRender > priceDownRender;
+  }],
   ["dynamic category rendering", (text) => /function ykRenderCategoryCatalog/.test(text) && /function ykBindSchoolLinks/.test(text)],
   ["sold-out handling", /SOLD OUT/],
   ["price-down and NEW labels", (text) => /yk-sale-badge/.test(text) && /yk-new-badge/.test(text)],
@@ -79,13 +89,21 @@ const requiredAssets = [
   "assets/preview-product-options.js",
   "assets/preview-product-details.js",
   "assets/preview-shop-reviews.js",
+  "assets/base-storefront-extras.js",
 ];
 
 for (const asset of requiredAssets) {
+  const assetPath = resolve(root, asset);
   try {
-    await stat(resolve(root, asset));
+    await stat(assetPath);
   } catch {
     failures.push(`required asset: ${asset}`);
+    continue;
+  }
+  try {
+    new Script(await readFile(assetPath, "utf8"), { filename: asset });
+  } catch {
+    failures.push(`valid JavaScript asset: ${asset}`);
   }
 }
 
@@ -94,5 +112,5 @@ if (failures.length) {
   failures.forEach((failure) => console.error(`- ${failure}`));
   process.exitCode = 1;
 } else {
-  console.log(`Yuukichiya EC regression contract: OK (${checks.length + requiredAssets.length + 4} checks)`);
+  console.log(`Yuukichiya EC regression contract: OK (${checks.length + requiredAssets.length * 2 + 4} checks)`);
 }
