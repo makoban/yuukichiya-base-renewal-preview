@@ -161,6 +161,14 @@ export async function verifySearchOptionsStaging(
         result.schoolLunchSetSearch = await runSearch("給食セット");
         await page.locator("[data-show-all]").click();
         result.spoonSearch = await runSearch("スプーン");
+        await page.locator("[data-show-all]").click();
+        result.middleUniformSearch = await runSearch("制服 中学生");
+        await page.locator("[data-show-all]").click();
+        result.middleUniformReverseSearch = await runSearch("中学生 制服");
+        await page.locator("[data-show-all]").click();
+        result.uniformRibbonSearch = await runSearch("制服 リボン");
+        await page.locator("[data-show-all]").click();
+        result.gakuranSearch = await runSearch("学ラン");
 
         await page.locator('[data-school-type="elementary"]').first().click();
         result.globalSearchFromSchoolFilter = await runSearch("Barbie");
@@ -386,6 +394,11 @@ export async function verifySearchOptionsStaging(
         result.schoolLunchSetSearch.total !== 1 || result.schoolLunchSetSearch.visibleIds[0] !== "72180473" ||
         result.spoonSearch.total !== 2 ||
         !["72180473", "72180476"].every((id) => result.spoonSearch.visibleIds.includes(id)) ||
+        result.middleUniformSearch.visibleIds.slice(0, 2).join(",") !== "140016543,75963999" ||
+        result.middleUniformReverseSearch.visibleIds.join(",") !== result.middleUniformSearch.visibleIds.join(",") ||
+        result.uniformRibbonSearch.total !== 8 ||
+        result.uniformRibbonSearch.visibleTitles.slice(0, 7).some((title) => !/セーラー服用.*リボン/.test(title)) ||
+        result.gakuranSearch.total !== 0 ||
         result.globalSearchFromSchoolFilter.total < 1 ||
         !result.globalSearchFromSchoolFilter.firstTitle.includes("Barbie") ||
         !result.globalSearchClearedSchoolFilter ||

@@ -8,10 +8,10 @@ const context = vm.createContext({ console });
 context.window = context;
 
 for (const relativePath of [
-  "assets/search-relevance.js",
+  "assets/search-relevance-v7.js",
   "assets/base-production-catalog.js",
   "assets/base-storefront-extras.js",
-  "assets/catalog-search-engine.js",
+  "assets/catalog-search-engine-v7.js",
 ]) {
   vm.runInContext(await readFile(resolve(root, relativePath), "utf8"), context, {
     filename: relativePath,
