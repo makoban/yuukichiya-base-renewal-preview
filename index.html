@@ -58,6 +58,7 @@
     .yk-hero-search .yk-search button { min-height: 54px; padding-right: 24px; padding-left: 24px; }
     .yk-hero-search__help { margin: 0!important; color: #52626a!important; font-size: 12px; font-weight: 800!important; line-height: 1.55; }
     .yk-nav { display: flex; gap: 14px; align-items: center; color: var(--yk-muted); font-size: 14px; font-weight: 800; white-space: nowrap; }
+    .yk-nav__history { display: inline-flex; align-items: center; justify-content: center; gap: .15em; }
     .yk-nav a:hover { color: var(--yk-main); }
     .yk-cart-count { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; margin-left: 5px; padding: 0 5px; border-radius: 999px; background: var(--yk-accent); color: #fff; font-size: 11px; line-height: 1; }
     #baseMenu ul { display: flex; align-items: center; gap: 10px; margin: 0; padding: 0; list-style: none; }
@@ -612,8 +613,9 @@
       .yk-free-shipping-badge { margin-right: clamp(14px,4.5vw,18px); margin-left: clamp(14px,4.5vw,18px); padding-right: 14px; padding-left: 14px; }
       .yk-header__inner { grid-template-columns: minmax(0,1fr); gap: 10px; }
       .yk-logo__image { width: min(220px,68vw); max-height: 48px; }
-      .yk-nav { grid-template-columns: .7fr 1.25fr 1fr .75fr; gap: 4px; font-size: 11px; }
+      .yk-nav { grid-template-columns: .55fr 1.15fr 1.55fr .75fr; gap: 4px; font-size: 10px; }
       .yk-nav__stores { display: none!important; }
+      .yk-nav__history { flex-direction: column; gap: 0; line-height: 1.15; white-space: normal; }
       .yk-nav > [data-yk-preview-cart-open] { gap: 3px; padding-right: 2px; padding-left: 2px; }
       .yk-nav .yk-cart-count { flex: 0 0 auto; min-width: 17px; height: 17px; margin-left: 0; padding: 0 4px; font-size: 10px; }
       .yk-nav #baseMenu { min-width: 0; overflow: hidden; }
@@ -784,7 +786,7 @@
         <a class="yk-nav__top" href="#top">TOP</a>
         <a class="yk-nav__stores" href="#yk-stores">店舗について</a>
         <a class="yk-nav__contact" href="contact.html">お問い合わせ</a>
-        <a class="yk-nav__history" href="https://yuukichiya-purchase-history-prototype.onrender.com/">購入履歴</a>
+        <a class="yk-nav__history" href="https://yuukichiya-purchase-history-prototype.onrender.com/"><span>購入履歴・</span><span>キャンセル申請</span></a>
         <a href="cart.html" data-yk-preview-cart-open>カート<span class="yk-cart-count" data-cart-count hidden>0</span></a>
       </nav>
     </div>
@@ -1307,7 +1309,7 @@
         <ul>
           <li><a href="#yk-stores">店舗について</a></li>
           <li><a href="contact.html">お問い合わせ</a></li>
-          <li><a href="https://yuukichiya-purchase-history-prototype.onrender.com/">購入履歴</a></li>
+          <li><a href="https://yuukichiya-purchase-history-prototype.onrender.com/">購入履歴・キャンセル申請</a></li>
           <li><a href="privacy.html">個人情報の取扱い</a></li>
           <li><a href="https://yuukichiya.base.shop/law" target="_blank" rel="noopener noreferrer">特定商取引法に基づく表記</a></li>
         </ul>

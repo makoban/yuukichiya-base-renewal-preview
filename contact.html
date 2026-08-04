@@ -33,6 +33,7 @@
     .yk-search input { min-width: 0; height: 46px; border: 0; background: transparent; padding: 0 16px; font: inherit; outline: 0; }
     .yk-search button, .yk-button { min-height: 46px; border: 0; border-radius: var(--yk-radius); background: var(--yk-main); color: #fff; padding: 0 18px; font: inherit; font-weight: 900; cursor: pointer; box-shadow: var(--yk-press); }
     .yk-nav { display: flex; gap: 14px; align-items: center; color: var(--yk-muted); font-size: 14px; font-weight: 800; white-space: nowrap; }
+    .yk-nav__history { display: inline-flex; align-items: center; justify-content: center; gap: .15em; }
     .yk-nav a:hover, .yk-nav a[aria-current="page"] { color: var(--yk-main); }
     .yk-page-hero { border-bottom: 1px solid var(--yk-line); background: linear-gradient(120deg, #fbfcf9 0%, #fbfcf9 58%, #e8f1ed 100%); }
     .yk-page-hero__inner { display: grid; gap: 18px; max-width: 1240px; min-height: 300px; margin: 0 auto; padding: 70px 28px 58px; align-content: center; }
@@ -106,6 +107,7 @@
     @media (max-width: 560px) {
       .yk-header__inner, .yk-page-hero__inner, .yk-page-section, .yk-footer__inner { padding-left: 18px; padding-right: 18px; }
       .yk-nav { gap: 10px; font-size: 13px; }
+      .yk-nav__history { flex-direction: column; gap: 0; line-height: 1.15; white-space: normal; }
       .yk-nav a:nth-child(1), .yk-nav a:nth-child(2) { display: none; }
       .yk-page-hero__inner { min-height: 250px; padding-top: 42px; padding-bottom: 42px; }
       .yk-page-hero h1 { font-size: 34px; }
@@ -139,7 +141,7 @@
         <a href="index.html#top">TOP</a>
         <a href="index.html#yk-stores">店舗について</a>
         <a href="contact.html" aria-current="page">お問い合わせ</a>
-        <a href="https://yuukichiya-purchase-history-prototype.onrender.com/">購入履歴</a>
+        <a class="yk-nav__history" href="https://yuukichiya-purchase-history-prototype.onrender.com/"><span>購入履歴・</span><span>キャンセル申請</span></a>
         <a href="cart.html">カート<span class="yk-cart-count" data-cart-count hidden>0</span></a>
       </nav>
     </div>
@@ -248,7 +250,7 @@
         <ul>
           <li><a href="index.html#yk-stores">店舗について</a></li>
           <li><a href="contact.html">お問い合わせ</a></li>
-          <li><a href="https://yuukichiya-purchase-history-prototype.onrender.com/">購入履歴</a></li>
+          <li><a href="https://yuukichiya-purchase-history-prototype.onrender.com/">購入履歴・キャンセル申請</a></li>
           <li><a href="privacy.html">個人情報の取扱い</a></li>
           <li><a href="https://yuukichiya.base.shop/law" target="_blank" rel="noopener noreferrer">特定商取引法に基づく表記</a></li>
           <li><a href="cart.html">カート</a></li>
