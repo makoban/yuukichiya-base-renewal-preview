@@ -10,13 +10,13 @@ const contact = await readFile(resolve(root, "contact.html"), "utf8");
 const previewActions = await readFile(resolve(root, "assets/preview-actions.js"), "utf8");
 
 const checks = [
-  ["theme release fingerprint", (text) => /BASE-Theme-Version" content="1\.4"/.test(text) && /YK-Theme-Contract" content="83984-amazon-intent-search-v6"/.test(text)],
+  ["theme release fingerprint", (text) => /BASE-Theme-Version" content="1\.5"/.test(text) && /YK-Theme-Contract" content="83984-faceted-intent-search-v7"/.test(text)],
   ["HP logo image", /assets\/yuukichiya-logo\.(?:png|webp|svg)/i],
   ["purchase history links", (text) => (text.match(/yuukichiya-purchase-history-prototype\.onrender\.com/g) || []).length >= 2],
   ["5,000 yen free-shipping notice", /5,000円以上の[\s\S]{0,120}送料無料/],
   ["major closure 14-day lead", /ykMajorClosureLeadDays\s*=\s*14/],
-  ["semantic search asset", /assets\/search-relevance\.js/],
-  ["shared strict-intent search engine", (text) => /assets\/catalog-search-engine\.js/.test(text) && /ykSemanticSearchEngine\.score/.test(text)],
+  ["semantic search asset", /assets\/search-relevance-v7\.js\?v=20260805-search-v7/],
+  ["shared faceted-intent search engine", (text) => /assets\/catalog-search-engine-v7\.js\?v=20260805-search-v7/.test(text) && /ykSemanticSearchEngine\.score/.test(text)],
   ["public catalog reset", (text) => /assets\/base-production-catalog\.js/.test(text) && /window\.ykCurrentCatalog/.test(text)],
   ["BASE live catalog apply", (text) => /window\.ykApplyLiveCatalog/.test(text) && /dataset\.ykCatalogSource\s*=\s*["']base-live["']/.test(text)],
   ["BASE live catalog rerenders both special shelves", (text) => {
@@ -86,8 +86,8 @@ if (!/action=["']https:\/\/yuukichi-ya\.com\/contact-submit\.php["']/.test(conta
 }
 
 const requiredAssets = [
-  "assets/search-relevance.js",
-  "assets/catalog-search-engine.js",
+  "assets/search-relevance-v7.js",
+  "assets/catalog-search-engine-v7.js",
   "assets/base-production-catalog.js",
   "assets/catalog-runtime.js",
   "assets/preview-product-inventory.js",

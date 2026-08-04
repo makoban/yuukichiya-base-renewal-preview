@@ -9,10 +9,10 @@ const context = vm.createContext({ console });
 context.window = context;
 
 for (const relativePath of [
-  "assets/search-relevance.js",
+  "assets/search-relevance-v7.js",
   "assets/base-production-catalog.js",
   "assets/base-storefront-extras.js",
-  "assets/catalog-search-engine.js",
+  "assets/catalog-search-engine-v7.js",
 ]) {
   vm.runInContext(await readFile(resolve(root, relativePath), "utf8"), context, {
     filename: relativePath,
@@ -145,6 +145,26 @@ function assertEquivalentIds(leftQuery, rightQuery) {
     ids(search(leftQuery)).sort(),
     ids(search(rightQuery)).sort(),
     `${leftQuery} / ${rightQuery}: spelling variants returned different products`,
+  );
+}
+
+function assertEquivalentOrder(leftQuery, rightQuery) {
+  assert.deepEqual(
+    ids(search(leftQuery)),
+    ids(search(rightQuery)),
+    `${leftQuery} / ${rightQuery}: spelling variants returned a different ranking`,
+  );
+}
+
+function assertFamilyBefore(query, preferred, deferred) {
+  const found = search(query);
+  const preferredIndexes = found.map((product, index) => preferred(product) ? index : -1).filter((index) => index >= 0);
+  const deferredIndexes = found.map((product, index) => deferred(product) ? index : -1).filter((index) => index >= 0);
+  assert(preferredIndexes.length > 0, `${query}: preferred family is missing`);
+  assert(deferredIndexes.length > 0, `${query}: deferred family is missing`);
+  assert(
+    Math.max(...preferredIndexes) < Math.min(...deferredIndexes),
+    `${query}: deferred accessory ranked before the preferred product body`,
   );
 }
 
@@ -293,6 +313,87 @@ for (const query of [
 // Uniform must not broaden into PE T-shirts, generic pants, jersey or rainwear.
 strictCheck("generic uniform purity", () => assertEveryResult("制服", isUniformProduct));
 strictCheck("Jousui uniform accessory only", () => assertExactIds("浄水中学校 制服", ["75660674"]));
+
+// v7 separates umbrella intents from leaf products. A broad uniform query ranks
+// garments before accessories, while an explicit ribbon query reverses that
+// preference and requires the ribbon facet.
+const isUniformBody = (product) =>
+  /通園服|園内服|セーラー服(?!用)/.test(String(product.t || ""));
+const isUniformRibbonAccessory = (product) =>
+  /セーラー服用/.test(String(product.t || "")) && /リボン/.test(String(product.t || ""));
+
+for (const query of ["制服", "学生服", "標準服", "学校制服"]) {
+  strictCheck(`uniform role ranking ${query}`, () =>
+    assertFamilyBefore(query, isUniformBody, isUniformRibbonAccessory));
+}
+for (const query of ["制服 中学生", "中学生 制服", "中学校 女子 制服"]) {
+  strictCheck(`middle-school uniform role ranking ${query}`, () => {
+    const found = search(query);
+    assert.deepEqual(ids(found).slice(0, 2), ["140016543", "75963999"], `${query}: sailor bodies are not first`);
+    assertFamilyBefore(query, isUniformBody, isUniformRibbonAccessory);
+  });
+}
+strictCheck("middle-school uniform phrase order", () =>
+  assertEquivalentOrder("制服 中学生", "中学生 制服"));
+strictCheck("sailor body before accessory", () =>
+  assertFamilyBefore("セーラー服", isUniformBody, isUniformRibbonAccessory));
+for (const query of ["リボン", "制服リボン", "制服 リボン", "リボン 制服"]) {
+  strictCheck(`explicit ribbon ranking ${query}`, () => {
+    const found = search(query);
+    assert.equal(found.length, 8, `${query}: ribbon result set changed`);
+    assert(found.slice(0, 7).every(isUniformRibbonAccessory), `${query}: standalone ribbons are not first`);
+  });
+}
+for (const query of ["学ラン", "詰襟", "詰衿", "ブレザー", "ネクタイ", "制服 学ラン", "中学生 学ラン"]) {
+  strictCheck(`out-of-stock uniform leaf ${query}`, () => assertExactIds(query, []));
+}
+strictCheck("summer sailor precision", () =>
+  assertEveryResult("夏 セーラー服", (product) => /夏セーラー/.test(String(product.t || ""))));
+strictCheck("winter sailor contradiction", () => assertExactIds("冬 セーラー服", []));
+
+// Leaf queries in other catalog families must not expand to every item in the
+// parent family. Their official/common spellings keep both membership and order.
+for (const [left, right] of [
+  ["上履き", "上靴"],
+  ["体育館シューズ", "体育館履き"],
+  ["赤白帽子", "紅白帽"],
+  ["体育帽", "体操帽"],
+  ["スクールバッグ", "スクバ"],
+  ["スクールバッグ", "通学カバン"],
+  ["スクールバッグ", "リュック"],
+  ["水泳帽", "スイムキャップ"],
+  ["雨具", "レインウエア"],
+]) {
+  strictCheck(`leaf spelling and rank ${left} / ${right}`, () => assertEquivalentOrder(left, right));
+}
+strictCheck("long pants leaf", () => {
+  const found = assertEveryResult("長ズボン", (product) => /長ズボン/.test(String(product.t || "")));
+  assert.equal(found.length, 14, "長ズボン: parent pants leaked into the result set");
+});
+strictCheck("polo shirt out of stock", () => assertExactIds("ポロシャツ", []));
+strictCheck("red-white cap leaf", () => {
+  const found = assertEveryResult("赤白帽子", (product) => /赤白帽子/.test(String(product.t || "")));
+  assert.equal(found.length, 43, "赤白帽子: other hats leaked into the result set");
+});
+strictCheck("yellow school cap leaf", () => {
+  const found = assertEveryResult("黄帽子", (product) => /通学黄帽子/.test(String(product.t || "")));
+  assert.equal(found.length, 26, "黄帽子: other hats leaked into the result set");
+});
+strictCheck("rash guard leaf", () => assertExactIds("ラッシュガード", ["72180510"]));
+strictCheck("swim cap leaf", () => assertExactIds("水泳帽", ["75165688", "72180506", "72180504"]));
+strictCheck("swim goggles leaf", () => assertExactIds("ゴーグル", ["74092778", "74092683"]));
+strictCheck("swim inner leaf", () => assertExactIds("水着インナー", ["142792046", "104151937"]));
+strictCheck("school bag leaf", () => assertExactIds("スクールバッグ", ["84053344", "84052877", "84051745", "84022735", "84051406"]));
+strictCheck("pool bag leaf", () => assertExactIds("プールバッグ", ["72180502"]));
+strictCheck("preschool bag leaf", () => assertExactIds("通園バッグ", ["95774610"]));
+strictCheck("Kabuto helmet leaf", () => assertExactIds("カブト", ["112033732", "95975392", "95974709", "95965218"]));
+strictCheck("Barbie kana brand", () => assertEquivalentOrder("バービー", "Barbie"));
+strictCheck("lunch wear out of stock", () => {
+  assertExactIds("給食着", []);
+  assertExactIds("給食衣", []);
+});
+strictCheck("sale follows live shelf", () =>
+  assertExactIds("セール", (context.ykSpecialCatalog?.priceDown || []).map((product) => String(product.id))));
 
 // The catalog has no product identified as a uniform for these schools.
 strictCheck("no Suenohara uniform stock", () => assertExactIds("末野原中学校 制服", []));
