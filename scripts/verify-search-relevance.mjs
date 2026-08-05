@@ -9,10 +9,10 @@ const context = vm.createContext({ console });
 context.window = context;
 
 for (const relativePath of [
-  "assets/search-relevance-v7.js",
+  "assets/search-relevance-v8.js",
   "assets/base-production-catalog.js",
   "assets/base-storefront-extras.js",
-  "assets/catalog-search-engine-v7.js",
+  "assets/catalog-search-engine-v8.js",
 ]) {
   vm.runInContext(await readFile(resolve(root, relativePath), "utf8"), context, {
     filename: relativePath,
@@ -189,6 +189,250 @@ function strictCheck(label, check) {
   }
 }
 
+// Future-stock fixtures keep the uniform vocabulary testable even while the
+// current BASE catalog has no gakuran, blazer, suit, Eton or slacks products.
+// They exercise the same production classifier rather than a test-only mapper.
+const futureUniformProducts = [
+  { id: "future-gakuran", t: "未来中学校 男子 詰襟学生服 上衣", n: 101, s: true },
+  { id: "future-blazer-unisex", t: "未来中学校 スクールブレザー", n: 102, s: true },
+  { id: "future-blazer-boys", t: "未来中学校 男子 紺ブレ", n: 103, s: true },
+  { id: "future-blazer-girls", t: "未来中学校 女子 ブレザージャケット", n: 104, s: true },
+  { id: "future-suit-unisex", t: "未来中学校 スーツ型制服", n: 105, s: true },
+  { id: "future-suit-girls", t: "未来中学校 女子 制服スーツ", n: 106, s: true },
+  { id: "future-eton-unisex", t: "未来小学校 イートンジャケット", n: 107, s: true },
+  { id: "future-upper", t: "未来中学校 学生服上衣", n: 108, s: true },
+  { id: "future-slacks", t: "未来中学校 制服スラックス", n: 109, s: true },
+  { id: "future-gakuran-slacks", t: "未来中学校 男子 詰襟用ズボン", n: 110, s: true },
+  { id: "future-jersey-upper", t: "未来中学校 ジャージ上衣", n: 111, s: true },
+  { id: "future-track-pants", t: "未来中学校 ストレートパンツ", n: 112, s: true },
+  { id: "future-rain-suit", t: "未来中学校 スクールスーツ 雨合羽", n: 113, s: true },
+  { id: "future-generic-upper", t: "未来中学校 ジャケット 上衣", n: 114, s: true },
+  { id: "future-upper-gakuran", t: "未来中学校 学ラン上衣", n: 115, s: true },
+  { id: "future-upper-tsumeeri", t: "未来中学校 詰襟上衣", n: 116, s: true },
+  { id: "future-upper-tsumeeri-mixed", t: "未来中学校 詰め襟上衣", n: 117, s: true },
+  { id: "future-upper-tsumeeri-kana", t: "未来中学校 つめえり上衣", n: 118, s: true },
+  { id: "future-upper-eton", t: "未来小学校 イートン上衣", n: 119, s: true },
+  { id: "future-slacks-gakuran", t: "未来中学校 学ラン用ズボン", n: 120, s: true },
+  { id: "future-slacks-tsumeeri", t: "未来中学校 詰襟ズボン", n: 121, s: true },
+  { id: "future-slacks-tsumeeri-mixed", t: "未来中学校 詰め襟用スラックス", n: 122, s: true },
+  { id: "future-slacks-tsumeeri-kana", t: "未来中学校 つめえりズボン", n: 123, s: true },
+  { id: "future-slacks-standard", t: "未来中学校 標準ズボン", n: 124, s: true },
+  { id: "future-slacks-standard-student", t: "未来中学校 標準型学生ズボン", n: 125, s: true },
+  { id: "future-knit-sweater", t: "未来中学校 制服セーター", n: 126, s: true },
+  { id: "future-knit-vest", t: "未来中学校 スクールベスト", n: 127, s: true },
+  { id: "future-knit-cardigan", t: "未来中学校 学生カーディガン", n: 128, s: true },
+  { id: "future-gym-vest", t: "未来中学校 体操着 ベスト", n: 129, s: true },
+  { id: "future-rain-vest", t: "未来中学校 スクールベスト 雨合羽", n: 130, s: true },
+  { id: "future-uniform-skirt", t: "未来中学校 制服スカート", n: 131, s: true },
+  { id: "future-swim-skirt", t: "未来中学校 水着 スカート付き", n: 132, s: true },
+  { id: "future-blazer-boys-en", t: "boys school blazer", n: 133, s: true },
+  { id: "future-blazer-girls-en", t: "girls school blazer", n: 134, s: true },
+].map((product) => ({ v: "", vs: [], ...product }));
+
+const futureUniformEngine = context.ykStorefrontExtras.createSearchEngine({
+  getSearchCatalog: () => ({}),
+  getAllProducts: () => futureUniformProducts,
+  getProductSchoolText: () => ({}),
+  getProductConditions: () => ({}),
+});
+
+function searchFutureUniform(query) {
+  return futureUniformProducts
+    .map((product) => ({ product, score: futureUniformEngine.score(product, query) }))
+    .filter(({ score }) => score >= 0)
+    .sort((left, right) => right.score - left.score || (right.product.n || 0) - (left.product.n || 0))
+    .map(({ product }) => product);
+}
+
+function assertFutureUniformIds(query, expectedIds) {
+  assert.deepEqual(
+    ids(searchFutureUniform(query)).sort(),
+    [...expectedIds].sort(),
+    `${query}: future uniform classification changed`,
+  );
+}
+
+function assertFutureUniformOrder(leftQuery, rightQuery) {
+  assert.deepEqual(
+    ids(searchFutureUniform(leftQuery)),
+    ids(searchFutureUniform(rightQuery)),
+    `${leftQuery} / ${rightQuery}: future uniform spelling changed the ranking`,
+  );
+}
+
+const gakuranFutureIds = [
+  "future-gakuran", "future-gakuran-slacks",
+  "future-upper-gakuran", "future-upper-tsumeeri", "future-upper-tsumeeri-mixed", "future-upper-tsumeeri-kana",
+  "future-slacks-gakuran", "future-slacks-tsumeeri", "future-slacks-tsumeeri-mixed", "future-slacks-tsumeeri-kana",
+];
+const blazerFutureIds = [
+  "future-blazer-unisex", "future-blazer-boys", "future-blazer-girls",
+  "future-blazer-boys-en", "future-blazer-girls-en",
+];
+const suitFutureIds = ["future-suit-unisex", "future-suit-girls"];
+const etonFutureIds = ["future-eton-unisex", "future-upper-eton"];
+const uniformUpperFutureIds = [
+  "future-gakuran", "future-upper", "future-upper-gakuran", "future-upper-tsumeeri",
+  "future-upper-tsumeeri-mixed", "future-upper-tsumeeri-kana", "future-upper-eton",
+];
+const uniformSlacksFutureIds = [
+  "future-slacks", "future-gakuran-slacks", "future-slacks-gakuran", "future-slacks-tsumeeri",
+  "future-slacks-tsumeeri-mixed", "future-slacks-tsumeeri-kana", "future-slacks-standard",
+  "future-slacks-standard-student",
+];
+const uniformKnitFutureIds = ["future-knit-sweater", "future-knit-vest", "future-knit-cardigan"];
+
+const gakuranSpellings = [
+  "学ラン", "学らん", "がくらん", "ガクラン", "詰襟", "詰衿", "詰め襟", "詰め衿",
+  "詰めえり", "つめえり", "つめ襟", "つめ衿", "詰襟学生服", "詰襟タイプ",
+  "学ランタイプ", "スタンドカラー制服", "gakuran",
+];
+for (const query of gakuranSpellings) {
+  strictCheck(`future gakuran spelling ${query}`, () => {
+    assertFutureUniformIds(query, gakuranFutureIds);
+    assertFutureUniformOrder("学ラン", query);
+  });
+}
+
+const blazerSpellings = [
+  "ブレザー", "ブレザ", "スクールブレザー", "制服ブレザー", "ブレザー制服",
+  "ブレザージャケット", "ブレザータイプ", "紺ブレ", "blazer",
+];
+for (const query of blazerSpellings) {
+  strictCheck(`future blazer spelling ${query}`, () => {
+    assertFutureUniformIds(query, blazerFutureIds);
+    assertFutureUniformOrder("ブレザー", query);
+  });
+}
+
+const suitSpellings = [
+  "スーツ型", "スーツタイプ", "スーツ型制服", "制服スーツ", "学生服スーツ", "スクールスーツ",
+];
+for (const query of suitSpellings) {
+  strictCheck(`future uniform suit spelling ${query}`, () => {
+    assertFutureUniformIds(query, suitFutureIds);
+    assertFutureUniformOrder("制服スーツ", query);
+  });
+}
+
+const etonSpellings = ["イートン", "イートン服", "イートン型", "イートンタイプ", "イートンジャケット"];
+for (const query of etonSpellings) {
+  strictCheck(`future Eton spelling ${query}`, () => {
+    assertFutureUniformIds(query, etonFutureIds);
+    assertFutureUniformOrder("イートン", query);
+  });
+}
+
+strictCheck("future uniform style leaves stay separate", () => {
+  assertFutureUniformIds("学ラン", gakuranFutureIds);
+  assertFutureUniformIds("ブレザー", blazerFutureIds);
+  assertFutureUniformIds("制服スーツ", suitFutureIds);
+  assertFutureUniformIds("イートン", etonFutureIds);
+});
+strictCheck("future parent and style AND", () => {
+  assertFutureUniformIds("学生服 ブレザー", blazerFutureIds);
+  assertFutureUniformIds("学生服 学ラン", gakuranFutureIds);
+  assertFutureUniformIds("学生服 制服スーツ", suitFutureIds);
+  assertFutureUniformIds("学生服 イートン", etonFutureIds);
+});
+strictCheck("future blazer gender and unisex", () => {
+  assertFutureUniformIds("男子 ブレザー", ["future-blazer-unisex", "future-blazer-boys", "future-blazer-boys-en"]);
+  assertFutureUniformIds("女子 ブレザー", ["future-blazer-unisex", "future-blazer-girls", "future-blazer-girls-en"]);
+  assert(!ids(searchFutureUniform("男子 ブレザー")).includes("future-blazer-girls-en"));
+  assert(!ids(searchFutureUniform("女子 ブレザー")).includes("future-blazer-boys-en"));
+});
+strictCheck("future suit and Eton gender neutral", () => {
+  assertFutureUniformIds("男子 制服スーツ", ["future-suit-unisex"]);
+  assertFutureUniformIds("女子 制服スーツ", suitFutureIds);
+  assertFutureUniformIds("男子 イートン", etonFutureIds);
+  assertFutureUniformIds("女子 イートン", etonFutureIds);
+});
+strictCheck("future uniform slacks purity", () => {
+  assertFutureUniformIds("スラックス", uniformSlacksFutureIds);
+  assertFutureUniformIds("slacks", uniformSlacksFutureIds);
+  assertFutureUniformIds("制服スラックス", uniformSlacksFutureIds);
+  assertFutureUniformIds("標準ズボン", uniformSlacksFutureIds);
+  assert(!futureUniformEngine.parseQuery("スラックス").concepts.some((concept) => concept.id === "pants"));
+  assert(futureUniformEngine.parseQuery("スラックス").concepts.some((concept) => concept.id === "uniform_slacks"));
+  assert(!ids(searchFutureUniform("スラックス")).includes("future-track-pants"));
+});
+strictCheck("future uniform upper is context scoped", () => {
+  assertFutureUniformIds("制服上衣", uniformUpperFutureIds);
+  assertFutureUniformIds("制服 上衣", uniformUpperFutureIds);
+  assert.equal(futureUniformEngine.parseQuery("上衣").concepts.length, 0, "bare 上衣 became a uniform facet");
+  assert(ids(searchFutureUniform("上衣")).includes("future-jersey-upper"), "bare 上衣 stopped being a neutral token");
+  assert(!ids(searchFutureUniform("制服上衣")).includes("future-generic-upper"));
+});
+const uniformKnitSpellings = [
+  "セーター", "制服セーター", "スクールセーター", "学生セーター",
+  "ベスト", "制服ベスト", "スクールベスト", "学生ベスト",
+  "カーディガン", "制服カーディガン", "スクールカーディガン", "学生カーディガン",
+  "学校用ニット", "スクールニット", "学校制服ニット",
+  "school sweater", "school cardigan", "school vest", "uniform knitwear",
+];
+for (const query of uniformKnitSpellings) {
+  strictCheck(`future uniform knit spelling ${query}`, () => {
+    assertFutureUniformIds(query, uniformKnitFutureIds);
+    assertFutureUniformOrder("制服セーター", query);
+  });
+}
+strictCheck("future uniform knit exclusions", () => {
+  assert(!ids(searchFutureUniform("セーター")).includes("future-gym-vest"));
+  assert(!ids(searchFutureUniform("スクールベスト")).includes("future-rain-vest"));
+  assert(!ids(searchFutureUniform("学生服")).includes("future-gym-vest"));
+  assert(!ids(searchFutureUniform("学生服")).includes("future-rain-vest"));
+});
+strictCheck("future contextual uniform skirt", () => {
+  assertFutureUniformIds("制服スカート", ["future-uniform-skirt"]);
+  assertFutureUniformIds("学生スカート", ["future-uniform-skirt"]);
+  assert(!ids(searchFutureUniform("制服スカート")).includes("future-swim-skirt"));
+  assert(ids(searchFutureUniform("スカート")).includes("future-swim-skirt"), "generic skirt lost swim-skirt discovery");
+});
+strictCheck("future uniform exclusions", () => {
+  assert(!ids(searchFutureUniform("学生服")).includes("future-jersey-upper"));
+  assert(!ids(searchFutureUniform("学生服")).includes("future-rain-suit"));
+  assertFutureUniformIds("スクールスーツ", suitFutureIds);
+});
+
+// Every configured uniform alias must survive product classification when the
+// future BASE title itself uses that alias. This guards aliases that are not
+// practical to enumerate again in the classifier's Japanese title patterns.
+const uniformRoundTripConceptIds = [
+  "uniform", "sailor_uniform", "gakuran", "uniform_blazer", "uniform_suit",
+  "uniform_eton", "uniform_upper", "uniform_slacks", "uniform_skirt", "uniform_knit",
+  "preschool_uniform", "uniform_blouse", "uniform_shirt", "uniform_ribbon",
+  "uniform_necktie", "uniform_collar_cover",
+];
+const uniformRoundTripFixtures = (context.ykSearchRelevanceConfig?.concepts || [])
+  .filter((concept) => uniformRoundTripConceptIds.includes(concept.id))
+  .flatMap((concept) => (concept.aliases || []).map((alias, aliasIndex) => ({
+    conceptId: concept.id,
+    alias,
+    product: {
+      id: `roundtrip-${concept.id}-${aliasIndex}`,
+      t: alias,
+      v: "",
+      vs: [],
+      n: aliasIndex,
+      s: true,
+    },
+  })));
+const uniformRoundTripProducts = uniformRoundTripFixtures.map((fixture) => fixture.product);
+const uniformRoundTripEngine = context.ykStorefrontExtras.createSearchEngine({
+  getSearchCatalog: () => ({}),
+  getAllProducts: () => uniformRoundTripProducts,
+  getProductSchoolText: () => ({}),
+  getProductConditions: () => ({}),
+});
+for (const fixture of uniformRoundTripFixtures) {
+  strictCheck(`uniform alias round trip ${fixture.conceptId}: ${fixture.alias}`, () => {
+    assert(
+      uniformRoundTripEngine.score(fixture.product, fixture.alias) >= 0,
+      `${fixture.conceptId}/${fixture.alias}: direct alias product was deleted from its own query`,
+    );
+  });
+}
+
 const chopstickIds = ["72180473", "72180475", "72180477"];
 for (const query of ["箸", "はし", "お箸", "おはし"]) {
   const found = assertOnly(query, chopstickIds);
@@ -337,6 +581,9 @@ strictCheck("middle-school uniform phrase order", () =>
   assertEquivalentOrder("制服 中学生", "中学生 制服"));
 strictCheck("sailor body before accessory", () =>
   assertFamilyBefore("セーラー服", isUniformBody, isUniformRibbonAccessory));
+for (const query of ["セーラータイプ", "セーラー型"]) {
+  strictCheck(`sailor style spelling ${query}`, () => assertEquivalentOrder("セーラー服", query));
+}
 for (const query of ["リボン", "制服リボン", "制服 リボン", "リボン 制服"]) {
   strictCheck(`explicit ribbon ranking ${query}`, () => {
     const found = search(query);
@@ -344,9 +591,26 @@ for (const query of ["リボン", "制服リボン", "制服 リボン", "リボ
     assert(found.slice(0, 7).every(isUniformRibbonAccessory), `${query}: standalone ribbons are not first`);
   });
 }
-for (const query of ["学ラン", "詰襟", "詰衿", "ブレザー", "ネクタイ", "制服 学ラン", "中学生 学ラン"]) {
+for (const query of [
+  ...gakuranSpellings,
+  ...blazerSpellings,
+  ...suitSpellings,
+  ...etonSpellings,
+  ...uniformKnitSpellings,
+  "スラックス", "制服スラックス", "標準ズボン", "標準型学生ズボン",
+  "制服上衣", "学生服上衣", "学ラン上衣", "詰襟上衣", "詰め襟上衣", "つめえり上衣",
+  "ネクタイ", "制服 学ラン", "中学生 学ラン", "学生服 ブレザー",
+]) {
   strictCheck(`out-of-stock uniform leaf ${query}`, () => assertExactIds(query, []));
 }
+strictCheck("contextual uniform skirt live purity", () => {
+  const expected = ["145087529", "76509075", "76508982", "76507241", "76507117", "74619968", "74619879"];
+  assertExactIds("制服スカート", expected);
+  assertExactIds("学生スカート", expected);
+  assertExactIds("スクールスカート", expected);
+  assert.equal(search("スカート").length, 8, "generic skirt behavior changed");
+  assert(ids(search("スカート")).includes("72180512"), "generic skirt lost the swim-skirt product");
+});
 strictCheck("summer sailor precision", () =>
   assertEveryResult("夏 セーラー服", (product) => /夏セーラー/.test(String(product.t || ""))));
 strictCheck("winter sailor contradiction", () => assertExactIds("冬 セーラー服", []));
