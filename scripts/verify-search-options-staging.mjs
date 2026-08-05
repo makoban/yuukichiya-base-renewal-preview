@@ -295,11 +295,12 @@ export async function verifySearchOptionsStaging(
           await page.locator("[data-yk-preview-condition-input]").isVisible() &&
           (await page.locator("[data-yk-preview-item-options]").textContent())
             .includes("生徒証明書の番号");
-        result.studentConditionNumeric = await page.locator("[data-yk-preview-condition-input]").evaluate((input) => ({
+        result.studentConditionContract = await page.locator("[data-yk-preview-condition-input]").evaluate((input) => ({
           inputMode: input.getAttribute("inputmode"),
           pattern: input.getAttribute("pattern"),
           numeric: input.getAttribute("data-condition-numeric"),
           placeholder: input.getAttribute("placeholder"),
+          maxLength: input.maxLength,
         }));
         await page.locator("[data-yk-preview-add-cart]").click();
         result.studentConditionBlocksEmpty =
@@ -307,12 +308,12 @@ export async function verifySearchOptionsStaging(
           (await page.locator("[data-yk-preview-item-status]").textContent())
             .includes("必須項目");
         await page.locator("[data-yk-preview-condition-input]").fill("12A３-4");
-        result.studentConditionFiltered =
-          await page.locator("[data-yk-preview-condition-input]").inputValue() === "1234";
+        result.studentConditionPreserved =
+          await page.locator("[data-yk-preview-condition-input]").inputValue() === "12A３-4";
         await page.locator("[data-yk-preview-add-cart]").click();
         result.studentConditionAdded =
           await page.locator("#yk-preview-cart-dialog").isVisible() &&
-          (await page.locator("[data-yk-preview-cart-list]").textContent()).includes("1234");
+          (await page.locator("[data-yk-preview-cart-list]").textContent()).includes("12A３-4");
         await page.locator("[data-yk-preview-cart-close]").click();
 
         await page.evaluate(() => ykOpenPreviewItem(ykFindProduct("114897908"), document.body));
@@ -434,11 +435,12 @@ export async function verifySearchOptionsStaging(
         !result.soldOutProduct.badge.includes("50%OFF") || !result.soldOutProduct.badge.includes("SOLD OUT") ||
         !result.soldOutProduct.price.includes("¥11,880") || !result.soldOutProduct.price.includes("¥5,940") ||
         !result.studentConditionVisible || !result.studentConditionBlocksEmpty ||
-        result.studentConditionNumeric.inputMode !== "numeric" ||
-        result.studentConditionNumeric.pattern !== "[0-9]*" ||
-        result.studentConditionNumeric.numeric !== "true" ||
-        !result.studentConditionNumeric.placeholder.includes("数字のみ") ||
-        !result.studentConditionFiltered || !result.studentConditionAdded || !result.pricedOptionVisible ||
+        result.studentConditionContract.inputMode !== null ||
+        result.studentConditionContract.pattern !== null ||
+        result.studentConditionContract.numeric !== null ||
+        result.studentConditionContract.placeholder !== "入力してください" ||
+        result.studentConditionContract.maxLength !== 20 ||
+        !result.studentConditionPreserved || !result.studentConditionAdded || !result.pricedOptionVisible ||
         !result.pricedOptionAdjusted;
     }
     return false;

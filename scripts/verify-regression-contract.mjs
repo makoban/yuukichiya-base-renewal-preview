@@ -10,7 +10,7 @@ const contact = await readFile(resolve(root, "contact.html"), "utf8");
 const previewActions = await readFile(resolve(root, "assets/preview-actions.js"), "utf8");
 
 const checks = [
-  ["theme release fingerprint", (text) => /BASE-Theme-Version" content="1\.5\.1"/.test(text) && /YK-Theme-Contract" content="83984-uniform-taxonomy-v8"/.test(text)],
+  ["theme release fingerprint", (text) => /BASE-Theme-Version" content="1\.5\.2"/.test(text) && /YK-Theme-Contract" content="83984-uniform-taxonomy-v8"/.test(text)],
   ["HP logo image", /assets\/yuukichiya-logo\.(?:png|webp|svg)/i],
   ["purchase history links", (text) => (text.match(/yuukichiya-purchase-history-prototype\.onrender\.com/g) || []).length >= 2],
   ["5,000 yen free-shipping notice", /5,000円以上の[\s\S]{0,120}送料無料/],
@@ -36,7 +36,7 @@ const checks = [
   ["privacy-policy link", /href=["']privacy\.html["']/],
   ["desktop image viewer bound", /width:\s*min\(94vw,1120px\)/],
   ["mobile image viewer bound", /width:\s*calc\(100vw - 16px\)/],
-  ["numeric-only student number", /inputmode=["']numeric["']/],
+  ["student number keeps the BASE free-text contract", (text) => !/data-condition-numeric|生徒番号は数字のみ|数字のみで入力してください/.test(text)],
   ["multiple-image product gallery", (text) => /data-yk-preview-gallery-next/.test(text) && /ykRenderPreviewGallery/.test(text)],
   ["BASE gallery removes cross-CDN duplicate lead image", (text) => /function ykPreviewImageKey/.test(text) && /\\\.akamaized\\\.net\$\/i\.test\(url\.hostname\)/.test(text) && /return ["']base-item:["'] \+ url\.pathname\.toLowerCase\(\)/.test(text)],
   ["product gallery stays inside a fixed frame", (text) => /\.yk-preview-gallery\s*\{[^}]*grid-template-rows:\s*minmax\(0,1fr\) auto[^}]*height:\s*100%[^}]*min-height:\s*0/.test(text) && /\.yk-preview-gallery__stage\s*\{[^}]*height:\s*100%[^}]*min-height:\s*0/.test(text) && (text.match(/\.yk-preview-item-dialog__image\s*\{[^}]*position:\s*absolute[^}]*inset:\s*12px[^}]*width:\s*calc\(100% - 24px\)[^}]*height:\s*calc\(100% - 24px\)[^}]*max-height:\s*none/g) || []).length >= 2 && !/\.yk-preview-item-dialog__image\s*\{[^}]*max-height:\s*calc\(100dvh - 84px\)/.test(text)],

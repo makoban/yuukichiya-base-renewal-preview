@@ -7,7 +7,7 @@
   <title>勇吉屋ネット｜学生服・学校用品を学校名で探す</title>
   <meta name="description" content="勇吉屋ネットの学生服・学校用品オンラインショップです。学校区分と学校名から必要な商品を探して注文できます。">
   <meta name="BASE-Theme-Name" content="Yuukichiya School Finder">
-  <meta name="BASE-Theme-Version" content="1.0">
+  <meta name="BASE-Theme-Version" content="1.5.2">
 
 
 
@@ -189,13 +189,17 @@
     .yk-purchase-panel__title { margin: 0; font-size: 20px; line-height: 1.4; }
     .yk-purchase-panel__lead { margin: 6px 0 18px; color: var(--yk-muted); font-size: 13px; font-weight: 800; }
     .yk-purchase-panel form, .yk-purchase-panel #purchase_form { margin: 0; }
-    .yk-purchase-panel #itemSelect { display: grid; gap: 14px; }
-    .yk-purchase-panel .purchaseElement, .yk-purchase-panel .itemSelect, .yk-purchase-panel .itemOptionElement { display: grid; gap: 7px; max-width: none; margin: 0; }
+    .yk-purchase-panel #itemSelect { display: grid; grid-template-columns: minmax(0,1fr); gap: 14px; }
+    .yk-purchase-panel #itemSelect > * { display: grid; align-self: start; width: 100%; min-width: 0; max-width: none; gap: 7px; margin: 0; }
+    .yk-purchase-panel #itemSelect > .itemOptionElement > div { display: grid; gap: 7px; }
     .yk-purchase-panel label { color: var(--yk-ink); font-size: 14px; font-weight: 900; }
-    .yk-purchase-panel select, .yk-purchase-panel .itemOption__select { width: 100%; min-height: 52px!important; border: 1px solid #cbd5d9!important; border-radius: var(--yk-radius)!important; background-color: #fff!important; padding: 0 42px 0 14px!important; color: var(--yk-ink); font: inherit; font-size: 16px; font-weight: 800; outline: 0; }
-    .yk-purchase-panel select:focus { border-color: var(--yk-main)!important; box-shadow: 0 0 0 4px rgba(47,125,91,.13); }
+    .yk-purchase-panel #itemSelect > * > label { display: flex; align-items: center; gap: 7px; }
+    .yk-purchase-panel #itemSelect > * > label::after { flex: 0 0 auto; border-radius: 4px; background: #c93729; color: #fff; padding: 2px 6px; content: "必須"; font-size: 10px; line-height: 1; }
+    .yk-purchase-panel :where(select,.itemOption__select,.itemOption__input) { width: 100%!important; height: 52px!important; min-height: 52px!important; margin: 0!important; border: 1px solid #cbd5d9!important; border-radius: var(--yk-radius)!important; background-color: #fff!important; color: var(--yk-ink); padding: 0 14px!important; font: inherit; font-size: 16px; outline: 0; }
+    .yk-purchase-panel :where(select,.itemOption__select) { padding-right: 42px!important; font-weight: 800; }
+    .yk-purchase-panel :where(select,.itemOption__select,.itemOption__input):focus { border-color: var(--yk-main)!important; box-shadow: 0 0 0 4px rgba(47,125,91,.13); }
     .yk-purchase-panel .purchaseButton { margin-top: 18px; }
-    .yk-purchase-panel .purchaseButton__btn { display: inline-flex!important; align-items: center; justify-content: center; width: 100%; min-height: 58px; border: 0; border-radius: var(--yk-radius); background: var(--yk-main); color: #fff; padding: 10px 16px; font: inherit; font-size: 16px; font-weight: 900; text-align: center; cursor: pointer; box-shadow: var(--yk-shadow); transition: background-color .18s ease, transform .18s ease, box-shadow .18s ease; }
+    .yk-purchase-panel .purchaseButton__btn { display: inline-flex; align-items: center; justify-content: center; width: 100%; min-height: 58px; border: 0; border-radius: var(--yk-radius); background: var(--yk-main); color: #fff; padding: 10px 16px; font: inherit; font-size: 16px; font-weight: 900; text-align: center; cursor: pointer; box-shadow: var(--yk-shadow); transition: background-color .18s ease, transform .18s ease, box-shadow .18s ease; }
     .yk-purchase-panel .purchaseButton__btn:hover { background: #24694c; box-shadow: 0 12px 26px rgba(31,83,61,.24); }
     .yk-purchase-panel .purchaseButton__btn:active { transform: translateY(1px); }
     .yk-purchase-panel .purchaseButton__btn--outOfStock { background: #637078; }
@@ -379,15 +383,15 @@
     .yk-lightbox__control:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
     .yk-lightbox__caption { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
     body.yk-lightbox-open { overflow: hidden; }
-    body.yk-item-route { height: 100dvh; overflow: hidden; }
+    body.yk-item-route { min-height: 100dvh; overflow-x: hidden; overflow-y: auto; }
     body.yk-item-route .yk-header__inner { grid-template-columns: auto minmax(0,1fr); min-height: 64px; }
     body.yk-item-route .yk-search { display: none; }
     body.yk-item-route .yk-nav { grid-column: 2; grid-row: 1; justify-self: end; }
-    body.yk-item-route .yk-main { height: calc(100dvh - var(--yk-item-header-height,64px)); overflow: hidden; }
+    body.yk-item-route .yk-main { min-height: calc(100dvh - var(--yk-item-header-height,64px)); overflow: visible; }
     body.yk-item-route .yk-footer { display: none; }
-    body.yk-item-route .yk-item-page { height: 100%; overflow: hidden; }
+    body.yk-item-route .yk-item-page { min-height: calc(100dvh - var(--yk-item-header-height,64px)); overflow: visible; }
     body.yk-item-route .yk-item-breadcrumb { height: 36px; padding-top: 7px; }
-    body.yk-item-route .yk-item { grid-template-columns: minmax(280px,450px) minmax(400px,620px); gap: clamp(30px,4vw,60px); justify-content: center; align-items: center; height: calc(100% - 36px); padding-top: 14px; padding-bottom: 18px; overflow: hidden; }
+    body.yk-item-route .yk-item { grid-template-columns: minmax(280px,450px) minmax(400px,620px); gap: clamp(30px,4vw,60px); justify-content: center; align-items: center; min-height: calc(100dvh - var(--yk-item-header-height,64px) - 36px); padding-top: 14px; padding-bottom: 18px; overflow: visible; }
     body.yk-item-route .yk-item__gallery { display: grid; grid-template-columns: minmax(0,380px) 60px; gap: 10px; justify-content: center; align-items: center; min-height: 0; max-height: 100%; }
     body.yk-item-route .yk-item__gallery:has(.yk-item__thumbs img:only-child) { grid-template-columns: minmax(0,400px); }
     body.yk-item-route .yk-item__mainImage { min-height: 0; width: 100%; height: min(42dvh,400px); cursor: zoom-in; }
@@ -404,13 +408,11 @@
     body.yk-item-route .yk-purchase-panel { margin-top: 8px; padding: 14px; }
     body.yk-item-route .yk-purchase-panel__title { font-size: 18px; }
     body.yk-item-route .yk-purchase-panel__lead { margin: 2px 0 9px; font-size: 11px; }
-    body.yk-item-route .yk-purchase-panel #itemSelect { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; }
+    body.yk-item-route .yk-purchase-panel #itemSelect { grid-template-columns: minmax(0,1fr); gap: 12px; }
     body.yk-item-route .yk-purchase-panel .purchaseElement,
     body.yk-item-route .yk-purchase-panel .itemSelect,
     body.yk-item-route .yk-purchase-panel .itemOptionElement { gap: 4px; }
     body.yk-item-route .yk-purchase-panel label { font-size: 12px; }
-    body.yk-item-route .yk-purchase-panel select,
-    body.yk-item-route .yk-purchase-panel .itemOption__select { min-height: 44px!important; font-size: 15px; }
     body.yk-item-route .yk-purchase-panel .purchaseButton { margin-top: 10px; }
     body.yk-item-route .yk-purchase-panel .purchaseButton__btn { min-height: 50px; }
     body.yk-item-route .yk-purchase-panel__note { margin-top: 7px; }
@@ -480,7 +482,7 @@
       body.yk-item-route .yk-nav > [data-yk-preview-cart-open] { display: inline-flex; width: auto; min-width: 52px; padding: 4px 8px; }
       body.yk-item-route .yk-nav #baseMenu { display: flex; min-width: 40px; }
       body.yk-item-route .yk-item-breadcrumb { height: 30px; padding: 4px 14px 0; font-size: 11px; }
-      body.yk-item-route .yk-item { grid-template-columns: minmax(92px,31%) minmax(0,1fr); grid-template-rows: auto auto auto auto auto auto; gap: 7px 11px; align-content: start; align-items: start; height: calc(100% - 30px); padding: 8px 14px 10px; }
+      body.yk-item-route .yk-item { grid-template-columns: minmax(92px,31%) minmax(0,1fr); grid-template-rows: auto auto auto auto auto auto; gap: 7px 11px; align-content: start; align-items: start; min-height: 0; padding: 8px 14px max(22px,env(safe-area-inset-bottom)); }
       body.yk-item-route .yk-item__gallery,
       body.yk-item-route .yk-item__summary { display: contents; }
       body.yk-item-route .yk-item__mainImage { grid-column: 1; grid-row: 1 / 4; align-self: start; width: 100%; height: auto; max-height: 118px; aspect-ratio: 1; }
@@ -493,9 +495,7 @@
       body.yk-item-route .yk-purchase-panel { grid-column: 1 / -1; grid-row: 4; margin: 0; padding: 10px; }
       body.yk-item-route .yk-purchase-panel__title { font-size: 16px; }
       body.yk-item-route .yk-purchase-panel__lead { margin-bottom: 6px; font-size: 10px; }
-      body.yk-item-route .yk-purchase-panel #itemSelect { gap: 7px; }
-      body.yk-item-route .yk-purchase-panel select,
-      body.yk-item-route .yk-purchase-panel .itemOption__select { min-height: 42px!important; padding-right: 30px!important; padding-left: 10px!important; font-size: 14px; }
+      body.yk-item-route .yk-purchase-panel #itemSelect { gap: 12px; }
       body.yk-item-route .yk-purchase-panel .purchaseButton { margin-top: 8px; }
       body.yk-item-route .yk-purchase-panel .purchaseButton__btn { min-height: 46px; font-size: 15px; }
       body.yk-item-route .yk-purchase-panel__note { margin-top: 5px; font-size: 9px; }
