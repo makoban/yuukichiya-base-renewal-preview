@@ -18,7 +18,7 @@
 .yk-free-shipping picture{min-width:0}
 .yk-free-shipping img{width:100%;height:100%;object-fit:cover;object-position:right center}
 .yk-reviews-band{border-top:1px solid var(--yk-line);border-bottom:1px solid var(--yk-line);background:#f4f7f5}
-.yk-reviews-band[hidden],.yk-site-notice[hidden]{display:none}
+.yk-reviews-band[hidden],.yk-site-notice[hidden],.yk-site-notices[hidden]{display:none}
 .yk-shop-reviews{display:grid;min-width:0;gap:14px;padding:18px;border:1px solid rgba(47,125,91,.24);border-radius:var(--yk-radius);background:#fffdf8}
 .yk-shop-reviews--home{max-width:1120px;margin:0 auto;padding:28px;box-shadow:0 12px 28px rgba(28,45,52,.08)}
 .yk-shop-reviews__head{display:flex;min-width:0;align-items:flex-start;justify-content:space-between;gap:12px}

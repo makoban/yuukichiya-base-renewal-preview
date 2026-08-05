@@ -10,11 +10,21 @@ const contact = await readFile(resolve(root, "contact.html"), "utf8");
 const previewActions = await readFile(resolve(root, "assets/preview-actions.js"), "utf8");
 
 const checks = [
-  ["theme release fingerprint", (text) => /BASE-Theme-Version" content="1\.5\.2"/.test(text) && /YK-Theme-Contract" content="83984-uniform-taxonomy-v8"/.test(text)],
+  ["theme release fingerprint", (text) => /BASE-Theme-Version" content="1\.5\.3"/.test(text) && /YK-Theme-Contract" content="83984-uniform-taxonomy-v8"/.test(text)],
   ["HP logo image", /assets\/yuukichiya-logo\.(?:png|webp|svg)/i],
   ["purchase history links", (text) => (text.match(/yuukichiya-purchase-history-prototype\.onrender\.com/g) || []).length >= 2],
   ["5,000 yen free-shipping notice", /5,000円以上の[\s\S]{0,120}送料無料/],
   ["major closure 14-day lead", /ykMajorClosureLeadDays\s*=\s*14/],
+  ["seasonal closure notice leads the homepage", (text) => {
+    const main = text.indexOf('<main class="yk-main"');
+    const closure = text.indexOf('data-yk-major-closure hidden', main);
+    const hero = text.indexOf('class="yk-hero"', main);
+    const shipping = text.indexOf('12時まで当日発送', main);
+    return main >= 0 && closure > main && closure < hero && hero < shipping &&
+      (text.match(/data-yk-major-closure hidden/g) || []).length === 1 &&
+      /\.yk-site-notices\[hidden\]\s*\{[^}]*display:\s*none/.test(text);
+  }],
+  ["summer and year-end closure aliases", /夏季休暇[\s\S]{0,80}年末休暇/],
   ["semantic search asset", /assets\/search-relevance-v8\.js\?v=20260805-uniform-v8/],
   ["shared faceted-intent search engine", (text) => /assets\/catalog-search-engine-v8\.js\?v=20260805-uniform-v8/.test(text) && /ykSemanticSearchEngine\.score/.test(text)],
   ["public catalog reset", (text) => /assets\/base-production-catalog\.js/.test(text) && /window\.ykCurrentCatalog/.test(text)],

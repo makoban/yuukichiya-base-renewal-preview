@@ -502,6 +502,9 @@
   }
 
   function tokyoDateKey() {
+    if (window.ykMajorClosureBaseDate && /^\d{4}-\d{2}-\d{2}$/.test(window.ykMajorClosureBaseDate)) {
+      return window.ykMajorClosureBaseDate;
+    }
     var parts = new Intl.DateTimeFormat("ja-JP", {
       timeZone: "Asia/Tokyo", year: "numeric", month: "2-digit", day: "2-digit"
     }).formatToParts(new Date());
@@ -516,41 +519,76 @@
     return Date.UTC(parts[0], parts[1] - 1, parts[2]) / 86400000;
   }
 
+  function eventDateKey(event, side) {
+    var value = event && event[side];
+    if (!value) return "";
+    return String(value.date || value.dateTime || "").slice(0, 10);
+  }
+
   function formatDay(value) {
     var date = new Date(value * 86400000);
     var weekdays = ["日", "月", "火", "水", "木", "金", "土"];
     return (date.getUTCMonth() + 1) + "月" + date.getUTCDate() + "日（" + weekdays[date.getUTCDay()] + "）";
   }
 
+  function majorClosurePeriods(calendarData) {
+    var today = dayNumber(tokyoDateKey());
+    var stores = calendarData && calendarData.stores || {};
+    var closurePattern = /休業|休暇|定休日|休み/;
+    var majorPattern = /夏季休業|夏季休暇|冬季休業|冬季休暇|年末年始|年末休暇|年始休暇/;
+    var periods = {};
+    Object.keys(stores).forEach(function (storeName) {
+      var closedDays = {};
+      (Array.isArray(stores[storeName]) ? stores[storeName] : []).forEach(function (event) {
+        var title = String(event && event.summary || "");
+        if (!closurePattern.test(title) || event.status === "cancelled") return;
+        var start = dayNumber(eventDateKey(event, "start"));
+        var end = dayNumber(eventDateKey(event, "end"));
+        if (!isFinite(start)) return;
+        if (!isFinite(end) || end <= start) end = start + 1;
+        for (var day = start; day < end; day += 1) {
+          if (!closedDays[day]) closedDays[day] = [];
+          if (majorPattern.test(title) && closedDays[day].indexOf(title) === -1) closedDays[day].push(title);
+        }
+      });
+      var run = null;
+      var days = Object.keys(closedDays).map(Number).sort(function (a, b) { return a - b; });
+      days.forEach(function (day, index) {
+        if (!run || day !== run.end + 1) {
+          if (run && run.titles.length) addPeriod(run);
+          run = { store: storeName, start: day, end: day, titles: [] };
+        } else run.end = day;
+        closedDays[day].forEach(function (title) {
+          if (run.titles.indexOf(title) === -1) run.titles.push(title);
+        });
+        if (index === days.length - 1 && run && run.titles.length) addPeriod(run);
+      });
+    });
+
+    function addPeriod(run) {
+      if (run.end < today || run.start > today + 14) return;
+      var title = run.titles[0] || "大型休業";
+      var key = title + "|" + run.start + "|" + run.end;
+      if (!periods[key]) periods[key] = { title: title, start: run.start, end: run.end, stores: [] };
+      if (periods[key].stores.indexOf(run.store) === -1) periods[key].stores.push(run.store);
+    }
+
+    return Object.keys(periods).map(function (key) { return periods[key]; }).sort(function (a, b) {
+      return a.start - b.start;
+    });
+  }
+
   function renderMajorClosures(calendarData) {
     var notice = document.querySelector("[data-yk-major-closure]");
     var target = document.querySelector("[data-yk-major-closure-periods]");
     if (!notice || !target) return;
-    var today = dayNumber(tokyoDateKey());
-    var stores = calendarData && calendarData.stores || {};
-    var periods = {};
-    Object.keys(stores).forEach(function (storeName) {
-      (Array.isArray(stores[storeName]) ? stores[storeName] : []).forEach(function (event) {
-        var title = String(event && event.summary || "");
-        if (!/夏季休業|冬季休業|年末年始/.test(title) || event.status === "cancelled") return;
-        var start = dayNumber(event.start && (event.start.date || event.start.dateTime));
-        var endExclusive = dayNumber(event.end && (event.end.date || event.end.dateTime));
-        if (!isFinite(start)) return;
-        var end = isFinite(endExclusive) && endExclusive > start ? endExclusive - 1 : start;
-        if (end < today || start > today + 14) return;
-        var key = title + "|" + start + "|" + end;
-        if (!periods[key]) periods[key] = { title: title, start: start, end: end, stores: [] };
-        if (periods[key].stores.indexOf(storeName) === -1) periods[key].stores.push(storeName);
-      });
-    });
     target.replaceChildren();
-    Object.keys(periods).sort(function (a, b) { return periods[a].start - periods[b].start; }).forEach(function (key) {
-      var period = periods[key];
+    majorClosurePeriods(calendarData).forEach(function (period) {
       var row = document.createElement("span");
       row.className = "yk-closure-period";
       row.textContent = period.title + "：" + formatDay(period.start) +
         (period.end > period.start ? "〜" + formatDay(period.end) : "") +
-        "（" + period.stores.join("・") + "）";
+        "／" + period.stores.join("・");
       target.appendChild(row);
     });
     notice.hidden = !target.children.length;

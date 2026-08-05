@@ -10,7 +10,7 @@
   <meta name="description" content="勇吉屋ネットの学生服・学校用品オンラインショップです。学校区分と学校名から必要な商品を探して注文できます。">
   <meta name="robots" content="noindex, nofollow">
   <meta name="BASE-Theme-Name" content="Yuukichiya School Finder">
-  <meta name="BASE-Theme-Version" content="1.5.2">
+  <meta name="BASE-Theme-Version" content="1.5.3">
   <meta name="YK-Theme-Contract" content="83984-uniform-taxonomy-v8">
 
 
@@ -72,6 +72,7 @@
     .yk-site-notices { display: grid; gap: 10px; max-width: var(--yk-content-max); margin: 0 auto; padding: 14px 28px; }
     .yk-site-notice { display: grid; grid-template-columns: auto minmax(0,1fr); gap: 14px; align-items: center; min-width: 0; padding: 13px 16px; border: 1px solid var(--yk-line); border-radius: var(--yk-radius); background: #fff; box-shadow: 0 6px 16px rgba(28,45,52,.07); }
     .yk-site-notice[hidden] { display: none; }
+    .yk-site-notices[hidden] { display: none; }
     .yk-site-notice__label { display: inline-flex; align-items: center; justify-content: center; min-width: 104px; min-height: 36px; padding: 0 12px; border-radius: 4px; background: var(--yk-main); color: #fff; font-size: 12px; font-weight: 900; line-height: 1; white-space: nowrap; }
     .yk-site-notice__body { min-width: 0; }
     .yk-site-notice__body strong { display: block; font-size: 16px; line-height: 1.5; }
@@ -798,6 +799,17 @@
 
   <main class="yk-main" id="top">
 
+    <section class="yk-site-notices" aria-label="夏季・年末年始休業のお知らせ" data-yk-major-closure hidden>
+      <div class="yk-site-notice yk-site-notice--closure">
+        <span class="yk-site-notice__label">営業日のお知らせ</span>
+        <div class="yk-site-notice__body">
+          <strong>長期休暇期間中も、ご注文いただけます。</strong>
+          <div class="yk-closure-periods" data-yk-major-closure-periods aria-live="polite"></div>
+          <p>商品の発送は、休業明けの営業日から順次対応いたします。</p>
+        </div>
+      </div>
+    </section>
+
     <section class="yk-hero">
       <div class="yk-hero__inner">
         <div class="yk-hero__copy">
@@ -1191,15 +1203,7 @@
       <span>5,000円以上のお買い上げが対象です。</span>
     </div>
 
-    <section class="yk-site-notices" aria-label="発送と営業日のお知らせ">
-      <div class="yk-site-notice yk-site-notice--closure" data-yk-major-closure hidden>
-        <span class="yk-site-notice__label">営業日のお知らせ</span>
-        <div class="yk-site-notice__body">
-          <strong>長期休暇期間中も、ご注文いただけます。</strong>
-          <div class="yk-closure-periods" data-yk-major-closure-periods aria-live="polite"></div>
-          <p>商品の発送は、休業明けの営業日から順次対応いたします。</p>
-        </div>
-      </div>
+    <section class="yk-site-notices" aria-label="発送のお知らせ">
       <div class="yk-site-notice yk-site-notice--shipping">
         <span class="yk-site-notice__label">12時まで当日発送</span>
         <div class="yk-site-notice__body">
@@ -2310,8 +2314,8 @@
     function ykMajorClosurePeriods(calendarData) {
       var stores = calendarData && calendarData.stores;
       if (!stores || typeof stores !== "object") return [];
-      var closurePattern = /休業|定休日|休み/;
-      var majorPattern = /夏季休業|冬季休業|年末年始/;
+      var closurePattern = /休業|休暇|定休日|休み/;
+      var majorPattern = /夏季休業|夏季休暇|冬季休業|冬季休暇|年末年始|年末休暇|年始休暇/;
       var periods = [];
 
       Object.keys(stores).forEach(function (storeName) {
