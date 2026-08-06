@@ -1,4 +1,5 @@
 const PAGE_SIZE = 60;
+const RAW_PROCESSED_ROOT = "https://raw.githubusercontent.com/makoban/yuukichiya-base-renewal-preview/main/image-review/all-products/";
 const STATUS_LABELS = {
   queued: "加工待ち",
   review_pending: "確認待ち",
@@ -41,6 +42,12 @@ function escapeHtml(value) {
 
 function keyFor(row) { return `${row.itemId}:${row.image.imageNo}`; }
 
+function processedSource(url) {
+  if (!url || !url.startsWith("processed/")) return url;
+  if (["127.0.0.1", "localhost"].includes(location.hostname)) return url;
+  return `${RAW_PROCESSED_ROOT}${url.split("/").map(encodeURIComponent).join("/")}`;
+}
+
 function effectiveStatus(row) {
   return decisions[keyFor(row)]?.decision === "regenerate" ? "regenerate" : row.image.status;
 }
@@ -77,8 +84,9 @@ function cardMarkup(row) {
   const status = effectiveStatus(row);
   const key = keyFor(row);
   const retryActive = decisions[key]?.decision === "regenerate";
+  const processedUrl = processedSource(image.processedUrl);
   const processed = image.processedUrl
-    ? `<button class="zoom-trigger" type="button" data-src="${escapeHtml(image.processedUrl)}" data-caption="${escapeHtml(`${row.title} 加工後`)}"><img src="${escapeHtml(image.processedUrl)}" width="1024" height="1024" loading="lazy" decoding="async" alt="${escapeHtml(`${row.title}の加工後画像`)}"></button>`
+    ? `<button class="zoom-trigger" type="button" data-src="${escapeHtml(processedUrl)}" data-caption="${escapeHtml(`${row.title} 加工後`)}"><img src="${escapeHtml(processedUrl)}" width="1024" height="1024" loading="lazy" decoding="async" alt="${escapeHtml(`${row.title}の加工後画像`)}"></button>`
     : `<div class="placeholder">加工後画像を生成中</div>`;
   const score = image.scores
     ? `<div class="score"><span>忠実度 ${image.scores.truthfulness}点</span><span>見栄え ${image.scores.appearance}点</span><span>生成 ${image.attempts}回</span></div>`
