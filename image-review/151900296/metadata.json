@@ -25,5 +25,13 @@
     "appearance_score": 95,
     "reason": "原本で見えていない左胸ポケットの銀ボタンを追加したため"
   },
-  "base_status": "write_items_reauthorization_required_not_uploaded"
+  "base_status": "uploaded_verified",
+  "uploaded_at": "2026-08-06T13:08:44+09:00",
+  "uploaded_image_no": 1,
+  "uploaded_image_url": "https://base-ec2.akamaized.net/images/item/origin/832fb6b24cf1c6e866cdaf559238e128.jpg",
+  "verification": {
+    "api_primary_image_changed": true,
+    "api_images_2_to_4_unchanged": true,
+    "public_store_primary_image_verified": true
+  }
 }
