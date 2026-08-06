@@ -1,14 +1,14 @@
 {
   "meta": {
     "schemaVersion": 1,
-    "generatedAt": "2026-08-06T13:39:03.388639Z",
+    "generatedAt": "2026-08-06T13:50:47.631160Z",
     "model": "gpt-image-2",
     "productCount": 606,
     "imageCount": 1597,
-    "queueCount": 1521,
+    "queueCount": 1520,
     "status": {
-      "queued": 1521,
-      "review_pending": 2,
+      "queued": 1520,
+      "review_pending": 3,
       "skipped": 74
     },
     "rule": "商品を変えず、文字資料は生成せず、GPT Image 2版を履歴付きで保存する"
@@ -22908,13 +22908,20 @@
         {
           "imageNo": 1,
           "originalUrl": "../all-products/originals/151791830/01.jpg",
-          "processedUrl": null,
-          "status": "queued",
+          "processedUrl": "processed/151791830/01-g01.jpg",
+          "status": "review_pending",
           "classification": "product_photo",
           "processingDecision": "gpt_image_2",
           "skipReason": "",
-          "attempts": 0,
-          "scores": null
+          "attempts": 1,
+          "scores": {
+            "truthfulness": 95,
+            "appearance": 96,
+            "textLogoIntegrity": 100,
+            "risk": "low",
+            "passed": true,
+            "reasons": []
+          }
         },
         {
           "imageNo": 2,
