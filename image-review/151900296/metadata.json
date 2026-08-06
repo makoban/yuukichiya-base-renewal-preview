@@ -1,0 +1,29 @@
+{
+  "item_id": "151900296",
+  "title": "自重堂 吸汗速乾長袖ブルゾン",
+  "public_url": "https://yuukichiya.base.shop/items/151900296",
+  "captured_at": "2026-08-06T12:25:00+09:00",
+  "target": "primary_image_only",
+  "original_image_urls": [
+    "https://baseec-img-mng.akamaized.net/images/item/origin/8dde0fe08f91ce67b7e2ae9a36027b6f.jpg",
+    "https://baseec-img-mng.akamaized.net/images/item/origin/3d0b3fc5885007f82b8b4309977530bc.jpg",
+    "https://baseec-img-mng.akamaized.net/images/item/origin/f621b71c3d755022ff8d0120c201a56a.jpg",
+    "https://baseec-img-mng.akamaized.net/images/item/origin/c64fca7b4ae3beffbce2d9e72ba91435.jpg"
+  ],
+  "approved_candidate": {
+    "file": "assets/base-upload-151900296.jpg",
+    "width": 1024,
+    "height": 1024,
+    "bytes": 209229,
+    "truthfulness_score": 96,
+    "appearance_score": 94,
+    "generation_attempt": 2
+  },
+  "rejected_candidate": {
+    "file": "assets/rejected-front.png",
+    "truthfulness_score": 84,
+    "appearance_score": 95,
+    "reason": "原本で見えていない左胸ポケットの銀ボタンを追加したため"
+  },
+  "base_status": "write_items_reauthorization_required_not_uploaded"
+}

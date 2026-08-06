@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>勇吉屋 BASE画像加工 1商品実運用テスト</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink:#16213d;--muted:#667087;--line:#dce2ec;--bg:#f3f6fb;--card:#fff;
+      --blue:#174a8b;--green:#147055;--red:#b83a4b;--amber:#9a6400;
+      font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;
+    }
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink)}
+    a{color:inherit} img{display:block;max-width:100%;height:auto}
+    .page{width:min(1240px,calc(100% - 28px));margin:auto;padding:38px 0 64px}
+    header{display:grid;gap:14px;margin-bottom:24px}
+    .eyebrow{width:max-content;padding:6px 11px;border-radius:999px;background:#e8f0fb;color:var(--blue);font-size:13px;font-weight:800}
+    h1{margin:0;font-size:clamp(27px,5vw,46px);line-height:1.35} p{margin:0;line-height:1.8}
+    .lead{max-width:860px;color:var(--muted)}
+    .status{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:14px 16px;border:1px solid #efd291;border-radius:14px;background:#fff8e7;color:#684a00}
+    .status strong{color:var(--amber)}
+    .summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px 0 24px}
+    .metric{padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--card)}
+    .metric b{display:block;margin-bottom:4px;font-size:25px}.metric span{color:var(--muted);font-size:13px}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    .panel{overflow:hidden;border:1px solid var(--line);border-radius:20px;background:var(--card);box-shadow:0 10px 30px rgba(20,33,62,.06)}
+    .panel-head{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:15px 16px;border-bottom:1px solid var(--line)}
+    .badge{padding:5px 9px;border-radius:999px;color:#fff;font-size:12px;font-weight:800}.original{background:#59657a}.reject{background:var(--red)}.approve{background:var(--green)}
+    .score{font-size:13px;font-weight:800}.photo{background:#eef1f5}.photo img{width:100%;aspect-ratio:1/1;object-fit:contain}
+    .copy{display:grid;gap:8px;padding:15px 16px;color:var(--muted);font-size:13px}.copy strong{color:var(--ink)}
+    .checks{margin-top:20px;padding:20px;border:1px solid var(--line);border-radius:20px;background:var(--card)}
+    .checks h2{margin:0 0 12px;font-size:20px}.check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 18px}
+    .check{display:flex;gap:8px;align-items:flex-start;line-height:1.7}.ok{color:var(--green);font-weight:900}.ng{color:var(--red);font-weight:900}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.button{display:inline-flex;align-items:center;min-height:44px;padding:10px 15px;border-radius:999px;background:var(--blue);color:#fff;text-decoration:none;font-weight:800}.button.secondary{border:1px solid var(--line);background:#fff;color:var(--ink)}
+    footer{margin-top:20px;color:var(--muted);font-size:12px;line-height:1.8}
+    @media(max-width:880px){.summary{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}.check-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <p class="eyebrow">1商品 実運用テスト</p>
+      <h1>自重堂 吸汗速乾長袖ブルゾン</h1>
+      <p class="lead">商品ID 151900296。主画像だけを加工対象にし、残り3枚は変更しません。原本、忠実度不足で却下した案、採用候補を同じ画面で比較できます。</p>
+      <div class="status"><strong>BASE API反映待ち</strong><span>加工画像は準備済みです。BASE開発アプリへ商品書込み権限を再承認後、主画像1枚だけをAPIで入れ替えて公開面を再確認します。</span></div>
+    </header>
+
+    <section class="summary" aria-label="採点概要">
+      <div class="metric"><b>96</b><span>採用候補・商品忠実度 / 100</span></div>
+      <div class="metric"><b>94</b><span>採用候補・見栄え / 100</span></div>
+      <div class="metric"><b>2回</b><span>生成回数</span></div>
+      <div class="metric"><b>1枚</b><span>今回のBASE入替対象</span></div>
+    </section>
+
+    <section class="grid" aria-label="原本と生成結果の比較">
+      <article class="panel">
+        <div class="panel-head"><span class="badge original">原本</span><span class="score">基準画像</span></div>
+        <div class="photo"><img src="assets/original.jpg" alt="BASEに登録されているブルゾンの原本"></div>
+        <div class="copy"><strong>変更前</strong><span>白背景、やや斜めの撮影。商品詳細を判定する唯一の正本です。</span></div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head"><span class="badge reject">却下</span><span class="score">忠実度 84点</span></div>
+        <div class="photo"><img src="assets/rejected-front.png" alt="正面化したが商品忠実度不足で却下した画像"></div>
+        <div class="copy"><strong>1回目・正面化を強く適用</strong><span>見栄えは良いものの、原本で見えていない左胸ポケットの銀ボタンを追加したため不採用です。</span></div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head"><span class="badge approve">採用候補</span><span class="score">忠実度 96点</span></div>
+        <div class="photo"><img src="assets/approved-candidate.png" alt="原本の形状を保って店内背景へ整えた採用候補画像"></div>
+        <div class="copy"><strong>2回目・原本角度を優先</strong><span>正面化を弱め、原本で確認できる非対称形状、白線、ボタン、前立て、ポケットを維持しました。</span></div>
+      </article>
+    </section>
+
+    <section class="checks">
+      <h2>忠実度チェック</h2>
+      <div class="check-grid">
+        <div class="check"><span class="ok">✓</span><span>ネービー色、素材感、既存のシワを維持</span></div>
+        <div class="check"><span class="ok">✓</span><span>右胸の銀ボタン1個、裾ボタン1個を維持</span></div>
+        <div class="check"><span class="ok">✓</span><span>左胸ポケットに新しいボタンを追加していない</span></div>
+        <div class="check"><span class="ok">✓</span><span>袖の白線2本、下ポケットの縦白線を維持</span></div>
+        <div class="check"><span class="ok">✓</span><span>襟、白い前立て、ファスナー、袖、裾を維持</span></div>
+        <div class="check"><span class="ng">!</span><span>採点は自動判定の補助値。最終判断は人が原本と比較</span></div>
+      </div>
+      <div class="actions">
+        <a class="button" href="https://yuukichiya.base.shop/items/151900296" target="_blank" rel="noopener">BASE商品ページを見る</a>
+        <a class="button secondary" href="assets/base-upload-151900296.jpg">BASE登録用JPEGを開く</a>
+      </div>
+    </section>
+
+    <footer>登録用画像：1024×1024px / JPEG / 209,229 bytes。原本URL4件と生成判定は metadata.json に保存しています。</footer>
+  </main>
+</body>
+</html>
