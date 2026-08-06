@@ -6,11 +6,12 @@ import { Script } from "node:vm";
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const indexPath = resolve(root, "index.html");
 const index = await readFile(indexPath, "utf8");
+const migrationPreview = await readFile(resolve(root, "base-theme-migration-preview.html"), "utf8");
 const contact = await readFile(resolve(root, "contact.html"), "utf8");
 const previewActions = await readFile(resolve(root, "assets/preview-actions.js"), "utf8");
 
 const checks = [
-  ["theme release fingerprint", (text) => /BASE-Theme-Version" content="1\.5\.3"/.test(text) && /YK-Theme-Contract" content="83984-uniform-taxonomy-v8"/.test(text)],
+  ["theme release fingerprint", (text) => /BASE-Theme-Version" content="1\.5\.5"/.test(text) && /YK-Theme-Contract" content="83984-uniform-taxonomy-v8"/.test(text)],
   ["HP logo image", /assets\/yuukichiya-logo\.(?:png|webp|svg)/i],
   ["purchase history links", (text) => (text.match(/yuukichiya-purchase-history-prototype\.onrender\.com/g) || []).length >= 2],
   ["5,000 yen free-shipping notice", /5,000円以上の[\s\S]{0,120}送料無料/],
@@ -48,6 +49,7 @@ const checks = [
   ["mobile image viewer bound", /width:\s*calc\(100vw - 16px\)/],
   ["student number keeps the BASE free-text contract", (text) => !/data-condition-numeric|生徒番号は数字のみ|数字のみで入力してください/.test(text)],
   ["multiple-image product gallery", (text) => /data-yk-preview-gallery-next/.test(text) && /ykRenderPreviewGallery/.test(text)],
+  ["product image fills its positioned frame before contain scaling", (text) => /body\.yk-item-route \.yk-item__mainImage\s*\{[^}]*position:\s*relative[^}]*overflow:\s*hidden/.test(text) && /body\.yk-item-route \.yk-item__mainImage img\s*\{[^}]*position:\s*absolute[^}]*inset:\s*0[^}]*display:\s*block[^}]*width:\s*100%[^}]*height:\s*100%[^}]*max-width:\s*none[^}]*max-height:\s*none[^}]*object-fit:\s*contain[^}]*object-position:\s*center/.test(text) && !/body\.yk-item-route \.yk-item__mainImage img\s*\{[^}]*width:\s*auto[^}]*height:\s*auto/.test(text)],
   ["BASE gallery removes cross-CDN duplicate lead image", (text) => /function ykPreviewImageKey/.test(text) && /\\\.akamaized\\\.net\$\/i\.test\(url\.hostname\)/.test(text) && /return ["']base-item:["'] \+ url\.pathname\.toLowerCase\(\)/.test(text)],
   ["product gallery stays inside a fixed frame", (text) => /\.yk-preview-gallery\s*\{[^}]*grid-template-rows:\s*minmax\(0,1fr\) auto[^}]*height:\s*100%[^}]*min-height:\s*0/.test(text) && /\.yk-preview-gallery__stage\s*\{[^}]*height:\s*100%[^}]*min-height:\s*0/.test(text) && (text.match(/\.yk-preview-item-dialog__image\s*\{[^}]*position:\s*absolute[^}]*inset:\s*12px[^}]*width:\s*calc\(100% - 24px\)[^}]*height:\s*calc\(100% - 24px\)[^}]*max-height:\s*none/g) || []).length >= 2 && !/\.yk-preview-item-dialog__image\s*\{[^}]*max-height:\s*calc\(100dvh - 84px\)/.test(text)],
   ["gallery switching scrolls thumbnails horizontally only", (text) => /function ykKeepPreviewThumbVisible/.test(text) && /thumbRail\.scrollLeft/.test(text) && !/current\s*&&\s*thumb\.scrollIntoView/.test(text)],
@@ -80,6 +82,13 @@ const failures = [];
 for (const [label, test] of checks) {
   const passed = typeof test === "function" ? test(index) : test.test(index);
   if (!passed) failures.push(label);
+}
+
+if (!/BASE-Theme-Version" content="1\.5\.5"/.test(migrationPreview) ||
+    !/body\.yk-item-route \.yk-item__mainImage\s*\{[^}]*position:\s*relative[^}]*overflow:\s*hidden/.test(migrationPreview) ||
+    !/body\.yk-item-route \.yk-item__mainImage img\s*\{[^}]*position:\s*absolute[^}]*inset:\s*0[^}]*display:\s*block[^}]*width:\s*100%[^}]*height:\s*100%[^}]*max-width:\s*none[^}]*max-height:\s*none[^}]*object-fit:\s*contain[^}]*object-position:\s*center/.test(migrationPreview) ||
+    /body\.yk-item-route \.yk-item__mainImage img\s*\{[^}]*width:\s*auto[^}]*height:\s*auto/.test(migrationPreview)) {
+  failures.push("migration preview uses the v1.5.5 contained product image contract");
 }
 
 if (!/この画面ではご注文を確定できません。商品ページから購入手続きへお進みください。/.test(previewActions)) {
