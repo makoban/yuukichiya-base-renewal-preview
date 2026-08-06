@@ -4,22 +4,35 @@ import path from "node:path";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
 const MANIFEST = path.join(ROOT, "image-review/all-products/data/manifest.json");
-const OUTPUT_ROOT = path.join(ROOT, ".image-batch/contact-sheets");
+const args = new Map(process.argv.slice(2).map((value) => value.split("=", 2)));
+const source = args.get("--source") || "original";
+const scope = args.get("--scope") || "main";
+if (!new Set(["original", "processed"]).has(source)) throw new Error("--sourceはoriginalまたはprocessedです");
+if (!new Set(["main", "all"]).has(scope)) throw new Error("--scopeはmainまたはallです");
+const OUTPUT_ROOT = path.join(ROOT, ".image-batch/contact-sheets", `${source}-${scope}`);
 const TILE = 220;
 const COLUMNS = 5;
 const PER_SHEET = 25;
 const manifest = JSON.parse(await fs.readFile(MANIFEST, "utf8"));
-const mains = manifest.products.map((product) => ({
-  itemId: product.itemId,
-  title: product.title,
-  file: path.join(ROOT, ".image-batch/originals", product.itemId, "01.jpg"),
-}));
+const selected = manifest.products.flatMap((product) => {
+  const images = scope === "main" ? product.images.slice(0, 1) : product.images;
+  return images.map((image) => ({ product, image }));
+}).map(({ product, image }) => {
+  return {
+    itemId: product.itemId,
+    title: product.title,
+    imageNo: image.imageNo,
+    file: source === "processed"
+      ? path.resolve(ROOT, "image-review/all-products", image.processedUrl)
+      : path.join(ROOT, ".image-batch/originals", product.itemId, `${String(image.imageNo).padStart(2, "0")}.jpg`),
+  };
+});
 
 await fs.mkdir(OUTPUT_ROOT, { recursive: true });
-for (let offset = 0; offset < mains.length; offset += PER_SHEET) {
-  const entries = mains.slice(offset, offset + PER_SHEET);
+for (let offset = 0; offset < selected.length; offset += PER_SHEET) {
+  const entries = selected.slice(offset, offset + PER_SHEET);
   const sheetNo = Math.floor(offset / PER_SHEET) + 1;
-  const basename = `main-${String(sheetNo).padStart(2, "0")}`;
+  const basename = `${scope}-${String(sheetNo).padStart(2, "0")}`;
   const output = path.join(OUTPUT_ROOT, `${basename}.jpg`);
   const mapping = path.join(OUTPUT_ROOT, `${basename}.json`);
   const args = ["-hide_banner", "-loglevel", "error", "-y"];
@@ -38,4 +51,4 @@ for (let offset = 0; offset < mains.length; offset += PER_SHEET) {
   await fs.writeFile(mapping, `${JSON.stringify({ sheetNo, offset, entries }, null, 2)}\n`);
 }
 
-process.stdout.write(`${JSON.stringify({ products: mains.length, sheets: Math.ceil(mains.length / PER_SHEET), output: path.relative(ROOT, OUTPUT_ROOT) })}\n`);
+process.stdout.write(`${JSON.stringify({ source, scope, images: selected.length, sheets: Math.ceil(selected.length / PER_SHEET), output: path.relative(ROOT, OUTPUT_ROOT) })}\n`);
