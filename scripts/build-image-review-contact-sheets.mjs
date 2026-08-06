@@ -1,4 +1,5 @@
 import { spawnSync } from "node:child_process";
+import fsSync from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 
@@ -14,6 +15,20 @@ const TILE = 220;
 const COLUMNS = 5;
 const PER_SHEET = 25;
 const manifest = JSON.parse(await fs.readFile(MANIFEST, "utf8"));
+const ffmpegAvailable = spawnSync("which", ["ffmpeg"], { stdio: "ignore" }).status === 0;
+let nativeSheetBinary = null;
+if (!ffmpegAvailable) {
+  const binaryDir = path.join(ROOT, ".image-batch/bin");
+  nativeSheetBinary = path.join(binaryDir, "image-contact-sheet");
+  const swiftSource = path.join(ROOT, "scripts/image-contact-sheet.swift");
+  await fs.mkdir(binaryDir, { recursive: true });
+  const needsCompile = !fsSync.existsSync(nativeSheetBinary)
+    || fsSync.statSync(nativeSheetBinary).mtimeMs < fsSync.statSync(swiftSource).mtimeMs;
+  if (needsCompile) {
+    const compile = spawnSync("xcrun", ["swiftc", "-O", swiftSource, "-o", nativeSheetBinary], { encoding: "utf8" });
+    if (compile.status !== 0) throw new Error(`Swift contact sheet compile: ${compile.stderr}`);
+  }
+}
 const selected = manifest.products.flatMap((product) => {
   const images = scope === "main" ? product.images.slice(0, 1) : product.images;
   return images.map((image) => ({ product, image }));
@@ -35,19 +50,23 @@ for (let offset = 0; offset < selected.length; offset += PER_SHEET) {
   const basename = `${scope}-${String(sheetNo).padStart(2, "0")}`;
   const output = path.join(OUTPUT_ROOT, `${basename}.jpg`);
   const mapping = path.join(OUTPUT_ROOT, `${basename}.json`);
-  const args = ["-hide_banner", "-loglevel", "error", "-y"];
-  for (const entry of entries) args.push("-i", entry.file);
-
-  const filters = entries.map((entry, index) => (
-    `[${index}:v]scale=${TILE}:${TILE}:force_original_aspect_ratio=decrease:flags=lanczos,`
-    + `pad=${TILE}:${TILE}:(ow-iw)/2:(oh-ih)/2:color=white[v${index}]`
-  ));
-  const layout = entries.map((_, index) => `${(index % COLUMNS) * TILE}_${Math.floor(index / COLUMNS) * TILE}`).join("|");
-  const inputs = entries.map((_, index) => `[v${index}]`).join("");
-  filters.push(`${inputs}xstack=inputs=${entries.length}:layout=${layout}:fill=white[out]`);
-  args.push("-filter_complex", filters.join(";"), "-map", "[out]", "-frames:v", "1", "-q:v", "3", output);
-  const result = spawnSync("ffmpeg", args, { encoding: "utf8" });
-  if (result.status !== 0) throw new Error(`ffmpeg ${basename}: ${result.stderr}`);
+  if (ffmpegAvailable) {
+    const ffmpegArgs = ["-hide_banner", "-loglevel", "error", "-y"];
+    for (const entry of entries) ffmpegArgs.push("-i", entry.file);
+    const filters = entries.map((entry, index) => (
+      `[${index}:v]scale=${TILE}:${TILE}:force_original_aspect_ratio=decrease:flags=lanczos,`
+      + `pad=${TILE}:${TILE}:(ow-iw)/2:(oh-ih)/2:color=white[v${index}]`
+    ));
+    const layout = entries.map((_, index) => `${(index % COLUMNS) * TILE}_${Math.floor(index / COLUMNS) * TILE}`).join("|");
+    const inputs = entries.map((_, index) => `[v${index}]`).join("");
+    filters.push(`${inputs}xstack=inputs=${entries.length}:layout=${layout}:fill=white[out]`);
+    ffmpegArgs.push("-filter_complex", filters.join(";"), "-map", "[out]", "-frames:v", "1", "-q:v", "3", output);
+    const result = spawnSync("ffmpeg", ffmpegArgs, { encoding: "utf8" });
+    if (result.status !== 0) throw new Error(`ffmpeg ${basename}: ${result.stderr}`);
+  } else {
+    const result = spawnSync(nativeSheetBinary, [output, ...entries.map((entry) => entry.file)], { encoding: "utf8" });
+    if (result.status !== 0) throw new Error(`native contact sheet ${basename}: ${result.stderr}`);
+  }
   await fs.writeFile(mapping, `${JSON.stringify({ sheetNo, offset, entries }, null, 2)}\n`);
 }
 
