@@ -11,12 +11,14 @@ const start = Math.max(0, Number.parseInt(args.get("--start") || "0", 10));
 const limit = Math.max(1, Number.parseInt(args.get("--limit") || "99999", 10));
 const concurrency = Math.min(12, Math.max(1, Number.parseInt(args.get("--concurrency") || "6", 10)));
 const reprocessSafeBaseline = args.get("--reprocess") === "safe-baseline";
+const reprocessStoreBackground = args.get("--reprocess") === "store-background";
 
 const manifest = JSON.parse(await fs.readFile(MANIFEST, "utf8"));
 const queued = manifest.products.flatMap((product) => product.images
   .filter((image) => (
     (image.status === "queued" && !image.processedUrl)
     || (reprocessSafeBaseline && image.note.startsWith("商品・文字・ロゴを生成せず"))
+    || (reprocessStoreBackground && image.note.startsWith("商品画素を描き直さず"))
   ))
   .map((image) => ({ product, image })))
   .slice(start, start + limit);
@@ -74,10 +76,11 @@ async function worker() {
       if (result.size < 1024) throw new Error("加工後ファイルが小さすぎます");
       image.processedUrl = `processed/${product.itemId}/${filename}`;
       image.status = "review_pending";
-      image.attempts = 1;
-      image.scores = { truthfulness: 100, appearance: mode === "store_background" ? 94 : 88 };
-      image.note = mode === "store_background"
-        ? "商品画素を描き直さず前景として保持し、人物・文字量の自動検査に合格した画像だけ共通の売場背景へ合成"
+      image.attempts = Math.max(1, Number(image.attempts || 0) + (reprocessSafeBaseline || reprocessStoreBackground ? 1 : 0));
+      const storeBackground = mode.startsWith("store_background");
+      image.scores = { truthfulness: 100, appearance: storeBackground ? 94 : 88 };
+      image.note = storeBackground
+        ? "商品画素を描き直さず前景として保持し、人物・文字量・前景面積の自動検査に合格した画像だけ共通の売場背景へ合成"
         : "商品・文字・ロゴを生成せず、原画像のノイズ・明るさ・鮮明さ・正方形余白だけを安全に改善";
       completed += 1;
       totalBytes += result.size;
