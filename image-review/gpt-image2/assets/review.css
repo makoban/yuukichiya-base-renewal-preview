@@ -1,0 +1,30 @@
+.grid { align-items: start; }
+
+.description {
+  margin: 10px 0 0;
+  padding: 10px;
+  max-height: 8.5em;
+  overflow: auto;
+  white-space: pre-wrap;
+  border-radius: 10px;
+  background: #f7f5ef;
+  color: #3b3b36;
+  font-size: .82rem;
+  line-height: 1.55;
+}
+
+.skip-note,
+.risk-reasons {
+  margin: 8px 0 0;
+  color: #8c3f23;
+  font-size: .8rem;
+  line-height: 1.45;
+}
+
+.status--skipped { background: #eee9df; color: #665b49; }
+.status--manual_review { background: #fff0c9; color: #7a5510; }
+.status--regenerate { background: #ffe3df; color: #9c2e21; }
+
+@media (max-width: 540px) {
+  .description { max-height: 7em; }
+}
