@@ -19,13 +19,16 @@ const queued = manifest.products.flatMap((product) => product.images
 
 function runFfmpeg(input, output) {
   return new Promise((resolve, reject) => {
-    const child = spawn("ffmpeg", [
+    const externalProcessor = process.env.YUUKICHIYA_IMAGE_PROCESSOR;
+    const command = externalProcessor || "ffmpeg";
+    const commandArgs = externalProcessor ? [input, output] : [
       "-hide_banner", "-loglevel", "error", "-y",
       "-i", input,
       "-vf", "hqdn3d=0.8:0.8:2.4:2.4,eq=contrast=1.025:brightness=0.006:saturation=1.015,unsharp=5:5:0.28,scale=1024:1024:force_original_aspect_ratio=decrease:flags=lanczos,pad=1024:1024:(ow-iw)/2:(oh-ih)/2:color=white",
       "-q:v", "4",
       output,
-    ], { stdio: ["ignore", "ignore", "pipe"] });
+    ];
+    const child = spawn(command, commandArgs, { stdio: ["ignore", "ignore", "pipe"] });
     let error = "";
     child.stderr.on("data", (chunk) => { error += chunk; });
     child.on("error", reject);
