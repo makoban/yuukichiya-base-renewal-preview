@@ -19,19 +19,33 @@ let rawExtent = rawSource.extent
 let source = rawSource.transformed(by: CGAffineTransform(translationX: -rawExtent.minX, y: -rawExtent.minY))
 
 func maskCoverage(_ pixelBuffer: CVPixelBuffer) -> Double {
-    guard CVPixelBufferGetPixelFormatType(pixelBuffer) == kCVPixelFormatType_OneComponent8 else { return 1.0 }
+    let pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer)
     CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
     defer { CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly) }
-    guard let baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer) else { return 1.0 }
+    guard let baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer) else { return 0.0 }
     let width = CVPixelBufferGetWidth(pixelBuffer)
     let height = CVPixelBufferGetHeight(pixelBuffer)
     let bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
-    var total: UInt64 = 0
-    for row in 0..<height {
-        let pixels = baseAddress.advanced(by: row * bytesPerRow).assumingMemoryBound(to: UInt8.self)
-        for column in 0..<width { total += UInt64(pixels[column]) }
+    var total = 0.0
+    if pixelFormat == kCVPixelFormatType_OneComponent8 {
+        for row in 0..<height {
+            let pixels = baseAddress.advanced(by: row * bytesPerRow).assumingMemoryBound(to: UInt8.self)
+            for column in 0..<width { total += Double(pixels[column]) / 255.0 }
+        }
+    } else if pixelFormat == kCVPixelFormatType_OneComponent16Half {
+        for row in 0..<height {
+            let pixels = baseAddress.advanced(by: row * bytesPerRow).assumingMemoryBound(to: UInt16.self)
+            for column in 0..<width { total += Double(Float16(bitPattern: pixels[column])) }
+        }
+    } else if pixelFormat == kCVPixelFormatType_OneComponent32Float {
+        for row in 0..<height {
+            let pixels = baseAddress.advanced(by: row * bytesPerRow).assumingMemoryBound(to: Float.self)
+            for column in 0..<width { total += Double(pixels[column]) }
+        }
+    } else {
+        return 0.0
     }
-    return Double(total) / (255.0 * Double(width * height))
+    return total / Double(width * height)
 }
 
 let controls = CIFilter(name: "CIColorControls")!
