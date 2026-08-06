@@ -56,6 +56,10 @@ try {
     }
     await page.locator("#query").fill("151900296");
     await page.waitForFunction(() => document.querySelectorAll("#grid .card").length === 4);
+    await page.waitForFunction(() => {
+      const images = Array.from(document.querySelectorAll("#grid .card:first-child img"));
+      return images.length === 2 && images.every((image) => image.complete && image.naturalWidth > 0);
+    });
     const pilot = await page.locator("#grid .card").first().evaluate((card) => ({
       title: card.querySelector("h2")?.textContent.trim(),
       status: card.querySelector(".status")?.textContent.trim(),
