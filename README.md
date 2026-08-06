@@ -65,6 +65,15 @@ python3 scripts/classify-image-review-input.py \
   --worker .image-batch/bin/classify-image-review-input \
   --manifest image-review/all-products/data/manifest.json \
   --original-root image-review/all-products/originals \
+  --output .image-batch/gpt-image2/classifications-preview.jsonl
+python3 scripts/classify-image-review-input.py \
+  --worker .image-batch/bin/classify-image-review-input \
+  --manifest image-review/all-products/data/manifest.json \
+  --original-root .image-batch/originals \
+  --output .image-batch/gpt-image2/classifications-highres.jsonl
+python3 scripts/merge-image-classifications.py \
+  --preview .image-batch/gpt-image2/classifications-preview.jsonl \
+  --highres .image-batch/gpt-image2/classifications-highres.jsonl \
   --output .image-batch/gpt-image2/classifications.jsonl
 python3 scripts/image-review-db.py import \
   --db .image-batch/gpt-image2/yuukichiya-images.sqlite3 \

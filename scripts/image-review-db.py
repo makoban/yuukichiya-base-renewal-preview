@@ -342,7 +342,7 @@ def command_import(args: argparse.Namespace) -> None:
                   processing_decision=excluded.processing_decision,
                   skip_reason=excluded.skip_reason,
                   generation_status=CASE
-                    WHEN product_images.generation_status IN ('completed','approved') THEN product_images.generation_status
+                    WHEN product_images.generation_status IN ('review_pending','regenerate','completed','approved') THEN product_images.generation_status
                     ELSE excluded.generation_status
                   END,
                   updated_at=excluded.updated_at
