@@ -55,4 +55,25 @@ node scripts/verify-image-review-batch.mjs
 
 高解像度原本の作業コピーとBASE入れ替えジャーナルは `.image-batch/` に置き、GitHubへは保存しません。BASEは入れ替え後に旧CDN画像を削除するため、公開比較面には原本内容を変更せず最大640px・JPEG品質65へ縮小した比較用コピーだけを保存します。公開確認面は `noindex` ですが、URLを知る人が閲覧できるため、注文・顧客・在庫数・秘密情報を含めません。
 
+### GPT Image 2版のDBと確認画面
+
+`scripts/image-review-db.py` は、606商品・1,597枚の高解像度原本と既存加工版をSQLiteのBLOBへ保存し、GPT Image 2の生成キュー・生成履歴・採点を同じDBで管理します。文字量の多いサイズ表・カタログ紙面・説明資料は `scripts/classify-image-review-input.swift` で検出し、GPT Image 2へ送らず原本を保持します。
+
+```sh
+xcrun swiftc -O scripts/classify-image-review-input.swift -o .image-batch/bin/classify-image-review-input
+.image-batch/bin/classify-image-review-input image-review/all-products/data/manifest.json .image-batch/originals .image-batch/gpt-image2/classifications.jsonl
+python3 scripts/image-review-db.py import \
+  --db .image-batch/gpt-image2/yuukichiya-images.sqlite3 \
+  --repo-root "$PWD" \
+  --manifest image-review/all-products/data/manifest.json \
+  --details assets/preview-product-details.js \
+  --original-root .image-batch/originals \
+  --classifications .image-batch/gpt-image2/classifications.jsonl
+python3 scripts/image-review-db.py export-review \
+  --db .image-batch/gpt-image2/yuukichiya-images.sqlite3 \
+  --output image-review/gpt-image2/data/manifest.json
+```
+
+`image-review/gpt-image2/index.html` は、原本、GPT Image 2加工後、忠実度・見栄え・文字ロゴ保全点、商品説明、文字資料の除外理由を一覧表示します。生成結果は `record-result` でDBへ追加し、過去世代を上書きしません。
+
 `../base_redesign/scripts/sync-github-pages-preview.mjs` は旧生成元との差分がある場合に停止する。停止を回避して一括上書きせず、必要な変更を差分レビューして手動統合する。

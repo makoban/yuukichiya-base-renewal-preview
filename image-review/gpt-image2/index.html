@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>勇吉屋 GPT Image 2 全商品画像確認</title>
+  <link rel="stylesheet" href="../all-products/assets/review.css">
+  <link rel="stylesheet" href="assets/review.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero__inner">
+      <p class="eyebrow">勇吉屋・GPT Image 2 全商品画像加工</p>
+      <h1><span class="phrase">原本・生成結果・採点・説明を、</span><span class="phrase">一画面で確認</span></h1>
+      <p class="lead">商品自体は変えません。文字資料は加工せず、GPT Image 2対象外として原本を保持します。</p>
+      <div id="stats" class="stats" aria-live="polite"></div>
+    </div>
+  </header>
+  <main class="main">
+    <section class="controls" aria-label="画像の絞り込み">
+      <label><span>商品検索</span><input id="query" type="search" placeholder="商品名・説明・商品ID" autocomplete="off"></label>
+      <label><span>状態</span><select id="status">
+        <option value="all">すべて</option>
+        <option value="queued">GPT Image 2生成待ち</option>
+        <option value="review_pending">確認待ち</option>
+        <option value="regenerate">再生成</option>
+        <option value="skipped">文字資料・加工なし</option>
+        <option value="approved">承認済み</option>
+      </select></label>
+    </section>
+    <p id="result-summary" class="result-summary" aria-live="polite"></p>
+    <section id="grid" class="grid" aria-label="画像比較一覧"></section>
+    <nav class="pager" aria-label="ページ切り替え"><button id="prev" type="button">前へ</button><span id="page"></span><button id="next" type="button">次へ</button></nav>
+  </main>
+  <dialog id="zoom"><button id="zoom-close" class="zoom-close" type="button" aria-label="拡大画像を閉じる">閉じる</button><img id="zoom-image" alt=""><p id="zoom-caption"></p></dialog>
+  <script src="assets/review.js" defer></script>
+</body>
+</html>
