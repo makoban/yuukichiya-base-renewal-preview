@@ -1,18 +1,22 @@
 import AppKit
 import CoreImage
 import Foundation
+import Vision
 
-guard CommandLine.arguments.count == 3 else {
-    FileHandle.standardError.write(Data("usage: image-safe-baseline input output\n".utf8))
+guard CommandLine.arguments.count == 3 || CommandLine.arguments.count == 4 else {
+    FileHandle.standardError.write(Data("usage: image-safe-baseline input output [background]\n".utf8))
     exit(2)
 }
 
 let inputURL = URL(fileURLWithPath: CommandLine.arguments[1])
 let outputURL = URL(fileURLWithPath: CommandLine.arguments[2])
-guard let source = CIImage(contentsOf: inputURL) else {
+let backgroundURL = CommandLine.arguments.count == 4 ? URL(fileURLWithPath: CommandLine.arguments[3]) : nil
+guard let rawSource = CIImage(contentsOf: inputURL) else {
     FileHandle.standardError.write(Data("画像を読み込めません\n".utf8))
     exit(3)
 }
+let rawExtent = rawSource.extent
+let source = rawSource.transformed(by: CGAffineTransform(translationX: -rawExtent.minX, y: -rawExtent.minY))
 
 let controls = CIFilter(name: "CIColorControls")!
 controls.setValue(source, forKey: kCIInputImageKey)
@@ -24,7 +28,59 @@ let sharpen = CIFilter(name: "CISharpenLuminance")!
 sharpen.setValue(controls.outputImage!, forKey: kCIInputImageKey)
 sharpen.setValue(0.22, forKey: kCIInputSharpnessKey)
 
-let image = sharpen.outputImage!
+var image = sharpen.outputImage!
+var mode = "safe_baseline"
+if let backgroundURL, let rawBackground = CIImage(contentsOf: backgroundURL) {
+    do {
+        let handler = VNImageRequestHandler(ciImage: source)
+        let textRequest = VNRecognizeTextRequest()
+        textRequest.recognitionLevel = .fast
+        textRequest.usesLanguageCorrection = false
+        let humanRequest = VNDetectHumanRectanglesRequest()
+        let foregroundRequest = VNGenerateForegroundInstanceMaskRequest()
+        try handler.perform([textRequest, humanRequest, foregroundRequest])
+
+        let textRegions = textRequest.results ?? []
+        let textArea = textRegions.reduce(0.0) { result, observation in
+            result + Double(observation.boundingBox.width * observation.boundingBox.height)
+        }
+        let hasHuman = !(humanRequest.results ?? []).isEmpty
+        if !hasHuman, textRegions.count <= 2, textArea < 0.035,
+           let foreground = foregroundRequest.results?.first,
+           !foreground.allInstances.isEmpty {
+            let maskBuffer = try foreground.generateScaledMaskForImage(forInstances: foreground.allInstances, from: handler)
+            let mask = CIImage(cvPixelBuffer: maskBuffer)
+            let sourceExtent = source.extent
+            let backgroundExtent = rawBackground.extent
+            let normalizedBackground = rawBackground.transformed(by: CGAffineTransform(
+                translationX: -backgroundExtent.minX,
+                y: -backgroundExtent.minY
+            ))
+            let backgroundScale = max(
+                sourceExtent.width / backgroundExtent.width,
+                sourceExtent.height / backgroundExtent.height
+            )
+            let scaledBackground = normalizedBackground.transformed(by: CGAffineTransform(
+                scaleX: backgroundScale,
+                y: backgroundScale
+            ))
+            let centeredBackground = scaledBackground.transformed(by: CGAffineTransform(
+                translationX: (sourceExtent.width - scaledBackground.extent.width) / 2,
+                y: (sourceExtent.height - scaledBackground.extent.height) / 2
+            )).cropped(to: sourceExtent)
+            let blend = CIFilter(name: "CIBlendWithMask")!
+            blend.setValue(image, forKey: kCIInputImageKey)
+            blend.setValue(centeredBackground, forKey: kCIInputBackgroundImageKey)
+            blend.setValue(mask, forKey: kCIInputMaskImageKey)
+            if let blended = blend.outputImage {
+                image = blended
+                mode = "store_background"
+            }
+        }
+    } catch {
+        mode = "safe_baseline"
+    }
+}
 let extent = image.extent
 let dimension: CGFloat = 1024
 let scale = min(dimension / extent.width, dimension / extent.height)
@@ -50,3 +106,4 @@ guard let data = bitmap.representation(using: .jpeg, properties: [.compressionFa
 }
 try FileManager.default.createDirectory(at: outputURL.deletingLastPathComponent(), withIntermediateDirectories: true)
 try data.write(to: outputURL, options: .atomic)
+FileHandle.standardOutput.write(Data("\(mode)\n".utf8))
