@@ -609,3 +609,479 @@
     initMajorClosureNotice: initMajorClosureNotice
   };
 })();
+(function () {
+  "use strict";
+  if (window.ykImageGalleryV1) return;
+
+  var genericSelector = ".yk-feature__image img,.yk-pickup__image img,.yk-payment-image img,.yk-store-card > img,.yk-card > img,.yk-preview-item-dialog__image";
+  var previousFocus = null;
+  var activeGallery = null;
+  var lightboxItems = [];
+  var lightboxIndex = 0;
+  var scale = 1;
+  var translateX = 0;
+  var translateY = 0;
+  var pointers = {};
+  var dragStart = null;
+  var pinchStart = null;
+  var pointerMoved = false;
+  var suppressClickUntil = 0;
+
+  function clamp(value, minimum, maximum) {
+    return Math.min(maximum, Math.max(minimum, value));
+  }
+
+  function wrapIndex(index, length) {
+    return length ? (index % length + length) % length : 0;
+  }
+
+  function preload(source) {
+    if (!source) return;
+    var nextImage = new Image();
+    nextImage.src = source;
+  }
+
+  function keepThumbVisible(container, thumb) {
+    if (!container || !thumb) return;
+    var left = thumb.offsetLeft;
+    var right = left + thumb.offsetWidth;
+    if (left < container.scrollLeft) container.scrollLeft = left;
+    else if (right > container.scrollLeft + container.clientWidth) container.scrollLeft = right - container.clientWidth;
+  }
+
+  function selectGalleryItem(state, requestedIndex, options) {
+    if (!state || !state.items.length) return;
+    options = options || {};
+    var index = wrapIndex(requestedIndex, state.items.length);
+    var item = state.items[index];
+    state.index = index;
+    state.mainImage.src = item.source;
+    state.mainImage.alt = item.alt;
+    state.mainButton.setAttribute("data-yk-lightbox", item.source);
+    state.mainButton.setAttribute("data-yk-lightbox-alt", item.alt);
+    state.thumbs.forEach(function (thumb, thumbIndex) {
+      thumb.setAttribute("aria-current", thumbIndex === index ? "true" : "false");
+    });
+    state.count.textContent = (index + 1) + " / " + state.items.length;
+    if (options.keepThumb !== false) keepThumbVisible(state.thumbStrip, state.thumbs[index]);
+    if (state.items.length > 1) preload(state.items[wrapIndex(index + 1, state.items.length)].source);
+  }
+
+  var dialog = document.createElement("dialog");
+  dialog.className = "yk-lightbox";
+  dialog.setAttribute("aria-label", "画像拡大表示");
+  dialog.innerHTML = '<div class="yk-lightbox__inner"><div class="yk-lightbox__stage" data-yk-lightbox-stage><img class="yk-lightbox__image" alt="" draggable="false"></div><button class="yk-lightbox__nav yk-lightbox__nav--prev" type="button" data-yk-lightbox-prev aria-label="前の画像">&#8249;</button><button class="yk-lightbox__nav yk-lightbox__nav--next" type="button" data-yk-lightbox-next aria-label="次の画像">&#8250;</button><output class="yk-lightbox__count" data-yk-lightbox-count aria-live="polite"></output><div class="yk-lightbox__controls"><button class="yk-lightbox__control" type="button" data-yk-zoom-out aria-label="縮小" title="縮小">&#8722;</button><button class="yk-lightbox__control" type="button" data-yk-zoom-reset aria-label="全体表示に戻す" title="全体表示に戻す">&#8634;</button><button class="yk-lightbox__control" type="button" data-yk-zoom-in aria-label="拡大" title="拡大">+</button><button class="yk-lightbox__control yk-lightbox__close" type="button" aria-label="画像拡大表示を閉じる" title="閉じる">&times;</button></div><p class="yk-lightbox__caption"></p></div>';
+  document.body.appendChild(dialog);
+
+  var stage = dialog.querySelector("[data-yk-lightbox-stage]");
+  var image = dialog.querySelector(".yk-lightbox__image");
+  var caption = dialog.querySelector(".yk-lightbox__caption");
+  var closeButton = dialog.querySelector(".yk-lightbox__close");
+  var zoomOutButton = dialog.querySelector("[data-yk-zoom-out]");
+  var resetButton = dialog.querySelector("[data-yk-zoom-reset]");
+  var zoomInButton = dialog.querySelector("[data-yk-zoom-in]");
+  var previousButton = dialog.querySelector("[data-yk-lightbox-prev]");
+  var nextButton = dialog.querySelector("[data-yk-lightbox-next]");
+  var lightboxCount = dialog.querySelector("[data-yk-lightbox-count]");
+
+  function pointerList() {
+    return Object.keys(pointers).map(function (key) { return pointers[key]; });
+  }
+
+  function clampPan() {
+    if (scale <= 1.001) {
+      translateX = 0;
+      translateY = 0;
+      return;
+    }
+    var maxX = Math.max(0, (image.offsetWidth * scale - stage.clientWidth) / 2);
+    var maxY = Math.max(0, (image.offsetHeight * scale - stage.clientHeight) / 2);
+    translateX = clamp(translateX, -maxX, maxX);
+    translateY = clamp(translateY, -maxY, maxY);
+  }
+
+  function renderView() {
+    clampPan();
+    image.style.transform = "translate3d(" + translateX + "px," + translateY + "px,0) scale(" + scale + ")";
+    dialog.setAttribute("data-yk-scale", scale <= 1.001 ? "1" : "zoomed");
+    zoomOutButton.disabled = scale <= 1.001;
+    resetButton.disabled = scale <= 1.001;
+    zoomInButton.disabled = scale >= 5;
+  }
+
+  function resetView() {
+    scale = 1;
+    translateX = 0;
+    translateY = 0;
+    renderView();
+  }
+
+  function setScale(nextScale, clientX, clientY) {
+    var oldScale = scale;
+    var next = clamp(nextScale, 1, 5);
+    if (Math.abs(next - oldScale) < .001) return;
+    var rect = stage.getBoundingClientRect();
+    var originX = typeof clientX === "number" ? clientX - rect.left - rect.width / 2 : 0;
+    var originY = typeof clientY === "number" ? clientY - rect.top - rect.height / 2 : 0;
+    var ratio = next / oldScale;
+    translateX = originX - (originX - translateX) * ratio;
+    translateY = originY - (originY - translateY) * ratio;
+    scale = next;
+    renderView();
+  }
+
+  function updateLightboxNavigation() {
+    var multiple = lightboxItems.length > 1;
+    previousButton.hidden = !multiple;
+    nextButton.hidden = !multiple;
+    lightboxCount.hidden = !multiple;
+    lightboxCount.textContent = multiple ? (lightboxIndex + 1) + " / " + lightboxItems.length : "";
+  }
+
+  function showLightboxItem(requestedIndex) {
+    if (!lightboxItems.length) return;
+    lightboxIndex = wrapIndex(requestedIndex, lightboxItems.length);
+    var item = lightboxItems[lightboxIndex];
+    if (activeGallery) selectGalleryItem(activeGallery, lightboxIndex);
+    image.src = item.source;
+    image.alt = item.alt;
+    caption.textContent = item.alt;
+    resetView();
+    updateLightboxNavigation();
+    if (lightboxItems.length > 1) preload(lightboxItems[wrapIndex(lightboxIndex + 1, lightboxItems.length)].source);
+  }
+
+  function closeDialog() {
+    if (typeof dialog.close === "function") dialog.close();
+    else {
+      dialog.removeAttribute("open");
+      document.body.classList.remove("yk-lightbox-open");
+    }
+  }
+
+  function openDialog(trigger, items, index, owner) {
+    var sourceImage = trigger && trigger.matches && trigger.matches("img") ? trigger : trigger && trigger.querySelector ? trigger.querySelector("img") : null;
+    var source = trigger && trigger.getAttribute ? trigger.getAttribute("data-yk-lightbox") : "";
+    source = source || (sourceImage && (sourceImage.currentSrc || sourceImage.src));
+    var alt = trigger && trigger.getAttribute ? trigger.getAttribute("data-yk-lightbox-alt") : "";
+    alt = alt || (sourceImage && sourceImage.alt) || "画像";
+    lightboxItems = items && items.length ? items.slice() : source ? [{ source: source, alt: alt }] : [];
+    if (!lightboxItems.length) return;
+    activeGallery = owner || null;
+    previousFocus = document.activeElement;
+    document.body.classList.add("yk-lightbox-open");
+    if (!dialog.open) {
+      if (typeof dialog.showModal === "function") dialog.showModal();
+      else dialog.setAttribute("open", "");
+    }
+    showLightboxItem(index || 0);
+    closeButton.focus();
+  }
+
+  function createPageControl(className, dataAttribute, label, symbol) {
+    var button = document.createElement("button");
+    button.type = "button";
+    button.className = "yk-item-gallery__control " + className;
+    button.setAttribute(dataAttribute, "");
+    button.setAttribute("aria-label", label);
+    button.innerHTML = symbol;
+    return button;
+  }
+
+  function initializeGallery(gallery) {
+    if (!gallery || gallery.dataset.ykItemGalleryReady) return;
+    var mainButton = gallery.querySelector("[data-yk-item-gallery-open]");
+    var mainImage = gallery.querySelector("[data-yk-item-gallery-main]");
+    var thumbStrip = gallery.querySelector(".yk-item__thumbs");
+    var thumbs = Array.prototype.slice.call(gallery.querySelectorAll("[data-yk-item-gallery-thumb]"));
+    var viewport = gallery.querySelector(".yk-item-gallery__viewport");
+    if (!mainButton || !mainImage || !thumbStrip || !viewport || !thumbs.length) return;
+    gallery.dataset.ykItemGalleryReady = "true";
+    mainButton.dataset.ykZoomReady = "true";
+    var title = mainImage.alt || "商品";
+    var items = thumbs.map(function (thumb, index) {
+      return {
+        source: thumb.getAttribute("data-yk-item-gallery-source") || (thumb.querySelector("img") || {}).src || "",
+        alt: title + (thumbs.length > 1 ? " 画像" + (index + 1) : "")
+      };
+    }).filter(function (item) { return item.source; });
+    if (!items.length) return;
+    var previous = createPageControl("yk-item-gallery__control--prev", "data-yk-item-gallery-prev", "前の画像", "&#8249;");
+    var next = createPageControl("yk-item-gallery__control--next", "data-yk-item-gallery-next", "次の画像", "&#8250;");
+    var count = document.createElement("output");
+    count.className = "yk-item-gallery__count";
+    count.setAttribute("data-yk-item-gallery-count", "");
+    count.setAttribute("aria-live", "polite");
+    viewport.appendChild(previous);
+    viewport.appendChild(next);
+    viewport.appendChild(count);
+    var state = {
+      root: gallery,
+      viewport: viewport,
+      mainButton: mainButton,
+      mainImage: mainImage,
+      thumbStrip: thumbStrip,
+      thumbs: thumbs,
+      items: items,
+      previous: previous,
+      next: next,
+      count: count,
+      index: 0,
+      suppressMainClickUntil: 0
+    };
+    gallery.ykGalleryState = state;
+    var multiple = items.length > 1;
+    previous.hidden = !multiple;
+    next.hidden = !multiple;
+    count.hidden = !multiple;
+    thumbStrip.hidden = !multiple;
+    thumbs.forEach(function (thumb, index) {
+      thumb.addEventListener("click", function (event) {
+        event.preventDefault();
+        selectGalleryItem(state, index);
+      });
+    });
+    previous.addEventListener("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      selectGalleryItem(state, state.index - 1);
+    });
+    next.addEventListener("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      selectGalleryItem(state, state.index + 1);
+    });
+    mainButton.addEventListener("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (Date.now() < state.suppressMainClickUntil) return;
+      openDialog(mainButton, state.items, state.index, state);
+    });
+    mainButton.addEventListener("keydown", function (event) {
+      if (!multiple || (event.key !== "ArrowLeft" && event.key !== "ArrowRight")) return;
+      event.preventDefault();
+      selectGalleryItem(state, state.index + (event.key === "ArrowRight" ? 1 : -1));
+    });
+    var swipeStart = null;
+    mainButton.addEventListener("pointerdown", function (event) {
+      if (event.pointerType === "mouse") return;
+      swipeStart = { id: event.pointerId, x: event.clientX, y: event.clientY };
+    });
+    mainButton.addEventListener("pointerup", function (event) {
+      if (!swipeStart || swipeStart.id !== event.pointerId || !multiple) {
+        swipeStart = null;
+        return;
+      }
+      var deltaX = event.clientX - swipeStart.x;
+      var deltaY = event.clientY - swipeStart.y;
+      swipeStart = null;
+      if (Math.abs(deltaX) < 36 || Math.abs(deltaX) <= Math.abs(deltaY) * 1.15) return;
+      state.suppressMainClickUntil = Date.now() + 450;
+      selectGalleryItem(state, state.index + (deltaX < 0 ? 1 : -1));
+    });
+    mainButton.addEventListener("pointercancel", function () { swipeStart = null; });
+    selectGalleryItem(state, 0, { keepThumb: false });
+  }
+
+  function enhance(root) {
+    var images = [];
+    if (root.matches && root.matches(genericSelector)) images.push(root);
+    if (root.querySelectorAll) images = images.concat(Array.prototype.slice.call(root.querySelectorAll(genericSelector)));
+    images.forEach(function (item) {
+      if (item.dataset.ykZoomReady) return;
+      item.dataset.ykZoomReady = "true";
+      item.classList.add("yk-zoomable");
+      item.setAttribute("role", "button");
+      item.setAttribute("tabindex", "0");
+      item.setAttribute("aria-label", (item.alt || "画像") + "を拡大表示");
+    });
+    var galleries = [];
+    if (root.matches && root.matches("[data-yk-item-gallery]")) galleries.push(root);
+    if (root.querySelectorAll) galleries = galleries.concat(Array.prototype.slice.call(root.querySelectorAll("[data-yk-item-gallery]")));
+    galleries.forEach(initializeGallery);
+  }
+
+  document.querySelectorAll(".yk-store-grid,.yk-grid-2").forEach(function (grid) {
+    var entries = [];
+    Array.prototype.forEach.call(grid.children, function (card) {
+      var cardImage = Array.prototype.find.call(card.children || [], function (child) { return child.tagName === "IMG"; });
+      if (!cardImage) return;
+      var heading = card.querySelector("h2,h3");
+      entries.push({ image: cardImage, label: heading ? heading.textContent.trim() : cardImage.alt });
+    });
+    if (entries.length < 2) return;
+    var gallery = document.createElement("div");
+    gallery.className = "yk-store-gallery";
+    gallery.setAttribute("aria-label", "店舗画像。タップすると拡大表示できます");
+    entries.forEach(function (entry) {
+      var button = document.createElement("button");
+      var thumb = entry.image.cloneNode(false);
+      var label = document.createElement("span");
+      button.type = "button";
+      button.className = "yk-gallery-button";
+      button.setAttribute("data-yk-lightbox", entry.image.currentSrc || entry.image.src);
+      button.setAttribute("data-yk-lightbox-alt", entry.image.alt || entry.label);
+      button.setAttribute("aria-label", entry.label + "の画像を拡大表示");
+      label.textContent = entry.label;
+      button.appendChild(thumb);
+      button.appendChild(label);
+      gallery.appendChild(button);
+    });
+    grid.parentNode.insertBefore(gallery, grid);
+    grid.classList.add("yk-has-mobile-gallery");
+  });
+
+  image.addEventListener("load", resetView);
+  zoomOutButton.addEventListener("click", function (event) { event.stopPropagation(); setScale(scale / 1.35); });
+  resetButton.addEventListener("click", function (event) { event.stopPropagation(); resetView(); });
+  zoomInButton.addEventListener("click", function (event) { event.stopPropagation(); setScale(scale * 1.35); });
+  closeButton.addEventListener("click", function (event) { event.stopPropagation(); closeDialog(); });
+  previousButton.addEventListener("click", function (event) { event.stopPropagation(); showLightboxItem(lightboxIndex - 1); });
+  nextButton.addEventListener("click", function (event) { event.stopPropagation(); showLightboxItem(lightboxIndex + 1); });
+  image.addEventListener("dblclick", function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    setScale(scale > 1.001 ? 1 : 2.2, event.clientX, event.clientY);
+  });
+  stage.addEventListener("wheel", function (event) {
+    if (!dialog.open) return;
+    event.preventDefault();
+    setScale(scale * (event.deltaY < 0 ? 1.16 : 1 / 1.16), event.clientX, event.clientY);
+  }, { passive: false });
+  stage.addEventListener("pointerdown", function (event) {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    pointers[event.pointerId] = { x: event.clientX, y: event.clientY };
+    if (stage.setPointerCapture) stage.setPointerCapture(event.pointerId);
+    var active = pointerList();
+    pointerMoved = false;
+    if (active.length === 1) {
+      dragStart = { x: event.clientX, y: event.clientY, translateX: translateX, translateY: translateY };
+      pinchStart = null;
+    } else if (active.length === 2) {
+      var dx = active[1].x - active[0].x;
+      var dy = active[1].y - active[0].y;
+      pinchStart = {
+        distance: Math.max(1, Math.sqrt(dx * dx + dy * dy)),
+        centerX: (active[0].x + active[1].x) / 2,
+        centerY: (active[0].y + active[1].y) / 2,
+        scale: scale,
+        translateX: translateX,
+        translateY: translateY
+      };
+    }
+  });
+  stage.addEventListener("pointermove", function (event) {
+    if (!pointers[event.pointerId]) return;
+    pointers[event.pointerId] = { x: event.clientX, y: event.clientY };
+    var active = pointerList();
+    if (active.length >= 2 && pinchStart) {
+      var dx = active[1].x - active[0].x;
+      var dy = active[1].y - active[0].y;
+      var distance = Math.max(1, Math.sqrt(dx * dx + dy * dy));
+      var centerX = (active[0].x + active[1].x) / 2;
+      var centerY = (active[0].y + active[1].y) / 2;
+      var rect = stage.getBoundingClientRect();
+      var nextScale = clamp(pinchStart.scale * distance / pinchStart.distance, 1, 5);
+      var ratio = nextScale / pinchStart.scale;
+      var localX = pinchStart.centerX - rect.left - rect.width / 2 - pinchStart.translateX;
+      var localY = pinchStart.centerY - rect.top - rect.height / 2 - pinchStart.translateY;
+      scale = nextScale;
+      translateX = centerX - rect.left - rect.width / 2 - localX * ratio;
+      translateY = centerY - rect.top - rect.height / 2 - localY * ratio;
+      pointerMoved = true;
+      stage.dataset.ykDragging = "true";
+      renderView();
+    } else if (active.length === 1 && dragStart) {
+      var moveX = event.clientX - dragStart.x;
+      var moveY = event.clientY - dragStart.y;
+      if (Math.abs(moveX) > 4 || Math.abs(moveY) > 4) pointerMoved = true;
+      if (scale > 1.001) {
+        translateX = dragStart.translateX + moveX;
+        translateY = dragStart.translateY + moveY;
+        stage.dataset.ykDragging = "true";
+        renderView();
+      }
+    }
+  });
+  function releasePointer(event) {
+    var released = pointers[event.pointerId] || { x: event.clientX, y: event.clientY };
+    var wasSingle = Object.keys(pointers).length === 1;
+    if (pointers[event.pointerId]) delete pointers[event.pointerId];
+    if (stage.releasePointerCapture && stage.hasPointerCapture && stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId);
+    if (wasSingle && dragStart && scale <= 1.001 && lightboxItems.length > 1) {
+      var deltaX = released.x - dragStart.x;
+      var deltaY = released.y - dragStart.y;
+      if (Math.abs(deltaX) >= 44 && Math.abs(deltaX) > Math.abs(deltaY) * 1.15) {
+        showLightboxItem(lightboxIndex + (deltaX < 0 ? 1 : -1));
+        pointerMoved = true;
+      }
+    }
+    if (pointerMoved) suppressClickUntil = Date.now() + 350;
+    stage.dataset.ykDragging = "false";
+    var active = pointerList();
+    pinchStart = null;
+    if (active.length === 1) dragStart = { x: active[0].x, y: active[0].y, translateX: translateX, translateY: translateY };
+    else dragStart = null;
+  }
+  stage.addEventListener("pointerup", releasePointer);
+  stage.addEventListener("pointercancel", releasePointer);
+  stage.addEventListener("click", function (event) {
+    if (Date.now() < suppressClickUntil || event.target !== stage) return;
+    closeDialog();
+  });
+  dialog.addEventListener("cancel", function (event) { event.preventDefault(); closeDialog(); });
+  dialog.addEventListener("close", function () {
+    document.body.classList.remove("yk-lightbox-open");
+    image.removeAttribute("src");
+    pointers = {};
+    dragStart = null;
+    pinchStart = null;
+    lightboxItems = [];
+    activeGallery = null;
+    resetView();
+    if (previousFocus && previousFocus.focus) previousFocus.focus();
+  });
+  document.addEventListener("click", function (event) {
+    var trigger = event.target.closest ? event.target.closest("[data-yk-lightbox]," + genericSelector) : null;
+    if (!trigger || trigger === image || trigger.matches("[data-yk-item-gallery-open]")) return;
+    event.preventDefault();
+    openDialog(trigger);
+  });
+  document.addEventListener("keydown", function (event) {
+    if (dialog.open) {
+      if (event.key === "ArrowLeft" && lightboxItems.length > 1) {
+        event.preventDefault();
+        showLightboxItem(lightboxIndex - 1);
+      } else if (event.key === "ArrowRight" && lightboxItems.length > 1) {
+        event.preventDefault();
+        showLightboxItem(lightboxIndex + 1);
+      } else if (event.key === "+" || event.key === "=") {
+        event.preventDefault();
+        setScale(scale * 1.35);
+      } else if (event.key === "-") {
+        event.preventDefault();
+        setScale(scale / 1.35);
+      } else if (event.key === "0") {
+        event.preventDefault();
+        resetView();
+      }
+      return;
+    }
+    if ((event.key === "Enter" || event.key === " ") && event.target.matches && event.target.matches(genericSelector)) {
+      event.preventDefault();
+      openDialog(event.target);
+    }
+  });
+  window.addEventListener("resize", function () { if (dialog.open) renderView(); });
+  enhance(document);
+  if ("MutationObserver" in window) {
+    new MutationObserver(function (records) {
+      records.forEach(function (record) {
+        Array.prototype.forEach.call(record.addedNodes, function (node) {
+          if (node.nodeType === 1) enhance(node);
+        });
+      });
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+  window.ykImageGalleryV1 = true;
+})();
