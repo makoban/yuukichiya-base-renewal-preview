@@ -480,7 +480,7 @@ def command_export(args: argparse.Namespace) -> None:
             ).fetchone()
             images.append({
                 "imageNo": slot["image_no"],
-                "originalUrl": f"../../all-products/originals/{product['item_id']}/{slot['image_no']:02d}.jpg",
+                "originalUrl": f"../all-products/originals/{product['item_id']}/{slot['image_no']:02d}.jpg",
                 "processedUrl": latest["review_path"] if latest else None,
                 "status": slot["generation_status"],
                 "classification": slot["classification"],
