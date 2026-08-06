@@ -27,10 +27,13 @@ let output = try FileHandle(forWritingTo: outputURL)
 defer { try? output.close() }
 
 let total = manifest.products.reduce(0) { $0 + $1.images.count }
+let limit = Int(ProcessInfo.processInfo.environment["YUUKICHIYA_CLASSIFY_LIMIT"] ?? "") ?? total
 var completed = 0
 
 for product in manifest.products {
+    if completed >= limit { break }
     for image in product.images {
+        if completed >= limit { break }
         autoreleasepool {
             let filename = String(format: "%02d.jpg", image.imageNo)
             let fileURL = originalsRoot
@@ -51,18 +54,24 @@ for product in manifest.products {
                     throw NSError(domain: "YuukichiyaImageClassifier", code: 1,
                                   userInfo: [NSLocalizedDescriptionKey: "画像を読み込めません"])
                 }
-                let textRequest = VNRecognizeTextRequest()
-                textRequest.recognitionLevel = .fast
-                textRequest.usesLanguageCorrection = false
-                let humanRequest = VNDetectHumanRectanglesRequest()
-                let handler = VNImageRequestHandler(ciImage: source)
-                try handler.perform([textRequest, humanRequest])
+                // BASE原本には高DPIや特殊なJPEGメタデータを含むものがある。
+                // CIImageをそのままVisionへ渡さず、一度CGImageへ正規化してクラッシュを避ける。
+                let context = CIContext(options: [.useSoftwareRenderer: false])
+                guard let normalized = context.createCGImage(source, from: source.extent) else {
+                    throw NSError(domain: "YuukichiyaImageClassifier", code: 2,
+                                  userInfo: [NSLocalizedDescriptionKey: "画像を正規化できません"])
+                }
+                let textRequest = VNDetectTextRectanglesRequest()
+                textRequest.reportCharacterBoxes = false
+                let handler = VNImageRequestHandler(cgImage: normalized)
+                // 人物検出をOCRと同じperformへ混在させると、一部の縦長JPEGで
+                // Vision内部の配列境界エラーが発生するため、資料判定に必要なOCRだけを行う。
+                try handler.perform([textRequest])
                 let textRegions = textRequest.results ?? []
                 let areas = textRegions.map { Double($0.boundingBox.width * $0.boundingBox.height) }
                 let textArea = areas.reduce(0, +)
                 let maxTextArea = areas.max() ?? 0
                 let textCount = textRegions.count
-                let hasHuman = !(humanRequest.results ?? []).isEmpty
 
                 // サイズ表・カタログ紙面・説明資料を保守的に除外する。
                 // 商品ロゴ1〜数個だけの写真は商品写真として残す。
@@ -72,7 +81,7 @@ for product in manifest.products {
                 result["textRegionCount"] = textCount
                 result["textArea"] = textArea
                 result["maxTextArea"] = maxTextArea
-                result["hasHuman"] = hasHuman
+                result["hasHuman"] = false
                 result["classification"] = isTextDocument ? "text_document" : "product_photo"
             } catch {
                 result["classification"] = "classification_error"
