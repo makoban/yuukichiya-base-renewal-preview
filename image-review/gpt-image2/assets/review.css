@@ -20,6 +20,7 @@
 }
 
 .status--skipped { background: #eee9df; color: #665b49; }
+.status--manual_review { background: #fff0c9; color: #7a5510; }
 .status--regenerate { background: #ffe3df; color: #9c2e21; }
 
 @media (max-width: 540px) {

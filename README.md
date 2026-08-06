@@ -61,7 +61,11 @@ node scripts/verify-image-review-batch.mjs
 
 ```sh
 xcrun swiftc -O scripts/classify-image-review-input.swift -o .image-batch/bin/classify-image-review-input
-.image-batch/bin/classify-image-review-input image-review/all-products/data/manifest.json .image-batch/originals .image-batch/gpt-image2/classifications.jsonl
+python3 scripts/classify-image-review-input.py \
+  --worker .image-batch/bin/classify-image-review-input \
+  --manifest image-review/all-products/data/manifest.json \
+  --original-root image-review/all-products/originals \
+  --output .image-batch/gpt-image2/classifications.jsonl
 python3 scripts/image-review-db.py import \
   --db .image-batch/gpt-image2/yuukichiya-images.sqlite3 \
   --repo-root "$PWD" \

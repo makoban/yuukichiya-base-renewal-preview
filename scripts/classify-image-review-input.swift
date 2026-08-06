@@ -27,13 +27,20 @@ let output = try FileHandle(forWritingTo: outputURL)
 defer { try? output.close() }
 
 let total = manifest.products.reduce(0) { $0 + $1.images.count }
+let start = max(0, Int(ProcessInfo.processInfo.environment["YUUKICHIYA_CLASSIFY_START"] ?? "") ?? 0)
 let limit = Int(ProcessInfo.processInfo.environment["YUUKICHIYA_CLASSIFY_LIMIT"] ?? "") ?? total
 var completed = 0
+var visited = 0
 
-for product in manifest.products {
+outer: for product in manifest.products {
     if completed >= limit { break }
     for image in product.images {
-        if completed >= limit { break }
+        if visited < start {
+            visited += 1
+            continue
+        }
+        if completed >= limit { break outer }
+        visited += 1
         autoreleasepool {
             let filename = String(format: "%02d.jpg", image.imageNo)
             let fileURL = originalsRoot
@@ -67,17 +74,23 @@ for product in manifest.products {
                 // 人物検出をOCRと同じperformへ混在させると、一部の縦長JPEGで
                 // Vision内部の配列境界エラーが発生するため、資料判定に必要なOCRだけを行う。
                 try handler.perform([textRequest])
-                let textRegions = textRequest.results ?? []
-                let areas = textRegions.map { Double($0.boundingBox.width * $0.boundingBox.height) }
+                // NSArrayとして1件ずつ読み、壊れた要素は資料判定から除外する。
+                let rawResults = textRequest.value(forKey: "results") as? NSArray
+                var areas: [Double] = []
+                if let rawResults {
+                    for index in 0..<rawResults.count {
+                        guard let observation = rawResults.object(at: index) as? VNTextObservation else { continue }
+                        areas.append(Double(observation.boundingBox.width * observation.boundingBox.height))
+                    }
+                }
                 let textArea = areas.reduce(0, +)
                 let maxTextArea = areas.max() ?? 0
-                let textCount = textRegions.count
+                let textCount = areas.count
 
                 // サイズ表・カタログ紙面・説明資料を保守的に除外する。
                 // 商品ロゴ1〜数個だけの写真は商品写真として残す。
-                let isTextDocument = textArea >= 0.12
-                    || textCount >= 18
-                    || (textCount >= 8 && textArea >= 0.045)
+                let isTextDocument = (textCount >= 8 && textArea >= 0.03)
+                    || (textCount >= 4 && textArea >= 0.12)
                 result["textRegionCount"] = textCount
                 result["textArea"] = textArea
                 result["maxTextArea"] = maxTextArea
@@ -91,8 +104,8 @@ for product in manifest.products {
             output.write(data)
             output.write(Data("\n".utf8))
             completed += 1
-            if completed % 50 == 0 || completed == total {
-                FileHandle.standardError.write(Data("classified \(completed)/\(total)\n".utf8))
+            if completed % 50 == 0 || start + completed == total {
+                FileHandle.standardError.write(Data("classified \(start + completed)/\(total)\n".utf8))
             }
         }
     }

@@ -316,9 +316,14 @@ def command_import(args: argparse.Namespace) -> None:
             classification = classifications.get(key, {})
             image_class = str(classification.get("classification") or "unclassified")
             skip_document = image_class == "text_document"
-            decision = "skip_text_document" if skip_document else "gpt_image_2"
-            generation_status = "skipped" if skip_document else "queued"
-            skip_reason = "文字資料のため原本を保持し、GPT Image 2加工を行わない" if skip_document else ""
+            manual_review = image_class in {"manual_review", "classification_error"}
+            decision = "skip_text_document" if skip_document else ("hold_manual_review" if manual_review else "gpt_image_2")
+            generation_status = "skipped" if skip_document else ("manual_review" if manual_review else "queued")
+            skip_reason = (
+                "文字資料のため原本を保持し、GPT Image 2加工を行わない"
+                if skip_document
+                else ("自動判定できないため、GPT Image 2へ送る前に手動確認" if manual_review else "")
+            )
             connection.execute(
                 """
                 INSERT INTO product_images(
@@ -377,8 +382,9 @@ def command_import(args: argparse.Namespace) -> None:
                 )
                 processed_bytes += processed_file.stat().st_size
 
-            if skip_document:
-                skipped_documents += 1
+            if skip_document or manual_review:
+                if skip_document:
+                    skipped_documents += 1
                 connection.execute("DELETE FROM generation_queue WHERE product_image_id=?", (slot_id,))
             else:
                 prompt = generation_prompt(str(product["title"]), image_no)
@@ -420,7 +426,7 @@ def command_import(args: argparse.Namespace) -> None:
         "originalBytes": original_bytes,
         "existingProcessedBytes": processed_bytes,
         "skippedTextDocuments": skipped_documents,
-        "queuedForGptImage2": imported_images - skipped_documents,
+        "queuedForGptImage2": connection.execute("SELECT COUNT(*) FROM generation_queue WHERE status='queued'").fetchone()[0],
     }, ensure_ascii=False))
 
 

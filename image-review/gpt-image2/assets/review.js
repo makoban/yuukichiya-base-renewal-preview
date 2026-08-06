@@ -5,6 +5,7 @@ const STATUS_LABELS = {
   review_pending: "確認待ち",
   regenerate: "再生成",
   skipped: "文字資料・加工なし",
+  manual_review: "生成前の手動確認",
   approved: "承認済み",
 };
 
@@ -27,14 +28,15 @@ function flatten(products) {
 function stat(value, label) { return `<div class="stat"><strong>${Number(value || 0).toLocaleString("ja-JP")}</strong><span>${label}</span></div>`; }
 function renderStats() {
   const counts = rows.reduce((a, r) => { a[r.image.status] = (a[r.image.status] || 0) + 1; return a; }, {});
-  elements.stats.innerHTML = [stat(manifest.meta.productCount,"商品"),stat(manifest.meta.imageCount,"全画像"),stat(counts.queued,"生成待ち"),stat(counts.review_pending,"確認待ち"),stat(counts.skipped,"文字資料")].join("");
+  elements.stats.innerHTML = [stat(manifest.meta.productCount,"商品"),stat(manifest.meta.imageCount,"全画像"),stat(counts.queued,"生成待ち"),stat(counts.review_pending,"確認待ち"),stat(counts.skipped,"文字資料"),stat(counts.manual_review,"手動確認")].join("");
 }
 function imageButton(src, caption, width) {
   return `<button class="zoom-trigger" type="button" data-src="${escapeHtml(src)}" data-caption="${escapeHtml(caption)}"><img src="${escapeHtml(src)}" width="${width}" height="${width}" loading="lazy" decoding="async" alt="${escapeHtml(caption)}"></button>`;
 }
 function card(row) {
   const {image} = row;
-  const after = image.processedUrl ? imageButton(image.processedUrl, `${row.title} GPT Image 2加工後`, 1024) : `<div class="placeholder">${image.status === "skipped" ? "文字資料のため加工なし" : "GPT Image 2生成待ち"}</div>`;
+  const waitingLabel = image.status === "skipped" ? "文字資料のため加工なし" : (image.status === "manual_review" ? "生成前の手動確認" : "GPT Image 2生成待ち");
+  const after = image.processedUrl ? imageButton(image.processedUrl, `${row.title} GPT Image 2加工後`, 1024) : `<div class="placeholder">${waitingLabel}</div>`;
   const score = image.scores ? `<div class="score"><span>忠実度 ${image.scores.truthfulness ?? "-"}点</span><span>見栄え ${image.scores.appearance ?? "-"}点</span><span>文字・ロゴ ${image.scores.textLogoIntegrity ?? "-"}点</span><span>生成 ${image.attempts}回</span></div>` : `<div class="score"><span>採点前</span></div>`;
   const reasons = image.scores?.reasons?.length ? `<p class="risk-reasons">${escapeHtml(image.scores.reasons.join("／"))}</p>` : "";
   return `<article class="card"><header class="card__header"><h2>${escapeHtml(row.title)}</h2><p class="meta">商品ID ${escapeHtml(row.itemId)}・画像 ${image.imageNo}</p></header><div class="compare"><figure class="figure">${imageButton(image.originalUrl, `${row.title} 原本`, 640)}<figcaption>原本</figcaption></figure><figure class="figure">${after}<figcaption>GPT Image 2加工後</figcaption></figure></div><div class="card__body"><span class="status status--${escapeHtml(image.status)}">${escapeHtml(STATUS_LABELS[image.status] || image.status)}</span>${score}${image.skipReason ? `<p class="skip-note">${escapeHtml(image.skipReason)}</p>` : ""}${reasons}<details><summary>商品説明を見る</summary><p class="description">${escapeHtml(row.description || "商品説明未登録")}</p></details><div class="card__actions"><a href="${escapeHtml(row.publicUrl)}" target="_blank" rel="noopener">BASE商品を見る</a></div></div></article>`;
