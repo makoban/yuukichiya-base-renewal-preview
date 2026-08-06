@@ -43,14 +43,16 @@ node scripts/verify-search-relevance.mjs
 
 ## 全商品画像の加工確認
 
-`image-review/all-products/index.html` は、BASE公開カタログから固定した606商品・1,597画像の原本と加工後を比較する確認画面です。商品IDと画像番号の対応を維持し、忠実度90点未満の画像はBASEへ反映しません。文字・ロゴ・寸法表など生成による誤記が起きやすい画像は、生成AIで描き直さず、原画像のノイズ・明るさ・鮮明さ・余白だけを整えます。人物や文字量を自動検査し、対象外と判定した商品写真だけは原画の前景画素を維持したままGPT Image 2の共通売場背景へ合成します。
+`image-review/all-products/index.html` は、BASE公開カタログから固定した606商品・1,597画像の原本と加工後を比較する確認画面です。商品IDと画像番号の対応を維持し、忠実度90点未満の画像はBASEへ反映しません。文字・ロゴ・寸法表など生成による誤記が起きやすい画像は、生成AIで描き直さず、原画像のノイズ・明るさ・鮮明さ・余白だけを整えます。人物や文字量を自動検査し、対象外と判定した商品写真だけは原画の前景画素を維持したままGPT Image 2の共通売場背景へ合成します。全64枚のコンタクトシート目視と全ファイル検証後、2026-08-06にBASE APIで公開中606商品・1,597画像を入れ替え、全画像スロットを再取得して一致を確認しました。
 
 ```sh
 node scripts/build-image-review-manifest.mjs
 node scripts/download-image-review-originals.mjs --start=0 --limit=100 --concurrency=8
 node scripts/process-image-review-safe-baseline.mjs --concurrency=6
+node scripts/localize-image-review-originals.mjs
+node scripts/verify-image-review-batch.mjs
 ```
 
-原本の作業コピーは `.image-batch/` に置き、GitHubへは保存しません。公開確認面は `noindex` ですが、URLを知る人が閲覧できるため、注文・顧客・在庫数・秘密情報を含めません。
+高解像度原本の作業コピーとBASE入れ替えジャーナルは `.image-batch/` に置き、GitHubへは保存しません。BASEは入れ替え後に旧CDN画像を削除するため、公開比較面には原本内容を変更せず最大640px・JPEG品質65へ縮小した比較用コピーだけを保存します。公開確認面は `noindex` ですが、URLを知る人が閲覧できるため、注文・顧客・在庫数・秘密情報を含めません。
 
 `../base_redesign/scripts/sync-github-pages-preview.mjs` は旧生成元との差分がある場合に停止する。停止を回避して一括上書きせず、必要な変更を差分レビューして手動統合する。

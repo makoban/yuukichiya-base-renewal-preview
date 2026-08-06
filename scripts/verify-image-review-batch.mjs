@@ -33,6 +33,7 @@ const errors = [];
 let images = 0;
 let totalBytes = 0;
 const originalUrls = new Set();
+const originalFiles = new Set();
 const processedFiles = new Set();
 
 for (const product of manifest.products) {
@@ -41,14 +42,29 @@ for (const product of manifest.products) {
   }
   for (const image of product.images) {
     images += 1;
-    let original;
-    try { original = new URL(image.originalUrl); } catch {}
-    if (!original || original.protocol !== "https:" || !allowedHosts.has(original.hostname)) {
-      errors.push(`${product.itemId}:${image.imageNo}: 原本URLが不正です`);
-    } else if (originalUrls.has(original.pathname)) {
-      errors.push(`${product.itemId}:${image.imageNo}: 原本URLが重複しています`);
+    let originalBase;
+    try { originalBase = new URL(image.originalBaseUrl || image.originalUrl); } catch {}
+    if (!originalBase || originalBase.protocol !== "https:" || !allowedHosts.has(originalBase.hostname)) {
+      errors.push(`${product.itemId}:${image.imageNo}: 原本BASE URLが不正です`);
+    } else if (originalUrls.has(originalBase.pathname)) {
+      errors.push(`${product.itemId}:${image.imageNo}: 原本BASE URLが重複しています`);
+    } else originalUrls.add(originalBase.pathname);
+    const originalResolved = path.resolve(PAGE_ROOT, image.originalUrl);
+    if (!originalResolved.startsWith(`${path.join(PAGE_ROOT, "originals")}${path.sep}`)) {
+      errors.push(`${product.itemId}:${image.imageNo}: 比較用原本パスが確認領域外です`);
+    } else if (originalFiles.has(originalResolved)) {
+      errors.push(`${product.itemId}:${image.imageNo}: 比較用原本が重複しています`);
     } else {
-      originalUrls.add(original.pathname);
+      originalFiles.add(originalResolved);
+      try {
+        const file = await fs.readFile(originalResolved);
+        const size = jpegDimensions(file);
+        if (!size || size.width > 640 || size.height > 640 || size.width < 1 || size.height < 1) {
+          errors.push(`${product.itemId}:${image.imageNo}: 比較用原本は最大640pxのJPEGではありません`);
+        }
+      } catch (error) {
+        errors.push(`${product.itemId}:${image.imageNo}: 比較用原本 ${error.message}`);
+      }
     }
     if (!image.processedUrl || !allowedStatuses.has(image.status)) {
       errors.push(`${product.itemId}:${image.imageNo}: 加工状態が未完了です`);
@@ -85,4 +101,4 @@ if (errors.length) {
   process.stderr.write(`${JSON.stringify({ errors: errors.slice(0, 100), errorCount: errors.length }, null, 2)}\n`);
   process.exit(1);
 }
-process.stdout.write(`${JSON.stringify({ products: manifest.products.length, images, processedFiles: processedFiles.size, totalBytes, errors: 0 })}\n`);
+process.stdout.write(`${JSON.stringify({ products: manifest.products.length, images, originalFiles: originalFiles.size, processedFiles: processedFiles.size, totalBytes, errors: 0 })}\n`);
